@@ -16,9 +16,9 @@ void Sz3::clear_compressed_data()
 size_t Sz3::compress(const std::vector<float> &input)
 {
     clear_compressed_data();
-    SZ::Config conf(input.size());
-    conf.cmprAlgo = SZ::ALGO_INTERP_LORENZO;
-    conf.errorBoundMode = SZ::EB_ABS;
+    SZ3::Config conf(input.size());
+    conf.cmprAlgo = SZ3::ALGO_INTERP_LORENZO;
+    conf.errorBoundMode = SZ3::EB_ABS;
     conf.absErrorBound = 1;
     compressedData = SZ_compress<float>(conf, input.data(), compressedSize);
     return compressedSize;
@@ -26,7 +26,7 @@ size_t Sz3::compress(const std::vector<float> &input)
 
 std::vector<float> Sz3::decompress()
 {
-    SZ::Config conf;
+    SZ3::Config conf;
     float *decompressedData = SZ_decompress<float>(conf, compressedData, compressedSize);
 
     std::vector<float> reconstructed_data(decompressedData, decompressedData + conf.num);

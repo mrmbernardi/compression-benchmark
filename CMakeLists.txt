@@ -21,7 +21,7 @@ ExternalProject_Add(libbsc
   INSTALL_COMMAND   ""
 )
 ExternalProject_Get_property(libbsc SOURCE_DIR)
-include_directories(${SOURCE_DIR}/libbsc)
+target_include_directories(compression-benchmark PRIVATE ${SOURCE_DIR}/libbsc)
 target_link_libraries(compression-benchmark PRIVATE ${SOURCE_DIR}/libbsc.a)
 find_package(OpenMP REQUIRED)
 target_link_libraries(compression-benchmark PUBLIC OpenMP::OpenMP_CXX)
@@ -31,8 +31,11 @@ ExternalProject_Add(libsz3
   GIT_REPOSITORY    git@github.com:szcompressor/SZ3.git
   GIT_TAG           05965ac2b36be7618822ae2e0d78526887cefa07
   INSTALL_COMMAND   ""
-  CMAKE_ARGS        -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+  CMAKE_ARGS        -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DSZ3_USE_BUNDLED_ZSTD=ON
 )
+ExternalProject_Get_property(libsz3 SOURCE_DIR)
+target_include_directories(compression-benchmark PRIVATE ${SOURCE_DIR}/include)
 ExternalProject_Get_property(libsz3 BINARY_DIR)
+target_include_directories(compression-benchmark PRIVATE ${BINARY_DIR}/include)
 target_link_libraries(compression-benchmark PRIVATE ${BINARY_DIR}/tools/zstd/libzstd.so)
 add_dependencies(compression-benchmark libsz3)
