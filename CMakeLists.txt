@@ -14,8 +14,8 @@ endif()
 
 include(ExternalProject)
 ExternalProject_Add(libbsc
-  GIT_REPOSITORY    git@github.com:IlyaGrebnov/libbsc.git
-  GIT_TAG           v3.3.2
+  GIT_REPOSITORY    https://github.com/IlyaGrebnov/libbsc.git
+  GIT_TAG           baf06ad80d507d7edbe028c205a4b6883e0d981d
   CONFIGURE_COMMAND ""
   BUILD_IN_SOURCE   1
   INSTALL_COMMAND   ""
@@ -28,7 +28,7 @@ target_link_libraries(compression-benchmark PUBLIC OpenMP::OpenMP_CXX)
 add_dependencies(compression-benchmark libbsc)
 
 ExternalProject_Add(libsz3
-  GIT_REPOSITORY    git@github.com:szcompressor/SZ3.git
+  GIT_REPOSITORY    https://github.com/szcompressor/SZ3.git
   GIT_TAG           162674f8743b8a6ff2042ef9236471a772bdbd3f
   INSTALL_COMMAND   ""
   CMAKE_ARGS        -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DSZ3_USE_BUNDLED_ZSTD=ON
