@@ -1,8 +1,8 @@
+#include "method.hpp"
+#include <SZ3/api/sz.hpp>
+#include <libbsc.h>
 #include <stddef.h>
 #include <vector>
-#include <libbsc.h>
-#include <SZ3/api/sz.hpp>
-#include "method.hpp"
 
 void Sz3::clear_compressed_data()
 {

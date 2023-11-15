@@ -1,10 +1,10 @@
+#include "method.hpp"
 #include <cassert>
 #include <chrono>
 #include <iostream>
 #include <random>
 #include <string>
 #include <vector>
-#include "method.hpp"
 
 std::vector<float> generate_random_data(size_t size)
 {
@@ -21,8 +21,7 @@ std::vector<float> generate_random_data(size_t size)
     return data;
 }
 
-template <class T>
-void benchmark(const std::vector<float> &original_buffer)
+template <class T> void benchmark(const std::vector<float> &original_buffer)
 {
     T method;
     std::cout << std::endl;
@@ -33,15 +32,13 @@ void benchmark(const std::vector<float> &original_buffer)
     size_t compressed_sz = method.compress(original_buffer);
     auto tend = std::chrono::high_resolution_clock::now();
     auto compress_duration = std::chrono::duration<double>(tend - tstart);
-    std::cout << "done" << std::endl
-              << "Decompressing... ";
+    std::cout << "done" << std::endl << "Decompressing... ";
     std::cout.flush();
     tstart = std::chrono::high_resolution_clock::now();
     std::vector<float> decompressed = method.decompress();
     tend = std::chrono::high_resolution_clock::now();
     auto decompress_duration = std::chrono::duration<double>(tend - tstart);
-    std::cout << "done" << std::endl
-              << "Comparing... ";
+    std::cout << "done" << std::endl << "Comparing... ";
     std::cout.flush();
 
     assert(original_buffer.size() == decompressed.size());
@@ -62,7 +59,7 @@ void benchmark(const std::vector<float> &original_buffer)
 
 int main(int argc, char **argv)
 {
-    std::vector<float> original_buffer = generate_random_data(20000000); // 20000000);
+    std::vector<float> original_buffer = generate_random_data(20000); // 20000000);
     benchmark<Bsc>(original_buffer);
     benchmark<Sz3>(original_buffer);
     return 0;

@@ -7,7 +7,7 @@ class Bsc
 {
     std::vector<unsigned char> compressed_buffer;
 
-public:
+  public:
     std::string name = "Bsc";
     Bsc();
     size_t compress(const std::vector<float> &input);
@@ -20,7 +20,7 @@ class Sz3
     size_t compressedSize;
     void clear_compressed_data();
 
-public:
+  public:
     std::string name = "Sz3";
     ~Sz3();
     size_t compress(const std::vector<float> &input);
