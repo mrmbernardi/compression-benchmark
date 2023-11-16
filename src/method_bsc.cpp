@@ -1,4 +1,5 @@
 #include "method.hpp"
+#include <cassert>
 #include <libbsc.h>
 
 #define BSC_FEATURES (LIBBSC_FEATURE_FASTMODE | LIBBSC_FEATURE_MULTITHREADING)
@@ -28,8 +29,9 @@ std::vector<float> Bsc::decompress()
 {
     int block_size, block_data_size;
     bsc_block_info(compressed_buffer.data(), LIBBSC_HEADER_SIZE, &block_size, &block_data_size, BSC_FEATURES);
+    assert(block_data_size % 4 == 0);
     std::vector<float> decompressed_buffer(block_data_size / 4);
     bsc_decompress(compressed_buffer.data(), block_size, reinterpret_cast<unsigned char *>(decompressed_buffer.data()),
                    block_data_size, BSC_FEATURES);
-    return std::move(decompressed_buffer);
+    return decompressed_buffer;
 }

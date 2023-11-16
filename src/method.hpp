@@ -1,4 +1,5 @@
 #pragma once
+#include <cstddef>
 #include <cstdint>
 #include <string>
 #include <vector>
@@ -29,6 +30,11 @@ class Sz3
 
 class Lfzip
 {
+    float error = 1.0f - 1e-06f; // this is nonsense which i'm only replicating to match the lfzip code.
+    //float error = 0.999999;
+    std::vector<int16_t> indices;
+    static const size_t filter_size = 1;
+
   public:
     std::string name = "LfZip";
     size_t compress(const std::vector<float> &input);
