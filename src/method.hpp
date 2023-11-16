@@ -26,3 +26,11 @@ class Sz3
     size_t compress(const std::vector<float> &input);
     std::vector<float> decompress();
 };
+
+class Lfzip
+{
+  public:
+    std::string name = "LfZip";
+    size_t compress(const std::vector<float> &input);
+    std::vector<float> decompress();
+};

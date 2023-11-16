@@ -1,7 +1,6 @@
 #include "method.hpp"
 #include <libbsc.h>
-#include <stddef.h>
-#include <vector>
+
 #define BSC_FEATURES (LIBBSC_FEATURE_FASTMODE | LIBBSC_FEATURE_MULTITHREADING)
 
 static bool bsc_initialised = false;
