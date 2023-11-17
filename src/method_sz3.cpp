@@ -1,5 +1,8 @@
-#include "method.hpp"
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Weverything"
 #include <SZ3/api/sz.hpp>
+#pragma clang diagnostic pop
+#include "method.hpp"
 
 void Sz3::clear_compressed_data()
 {

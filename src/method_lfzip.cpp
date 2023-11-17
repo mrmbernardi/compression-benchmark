@@ -23,7 +23,7 @@ template <size_t N> class NlmsFilter
         {
             auto signal_static = signal.subspan<0, N + 1>();
             adapt(signal_static);
-            return std::inner_product(signal_static.begin(), signal_static.end() - 1, w.begin(), 0);
+            return std::inner_product(signal_static.begin() + 1, signal_static.end(), w.begin(), 0.0f);
         }
         else if (signal.size() == 0)
         {
@@ -37,15 +37,14 @@ template <size_t N> class NlmsFilter
     void adapt(std::span<const float, N + 1> signal)
     {
         float true_val = signal.back();
-        float y = std::inner_product(signal.begin(), signal.end() - 1, w.begin(), 0);
+        float y = std::inner_product(signal.begin(), signal.end() - 1, w.begin(), 0.0f);
         float e = true_val - y;
-        float dot = std::inner_product(signal.begin(), signal.end() - 1, signal.begin(), 0);
+        float dot = std::inner_product(signal.begin(), signal.end() - 1, signal.begin(), 0.0f);
         float nu = mu / (eps + dot);
         for (size_t i = 0; i < N; i++)
         {
             w[i] += nu * e * signal[i];
         }
-        int x = 13;
     }
 };
 
@@ -53,31 +52,23 @@ size_t Lfzip::compress(const std::vector<float> &input)
 {
     std::vector<int16_t> test = vec_from_file<int16_t>("../../LFZip/debug/bin_idx.0");
 
-    std::vector<float> recon(input.size());
+    std::vector<float> recon;
+    recon.reserve(input.size());
     NlmsFilter<filter_size> nlms;
     indices.clear();
 
-    auto input_it = input.begin();
-    for (std::vector<float>::iterator recon_it = recon.begin(); recon_it != recon.end(); recon_it++)
+    for (const float v : input)
     {
-        auto begin = recon_it - filter_size - 1;
-        if (begin < recon.begin())
-        {
-            begin = recon.begin();
-        }
-        float prediction = nlms.predict(std::span<const float>(begin, recon_it));
-        float diff = *(input_it++) - prediction;
-        int64_t index = std::round((diff / (2.0 * error)));
+        auto sample_start = std::max(recon.end() - filter_size - 1, recon.begin());
+        float predval = nlms.predict(std::span<const float>(sample_start, recon.end()));
+        float diff = v - predval;
+        int64_t index = std::round(diff / (2.0 * error));
+        // TODO: Handle out of range values.
         indices.push_back(index);
-        *recon_it = prediction + index * 2.0 * error;
-
-        if(test[indices.size() - 1] != indices.back())
-        {
-            assert(false);
-        }
+        recon.push_back(predval + error * index * 2.0);
     }
     assert(indices == test);
-    return 1; // nonsense for now
+    return 1; // TODO: nonsense for now
 }
 
 std::vector<float> Lfzip::decompress()
@@ -86,11 +77,13 @@ std::vector<float> Lfzip::decompress()
 
     std::vector<float> result;
     result.reserve(indices.size());
-    for (int16_t v : indices)
+    NlmsFilter<filter_size> nlms;
+    for (const int16_t v : indices)
     {
-        result.push_back(v * 2.0 * error);
+        auto sample_start = std::max(result.end() - filter_size - 1, result.begin());
+        float predval = nlms.predict(std::span<const float>(sample_start, result.end()));
+        result.push_back(predval + error * v * 2.0);
     }
     assert(result == test);
-    int x = 1;
     return result;
 }

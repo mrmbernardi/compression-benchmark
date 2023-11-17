@@ -7,7 +7,6 @@
 class Bsc
 {
     std::vector<unsigned char> compressed_buffer;
-
   public:
     std::string name = "Bsc";
     Bsc();
@@ -31,9 +30,8 @@ class Sz3
 class Lfzip
 {
     float error = 1.0f - 1e-06f; // this is nonsense which i'm only replicating to match the lfzip code.
-    //float error = 0.999999;
     std::vector<int16_t> indices;
-    static const size_t filter_size = 1;
+    static const size_t filter_size = 32;
 
   public:
     std::string name = "LfZip";

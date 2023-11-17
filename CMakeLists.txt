@@ -12,6 +12,12 @@ if (NOT CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
   message( FATAL_ERROR "To support libbsc, Clang is required. Set -DCMAKE_CXX_COMPILER=clang++" )
 endif()
 
+set_source_files_properties(
+  ${CPP_SOURCES}
+  PROPERTIES
+  COMPILE_FLAGS -Wall -Wextra -Wpedantic
+)
+
 include(ExternalProject)
 ExternalProject_Add(libbsc
   GIT_REPOSITORY    https://github.com/IlyaGrebnov/libbsc.git
