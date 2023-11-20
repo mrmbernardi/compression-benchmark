@@ -1,4 +1,5 @@
 #include "benchmark.hpp"
+#include "bsc_wrapper.hpp"
 #include "method.hpp"
 #include <algorithm>
 #include <array>
@@ -7,6 +8,8 @@
 #include <complex>
 #include <cstddef>
 #include <cstdint>
+#include <iostream>
+#include <iterator>
 #include <limits>
 #include <numeric>
 #include <span>
@@ -53,13 +56,14 @@ template <size_t N> class NlmsFilter
 
 size_t Lfzip::compress(const std::vector<float> &input)
 {
-    std::vector<int16_t> test = vec_from_file<int16_t>("../../LFZip/debug/bin_idx.0");
+    // std::vector<int16_t> test = vec_from_file<int16_t>("../../LFZip/debug/bin_idx.0");
 
+    NlmsFilter<filter_size> nlms;
+    std::vector<int16_t> indices;
+    std::vector<float> outliers;
     std::vector<float> recon;
     recon.reserve(input.size());
-    NlmsFilter<filter_size> nlms;
-    indices.clear();
-    outliers.clear();
+    indices.reserve(input.size());
 
     for (const float v : input)
     {
@@ -80,13 +84,36 @@ size_t Lfzip::compress(const std::vector<float> &input)
             recon.push_back(predval + error * index * 2.0);
         }
     }
-    assert(indices == test);
-    return 1; // TODO: nonsense for now
+
+    // assert(indices == test);
+
+    std::vector<std::byte> stream;
+    size_t indices_stream_size = indices.size();
+    auto s1 = std::as_bytes(std::span<size_t, 1>(&indices_stream_size, 1));
+    auto s2 = std::as_bytes(std::span(indices));
+    auto s3 = std::as_bytes(std::span(outliers));
+    stream.reserve(s1.size_bytes() + s2.size_bytes() + s3.size_bytes());
+    stream.insert(stream.end(), s1.begin(), s1.end());
+    stream.insert(stream.end(), s2.begin(), s2.end());
+    stream.insert(stream.end(), s3.begin(), s3.end());
+
+    // std::cout << "Lfzip before compression: " << stream.size() << std::endl;
+    compressed_buffer = bsc_compress_wrapper(stream);
+    // std::cout << "Lfzip after compression: " << compressed_buffer.size() << std::endl;
+    return compressed_buffer.size();
 }
 
 std::vector<float> Lfzip::decompress()
 {
-    std::vector<float> test = vec_from_file<float>("../../LFZip/debug/recon.bin");
+    // std::vector<float> test = vec_from_file<float>("../../LFZip/debug/recon.bin");
+
+    std::vector<std::byte> decompressed_buffer = bsc_decompress_wrapper(compressed_buffer);
+    size_t indicies_count = *reinterpret_cast<const size_t *>(decompressed_buffer.data());
+    auto indices_start = decompressed_buffer.data() + sizeof(size_t);
+    auto outliers_start = indices_start + sizeof(int16_t) * indicies_count;
+    auto outliers_end = reinterpret_cast<const float *>(decompressed_buffer.data() + decompressed_buffer.size());
+    auto indices = std::span<const int16_t>(reinterpret_cast<const int16_t *>(indices_start), indicies_count);
+    auto outliers = std::span<const float>(reinterpret_cast<const float *>(outliers_start), outliers_end);
 
     std::vector<float> result;
     result.reserve(indices.size());
@@ -106,6 +133,6 @@ std::vector<float> Lfzip::decompress()
             result.push_back(predval + error * v * 2.0);
         }
     }
-    assert(result == test);
+    // assert(result == test);
     return result;
 }

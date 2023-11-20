@@ -1,37 +1,19 @@
+#include "bsc_wrapper.hpp"
 #include "method.hpp"
 #include <cassert>
-#include <libbsc.h>
-
-#define BSC_FEATURES (LIBBSC_FEATURE_FASTMODE | LIBBSC_FEATURE_MULTITHREADING)
-
-static bool bsc_initialised = false;
-
-Bsc::Bsc()
-{
-    if (!bsc_initialised)
-    {
-        bsc_init(bsc_init(BSC_FEATURES));
-        bsc_initialised = true;
-    }
-}
+#include <cstdint>
+#include <span>
 
 size_t Bsc::compress(const std::vector<float> &input)
 {
-    size_t input_sz = input.size() * sizeof(input[0]);
-    compressed_buffer.resize(LIBBSC_HEADER_SIZE + input_sz);
-    int compressed_sz = bsc_compress(reinterpret_cast<const unsigned char *>(input.data()), compressed_buffer.data(),
-                                     input_sz, 0, 0, LIBBSC_BLOCKSORTER_BWT, LIBBSC_CODER_QLFC_STATIC, BSC_FEATURES);
-    compressed_buffer.resize(compressed_sz);
-    return compressed_buffer.size();
+    compressed_buffer = bsc_compress_wrapper(std::as_bytes(std::span(input)));
+    return compressed_buffer.size() * sizeof(compressed_buffer[0]);
 }
 
-std::vector<float> Bsc::decompress()
+std::span<const float> Bsc::decompress()
 {
-    int block_size, block_data_size;
-    bsc_block_info(compressed_buffer.data(), LIBBSC_HEADER_SIZE, &block_size, &block_data_size, BSC_FEATURES);
-    assert(block_data_size % 4 == 0);
-    std::vector<float> decompressed_buffer(block_data_size / 4);
-    bsc_decompress(compressed_buffer.data(), block_size, reinterpret_cast<unsigned char *>(decompressed_buffer.data()),
-                   block_data_size, BSC_FEATURES);
-    return decompressed_buffer;
+    decompressed_buffer = bsc_decompress_wrapper(compressed_buffer);
+    assert(decompressed_buffer.size() % 4 == 0);
+    auto data_ptr = reinterpret_cast<float *>(decompressed_buffer.data());
+    return std::span<const float>(data_ptr, decompressed_buffer.size() / sizeof(float));
 }

@@ -38,13 +38,14 @@ template <class T> void benchmark(const std::vector<float> &original_buffer)
     std::cout << "done" << std::endl << "Decompressing... ";
     std::cout.flush();
     tstart = std::chrono::high_resolution_clock::now();
-    std::vector<float> decompressed = method.decompress();
+    auto decompressed = method.decompress();
     tend = std::chrono::high_resolution_clock::now();
     auto decompress_duration = std::chrono::duration<double>(tend - tstart);
     std::cout << "done" << std::endl << "Comparing... ";
     std::cout.flush();
 
     assert(original_buffer.size() == decompressed.size());
+
     double error = 0;
     for (size_t i = 0; i < original_buffer.size(); i++)
     {
@@ -63,7 +64,7 @@ template void benchmark<Bsc>(const std::vector<float> &original_buffer);
 template void benchmark<Sz3>(const std::vector<float> &original_buffer);
 template void benchmark<Lfzip>(const std::vector<float> &original_buffer);
 
-template <class T> void vec_to_file(std::string path, const std::vector<T> &data)
+template <typename T> void vec_to_file(std::string path, const std::vector<T> &data)
 {
     if (std::FILE *f = std::fopen(path.c_str(), "wb"))
     {
@@ -78,7 +79,7 @@ template <class T> void vec_to_file(std::string path, const std::vector<T> &data
 template void vec_to_file(std::string path, const std::vector<float> &data);
 template void vec_to_file(std::string path, const std::vector<uint16_t> &data);
 
-template <class T> std::vector<T> vec_from_file(std::string path)
+template <typename T> std::vector<T> vec_from_file(std::string path)
 {
     std::vector<T> data;
     if (std::FILE *f = std::fopen(path.c_str(), "rb"))
