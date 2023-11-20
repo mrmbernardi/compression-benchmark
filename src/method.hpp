@@ -30,7 +30,9 @@ class Sz3
 class Lfzip
 {
     float error = 1.0f - 1e-06f; // this is nonsense which i'm only replicating to match the lfzip code.
+    float maxerror_original = 1.0f;
     std::vector<int16_t> indices;
+    std::vector<float> outliers;
     static const size_t filter_size = 32;
 
   public:

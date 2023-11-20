@@ -4,8 +4,10 @@
 #include <array>
 #include <cassert>
 #include <cmath>
+#include <complex>
 #include <cstddef>
 #include <cstdint>
+#include <limits>
 #include <numeric>
 #include <span>
 #include <vector>
@@ -19,6 +21,7 @@ template <size_t N> class NlmsFilter
   public:
     float predict(std::span<const float> signal)
     {
+        assert(signal.size() <= N + 1);
         if (signal.size() == N + 1)
         {
             auto signal_static = signal.subspan<0, N + 1>();
@@ -56,16 +59,26 @@ size_t Lfzip::compress(const std::vector<float> &input)
     recon.reserve(input.size());
     NlmsFilter<filter_size> nlms;
     indices.clear();
+    outliers.clear();
 
     for (const float v : input)
     {
         auto sample_start = std::max(recon.end() - filter_size - 1, recon.begin());
         float predval = nlms.predict(std::span<const float>(sample_start, recon.end()));
         float diff = v - predval;
-        int64_t index = std::round(diff / (2.0 * error));
-        // TODO: Handle out of range values.
-        indices.push_back(index);
-        recon.push_back(predval + error * index * 2.0);
+        int16_t index = std::round(diff / (2.0 * error));
+        float reconstruction = predval + error * index * 2.0;
+        if (std::abs(v - reconstruction) > maxerror_original || index == std::numeric_limits<int16_t>::min())
+        {
+            indices.push_back(std::numeric_limits<int16_t>::min());
+            outliers.push_back(v);
+            recon.push_back(v);
+        }
+        else
+        {
+            indices.push_back(index);
+            recon.push_back(predval + error * index * 2.0);
+        }
     }
     assert(indices == test);
     return 1; // TODO: nonsense for now
@@ -78,11 +91,20 @@ std::vector<float> Lfzip::decompress()
     std::vector<float> result;
     result.reserve(indices.size());
     NlmsFilter<filter_size> nlms;
+    auto outlier = outliers.begin();
     for (const int16_t v : indices)
     {
         auto sample_start = std::max(result.end() - filter_size - 1, result.begin());
         float predval = nlms.predict(std::span<const float>(sample_start, result.end()));
-        result.push_back(predval + error * v * 2.0);
+        if (v == std::numeric_limits<int16_t>::min())
+        {
+            assert(outlier != outliers.end());
+            result.push_back(*(outlier++));
+        }
+        else
+        {
+            result.push_back(predval + error * v * 2.0);
+        }
     }
     assert(result == test);
     return result;
