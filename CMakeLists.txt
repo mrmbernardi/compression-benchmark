@@ -41,6 +41,7 @@ ExternalProject_Add(libsz3
 )
 ExternalProject_Get_property(libsz3 SOURCE_DIR)
 target_include_directories(compression-benchmark PRIVATE ${SOURCE_DIR}/include)
+target_include_directories(compression-benchmark PRIVATE ${SOURCE_DIR}/tools/zstd/)
 ExternalProject_Get_property(libsz3 BINARY_DIR)
 target_include_directories(compression-benchmark PRIVATE ${BINARY_DIR}/include)
 target_link_libraries(compression-benchmark PRIVATE ${BINARY_DIR}/tools/zstd/libzstd.so)

@@ -53,14 +53,16 @@ template <class T> void benchmark(const std::vector<float> &original_buffer)
     }
     error /= original_buffer.size();
     std::cout << "done" << std::endl;
-    std::cout << "Original size:   " << original_buffer.size() * 4 << std::endl;
+    auto original_sz = original_buffer.size() * sizeof(original_buffer[0]);
+    std::cout << "Original size:   " << original_sz << std::endl;
     std::cout << "Compressed size: " << compressed_sz << std::endl;
-    std::cout << "Ratio: " << (100.0f * compressed_sz / (original_buffer.size() * 4)) << "%" << std::endl;
+    std::cout << "Ratio: " << (100.0f * compressed_sz / (original_sz)) << "%" << std::endl;
     std::cout << "Compression time:     " << compress_duration.count() << "s" << std::endl;
     std::cout << "Decompression time:   " << decompress_duration.count() << "s" << std::endl;
     std::cout << "Mean Absolute Error:  " << error << std::endl;
 }
 template void benchmark<Bsc>(const std::vector<float> &original_buffer);
+template void benchmark<Zstd>(const std::vector<float> &original_buffer);
 template void benchmark<Sz3>(const std::vector<float> &original_buffer);
 template void benchmark<Lfzip>(const std::vector<float> &original_buffer);
 

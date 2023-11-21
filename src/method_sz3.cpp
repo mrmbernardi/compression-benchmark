@@ -1,6 +1,6 @@
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Weverything"
-#include <SZ3/api/sz.hpp>
+#include "SZ3/api/sz.hpp"
 #pragma clang diagnostic pop
 #include "method.hpp"
 

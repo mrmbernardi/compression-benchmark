@@ -17,6 +17,17 @@ class Bsc
     std::span<const float> decompress();
 };
 
+class Zstd
+{
+    std::vector<std::byte> compressed_buffer;
+    std::vector<float> decompressed_buffer;
+
+  public:
+    std::string name = "Zstd";
+    size_t compress(const std::vector<float> &input);
+    std::span<const float> decompress();
+};
+
 class Sz3
 {
     std::unique_ptr<char[]> compressed_data;

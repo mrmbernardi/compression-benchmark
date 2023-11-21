@@ -13,7 +13,7 @@ size_t Bsc::compress(const std::vector<float> &input)
 std::span<const float> Bsc::decompress()
 {
     decompressed_buffer = bsc_decompress_wrapper(compressed_buffer);
-    assert(decompressed_buffer.size() % 4 == 0);
+    assert(decompressed_buffer.size() % sizeof(float) == 0);
     auto data_ptr = reinterpret_cast<float *>(decompressed_buffer.data());
     return std::span<const float>(data_ptr, decompressed_buffer.size() / sizeof(float));
 }
