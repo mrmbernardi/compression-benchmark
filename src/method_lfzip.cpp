@@ -1,5 +1,5 @@
 #include "benchmark.hpp"
-#include "bsc_wrapper.hpp"
+#include "wrapper.hpp"
 #include "method.hpp"
 #include <algorithm>
 #include <array>
@@ -98,7 +98,7 @@ size_t Lfzip::compress(const std::vector<float> &input)
     stream.insert(stream.end(), s3.begin(), s3.end());
 
     // std::cout << "Lfzip before compression: " << stream.size() << std::endl;
-    compressed_buffer = bsc_compress_wrapper(stream);
+    compressed_buffer = BscWrapper::compress(stream);
     // std::cout << "Lfzip after compression: " << compressed_buffer.size() << std::endl;
     return compressed_buffer.size();
 }
@@ -107,7 +107,7 @@ std::vector<float> Lfzip::decompress()
 {
     // std::vector<float> test = vec_from_file<float>("../../LFZip/debug/recon.bin");
 
-    std::vector<std::byte> decompressed_buffer = bsc_decompress_wrapper(compressed_buffer);
+    std::vector<std::byte> decompressed_buffer = BscWrapper::decompress(compressed_buffer);
     size_t indicies_count = *reinterpret_cast<const size_t *>(decompressed_buffer.data());
     auto indices_start = decompressed_buffer.data() + sizeof(size_t);
     auto outliers_start = indices_start + sizeof(int16_t) * indicies_count;

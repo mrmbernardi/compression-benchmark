@@ -1,4 +1,4 @@
-#include "bsc_wrapper.hpp"
+#include "wrapper.hpp"
 #include <cassert>
 #include <cstddef>
 #include <cstdint>
@@ -13,7 +13,7 @@ void init_bsc()
     }
 }
 
-std::vector<std::byte> bsc_compress_wrapper(std::span<const std::byte> input)
+std::vector<std::byte> BscWrapper::compress(std::span<const std::byte> input)
 {
     init_bsc();
 
@@ -26,7 +26,7 @@ std::vector<std::byte> bsc_compress_wrapper(std::span<const std::byte> input)
     return output_buffer;
 }
 
-std::vector<std::byte> bsc_decompress_wrapper(std::span<const std::byte> input)
+std::vector<std::byte> BscWrapper::decompress(std::span<const std::byte> input)
 {
     init_bsc();
 

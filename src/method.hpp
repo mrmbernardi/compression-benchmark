@@ -20,7 +20,7 @@ class Bsc
 class Zstd
 {
     std::vector<std::byte> compressed_buffer;
-    std::vector<float> decompressed_buffer;
+    std::vector<std::byte> decompressed_buffer;
 
   public:
     std::string name = "Zstd";
