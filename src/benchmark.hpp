@@ -1,3 +1,4 @@
+#pragma once
 #include "method.hpp"
 #include <string>
 #include <vector>
