@@ -8,6 +8,8 @@ int main(/* int argc, char **argv */)
     // for (float &v : original_buffer)
     //     v *= 500;
     vec_to_file("input.vec", original_buffer);
+    benchmark<Sz3>(original_buffer);
     benchmark<Lfzip>(original_buffer);
+    benchmark<Bsc>(original_buffer);
     return 0;
 }

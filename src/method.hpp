@@ -1,6 +1,7 @@
 #pragma once
 #include <cstddef>
 #include <cstdint>
+#include <memory>
 #include <span>
 #include <string>
 #include <vector>
@@ -18,15 +19,13 @@ class Bsc
 
 class Sz3
 {
-    char *compressed_data = nullptr;
+    std::unique_ptr<char[]> compressed_data;
     size_t compressed_size;
-    float *decompressed_data = nullptr;
+    std::unique_ptr<float[]> decompressed_data;
     size_t decompressed_size;
-    void clear_data();
 
   public:
     std::string name = "Sz3";
-    ~Sz3();
     size_t compress(const std::vector<float> &input);
     std::span<const float> decompress();
 };
