@@ -1,6 +1,7 @@
 #include "benchmark.hpp"
 #include "method.hpp"
 #include "wrapper.hpp"
+#include "util.hpp"
 #include <cstdint>
 
 int main(/* int argc, char **argv */)

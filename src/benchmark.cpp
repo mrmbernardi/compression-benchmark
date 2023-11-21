@@ -6,7 +6,6 @@
 #include <cstdint>
 #include <iostream>
 #include <random>
-#include <stdexcept>
 #include <string>
 #include <vector>
 
@@ -67,39 +66,3 @@ template void benchmark<Lossless<Zstd>>(const std::vector<float> &original_buffe
 template void benchmark<Lfzip<Bsc>>(const std::vector<float> &original_buffer);
 template void benchmark<Lfzip<Zstd>>(const std::vector<float> &original_buffer);
 template void benchmark<Sz3>(const std::vector<float> &original_buffer);
-
-template <typename T> void vec_to_file(std::string path, const std::vector<T> &data)
-{
-    if (std::FILE *f = std::fopen(path.c_str(), "wb"))
-    {
-        std::fwrite(data.data(), sizeof(data[0]), data.size(), f);
-        std::fclose(f);
-    }
-    else
-    {
-        throw std::runtime_error("cannot open file");
-    }
-}
-template void vec_to_file(std::string path, const std::vector<float> &data);
-template void vec_to_file(std::string path, const std::vector<uint16_t> &data);
-
-template <typename T> std::vector<T> vec_from_file(std::string path)
-{
-    std::vector<T> data;
-    if (std::FILE *f = std::fopen(path.c_str(), "rb"))
-    {
-        T v;
-        while (std::fread(&v, sizeof(v), 1, f))
-        {
-            data.push_back(v);
-        }
-        std::fclose(f);
-    }
-    else
-    {
-        throw std::runtime_error("cannot open file");
-    }
-    return data;
-}
-template std::vector<float> vec_from_file(std::string path);
-template std::vector<int16_t> vec_from_file(std::string path);
