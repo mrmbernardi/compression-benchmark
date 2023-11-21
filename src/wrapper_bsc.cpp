@@ -13,7 +13,7 @@ void init_bsc()
     }
 }
 
-std::vector<std::byte> BscWrapper::compress(std::span<const std::byte> input)
+std::vector<std::byte> Bsc::compress(std::span<const std::byte> input)
 {
     init_bsc();
 
@@ -26,7 +26,7 @@ std::vector<std::byte> BscWrapper::compress(std::span<const std::byte> input)
     return output_buffer;
 }
 
-std::vector<std::byte> BscWrapper::decompress(std::span<const std::byte> input)
+std::vector<std::byte> Bsc::decompress(std::span<const std::byte> input)
 {
     init_bsc();
 

@@ -1,5 +1,6 @@
 #include "benchmark.hpp"
 #include "method.hpp"
+#include "wrapper.hpp"
 #include <cstdint>
 
 int main(/* int argc, char **argv */)
@@ -8,9 +9,10 @@ int main(/* int argc, char **argv */)
     // for (float &v : original_buffer)
     //     v *= 500;
     vec_to_file("input.vec", original_buffer);
-    benchmark<Bsc>(original_buffer);
-    benchmark<Zstd>(original_buffer);
+    benchmark<Lossless<Bsc>>(original_buffer);
+    benchmark<Lossless<Zstd>>(original_buffer);
+    benchmark<Lfzip<Bsc>>(original_buffer);
+    benchmark<Lfzip<Zstd>>(original_buffer);
     benchmark<Sz3>(original_buffer);
-    benchmark<Lfzip>(original_buffer);
     return 0;
 }

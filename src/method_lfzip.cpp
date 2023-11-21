@@ -1,6 +1,6 @@
 #include "benchmark.hpp"
-#include "wrapper.hpp"
 #include "method.hpp"
+#include "wrapper.hpp"
 #include <algorithm>
 #include <array>
 #include <cassert>
@@ -54,7 +54,7 @@ template <size_t N> class NlmsFilter
     }
 };
 
-size_t Lfzip::compress(const std::vector<float> &input)
+template <class LosslessWrapper> size_t Lfzip<LosslessWrapper>::compress(const std::vector<float> &input)
 {
     // std::vector<int16_t> test = vec_from_file<int16_t>("../../LFZip/debug/bin_idx.0");
 
@@ -98,16 +98,16 @@ size_t Lfzip::compress(const std::vector<float> &input)
     stream.insert(stream.end(), s3.begin(), s3.end());
 
     // std::cout << "Lfzip before compression: " << stream.size() << std::endl;
-    compressed_buffer = BscWrapper::compress(stream);
+    compressed_buffer = LosslessWrapper::compress(stream);
     // std::cout << "Lfzip after compression: " << compressed_buffer.size() << std::endl;
     return compressed_buffer.size();
 }
 
-std::vector<float> Lfzip::decompress()
+template <class LosslessWrapper> std::vector<float> Lfzip<LosslessWrapper>::decompress()
 {
     // std::vector<float> test = vec_from_file<float>("../../LFZip/debug/recon.bin");
 
-    std::vector<std::byte> decompressed_buffer = BscWrapper::decompress(compressed_buffer);
+    std::vector<std::byte> decompressed_buffer = LosslessWrapper::decompress(compressed_buffer);
     size_t indicies_count = *reinterpret_cast<const size_t *>(decompressed_buffer.data());
     auto indices_start = decompressed_buffer.data() + sizeof(size_t);
     auto outliers_start = indices_start + sizeof(int16_t) * indicies_count;
@@ -136,3 +136,6 @@ std::vector<float> Lfzip::decompress()
     // assert(result == test);
     return result;
 }
+
+template class Lfzip<Bsc>;
+template class Lfzip<Zstd>;

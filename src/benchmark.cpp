@@ -1,5 +1,6 @@
 #include "benchmark.hpp"
 #include "method.hpp"
+#include "wrapper.hpp"
 #include <cassert>
 #include <chrono>
 #include <cstdint>
@@ -61,10 +62,11 @@ template <class T> void benchmark(const std::vector<float> &original_buffer)
     std::cout << "Decompression time:   " << decompress_duration.count() << "s" << std::endl;
     std::cout << "Mean Absolute Error:  " << error << std::endl;
 }
-template void benchmark<Bsc>(const std::vector<float> &original_buffer);
-template void benchmark<Zstd>(const std::vector<float> &original_buffer);
+template void benchmark<Lossless<Bsc>>(const std::vector<float> &original_buffer);
+template void benchmark<Lossless<Zstd>>(const std::vector<float> &original_buffer);
+template void benchmark<Lfzip<Bsc>>(const std::vector<float> &original_buffer);
+template void benchmark<Lfzip<Zstd>>(const std::vector<float> &original_buffer);
 template void benchmark<Sz3>(const std::vector<float> &original_buffer);
-template void benchmark<Lfzip>(const std::vector<float> &original_buffer);
 
 template <typename T> void vec_to_file(std::string path, const std::vector<T> &data)
 {

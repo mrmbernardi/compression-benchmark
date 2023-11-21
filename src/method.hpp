@@ -6,24 +6,13 @@
 #include <string>
 #include <vector>
 
-class Bsc
+template <class LosslessWrapper> class Lossless
 {
     std::vector<std::byte> compressed_buffer;
     std::vector<std::byte> decompressed_buffer;
 
   public:
-    std::string name = "Bsc";
-    size_t compress(const std::vector<float> &input);
-    std::span<const float> decompress();
-};
-
-class Zstd
-{
-    std::vector<std::byte> compressed_buffer;
-    std::vector<std::byte> decompressed_buffer;
-
-  public:
-    std::string name = "Zstd";
+    inline static const std::string name = LosslessWrapper::name + " (lossless)";
     size_t compress(const std::vector<float> &input);
     std::span<const float> decompress();
 };
@@ -36,12 +25,12 @@ class Sz3
     size_t decompressed_size;
 
   public:
-    std::string name = "Sz3";
+    inline static const std::string name = "Sz3";
     size_t compress(const std::vector<float> &input);
     std::span<const float> decompress();
 };
 
-class Lfzip
+template <class LosslessWrapper> class Lfzip
 {
     float error = 1.0f - 1e-06f; // this is nonsense which i'm only replicating to match the lfzip code.
     float maxerror_original = 1.0f;
@@ -49,7 +38,7 @@ class Lfzip
     std::vector<std::byte> compressed_buffer;
 
   public:
-    std::string name = "LfZip";
+    inline static const std::string name = "LfZip with " + LosslessWrapper::name;
     size_t compress(const std::vector<float> &input);
     std::vector<float> decompress();
 };
