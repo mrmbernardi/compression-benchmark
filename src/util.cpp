@@ -1,5 +1,6 @@
 #include "util.hpp"
 #include <cassert>
+#include <cstdint>
 #include <stdexcept>
 
 std::span<const float> as_float_span(std::vector<std::byte> input)
