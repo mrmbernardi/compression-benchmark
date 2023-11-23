@@ -42,3 +42,14 @@ template <class LosslessWrapper> class Lfzip
     size_t compress(const std::vector<float> &input);
     std::vector<float> decompress();
 };
+
+template <class LosslessWrapper> class Quantise
+{
+    std::vector<std::byte> compressed_buffer;
+    std::vector<std::byte> decompressed_buffer;
+
+  public:
+    inline static const std::string name = "Quantise with " + LosslessWrapper::name;
+    size_t compress(const std::vector<float> &input);
+    std::span <const float> decompress();
+};

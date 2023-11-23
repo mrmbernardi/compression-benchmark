@@ -3,11 +3,18 @@
 #include <cstdint>
 #include <stdexcept>
 
-std::span<const float> as_float_span(std::vector<std::byte> input)
+std::span<const float> as_float_span(const std::vector<std::byte> &input)
+{
+    assert(input.size() % sizeof(float) == 0);
+    auto data_ptr = reinterpret_cast<const float *>(input.data());
+    return std::span<const float>(data_ptr, input.size() / sizeof(float));
+}
+
+std::span<float> as_float_span(std::vector<std::byte> &input)
 {
     assert(input.size() % sizeof(float) == 0);
     auto data_ptr = reinterpret_cast<float *>(input.data());
-    return std::span<const float>(data_ptr, input.size() / sizeof(float));
+    return std::span<float>(data_ptr, input.size() / sizeof(float));
 }
 
 template <typename T> void vec_to_file(std::string path, const std::vector<T> &data)
