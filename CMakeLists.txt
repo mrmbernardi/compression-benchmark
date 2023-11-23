@@ -38,6 +38,7 @@ add_dependencies(compression-benchmark libbsc)
 ExternalProject_Add(libsz3
   GIT_REPOSITORY    https://github.com/szcompressor/SZ3.git
   GIT_TAG           162674f8743b8a6ff2042ef9236471a772bdbd3f
+  BUILD_COMMAND     cmake --build . --target zstd
   INSTALL_COMMAND   ""
   CMAKE_ARGS        -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DSZ3_USE_BUNDLED_ZSTD=ON
 )
