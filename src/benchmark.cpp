@@ -30,7 +30,7 @@ std::string bench_result::to_string()
     std::ostringstream s;
     s << "Original size:   " << original_size << std::endl;
     s << "Compressed size: " << compressed_size << std::endl;
-    s << "Ratio: " << (100.0f * original_size / (compressed_size)) << "%" << std::endl;
+    s << "Ratio: " << ((100.0f * compressed_size) / original_size) << "%" << std::endl;
     s << "Compression time:     " << compression_time << "s" << std::endl;
     s << "Decompression time:   " << decompression_time << "s" << std::endl;
     s << "Mean Absolute Error:  " << mean_absolute_error << std::endl;

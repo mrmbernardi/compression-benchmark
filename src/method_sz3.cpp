@@ -1,7 +1,4 @@
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Weverything"
 #include "SZ3/api/sz.hpp"
-#pragma clang diagnostic pop
 #include "method.hpp"
 
 size_t Sz3::compress(const std::vector<float> &input)
