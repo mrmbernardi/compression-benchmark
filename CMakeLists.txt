@@ -3,6 +3,8 @@ cmake_minimum_required(VERSION 3.22)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} -march=native)
+
 project(compression-benchmark)
 file(GLOB_RECURSE CPP_SOURCES "${CMAKE_CURRENT_LIST_DIR}/src/*.cpp")
 file(GLOB_RECURSE CPP_HEADERS "${CMAKE_CURRENT_LIST_DIR}/src/*.hpp")
@@ -46,3 +48,12 @@ ExternalProject_Get_property(libsz3 BINARY_DIR)
 target_include_directories(compression-benchmark PRIVATE ${BINARY_DIR}/include)
 target_link_libraries(compression-benchmark PRIVATE ${BINARY_DIR}/tools/zstd/libzstd.so)
 add_dependencies(compression-benchmark libsz3)
+
+ExternalProject_Add(tabulate
+  GIT_REPOSITORY    https://github.com/p-ranav/tabulate.git
+  GIT_TAG           b35db4cce50a4b296290b0ae827305cdeb23751e
+  INSTALL_COMMAND   ""
+)
+ExternalProject_Get_property(tabulate SOURCE_DIR)
+target_include_directories(compression-benchmark PRIVATE ${SOURCE_DIR}/include)
+add_dependencies(compression-benchmark tabulate)

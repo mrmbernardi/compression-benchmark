@@ -1,13 +1,14 @@
 #include "benchmark.hpp"
 #include "method.hpp"
 #include "wrapper.hpp"
+#include <algorithm>
 #include <cassert>
 #include <chrono>
 #include <cstdint>
 #include <iostream>
 #include <random>
+#include <sstream>
 #include <string>
-#include <vector>
 
 std::vector<float> generate_random_data(size_t size)
 {
@@ -24,7 +25,20 @@ std::vector<float> generate_random_data(size_t size)
     return data;
 }
 
-template <class T> void benchmark(const std::vector<float> &original_buffer)
+std::string bench_result::to_string()
+{
+    std::ostringstream s;
+    s << "Original size:   " << original_size << std::endl;
+    s << "Compressed size: " << compressed_size << std::endl;
+    s << "Ratio: " << (100.0f * original_size / (compressed_size)) << "%" << std::endl;
+    s << "Compression time:     " << compression_time << "s" << std::endl;
+    s << "Decompression time:   " << decompression_time << "s" << std::endl;
+    s << "Mean Absolute Error:  " << mean_absolute_error << std::endl;
+    s << "Max Error:  " << max_error << std::endl;
+    return s.str();
+}
+
+template <class T> bench_result benchmark(const std::vector<float> &original_buffer)
 {
     T method;
     std::cout << std::endl;
@@ -46,23 +60,31 @@ template <class T> void benchmark(const std::vector<float> &original_buffer)
 
     assert(original_buffer.size() == decompressed.size());
 
-    double error = 0;
+    double mae = 0;
+    double max_error = 0;
     for (size_t i = 0; i < original_buffer.size(); i++)
     {
-        error += std::abs(decompressed[i] - original_buffer[i]);
+        double e = std::abs(decompressed[i] - original_buffer[i]);
+        mae += e;
+        max_error = std::max(max_error, e);
     }
-    error /= original_buffer.size();
+    mae /= original_buffer.size();
     std::cout << "done" << std::endl;
-    auto original_sz = original_buffer.size() * sizeof(original_buffer[0]);
-    std::cout << "Original size:   " << original_sz << std::endl;
-    std::cout << "Compressed size: " << compressed_sz << std::endl;
-    std::cout << "Ratio: " << (100.0f * compressed_sz / (original_sz)) << "%" << std::endl;
-    std::cout << "Compression time:     " << compress_duration.count() << "s" << std::endl;
-    std::cout << "Decompression time:   " << decompress_duration.count() << "s" << std::endl;
-    std::cout << "Mean Absolute Error:  " << error << std::endl;
+
+    bench_result b;
+    b.name = method.name;
+    b.original_size = original_buffer.size() * sizeof(original_buffer[0]);
+    b.compressed_size = compressed_sz;
+    b.compression_time = compress_duration.count();
+    b.decompression_time = decompress_duration.count();
+    b.mean_absolute_error = mae;
+    b.max_error = max_error;
+    std::cout << b.to_string();
+    std::cout.flush();
+    return b;
 }
-template void benchmark<Lossless<Bsc>>(const std::vector<float> &original_buffer);
-template void benchmark<Lossless<Zstd>>(const std::vector<float> &original_buffer);
-template void benchmark<Lfzip<Bsc>>(const std::vector<float> &original_buffer);
-template void benchmark<Lfzip<Zstd>>(const std::vector<float> &original_buffer);
-template void benchmark<Sz3>(const std::vector<float> &original_buffer);
+template bench_result benchmark<Lossless<Bsc>>(const std::vector<float> &original_buffer);
+template bench_result benchmark<Lossless<Zstd>>(const std::vector<float> &original_buffer);
+template bench_result benchmark<Lfzip<Bsc>>(const std::vector<float> &original_buffer);
+template bench_result benchmark<Lfzip<Zstd>>(const std::vector<float> &original_buffer);
+template bench_result benchmark<Sz3>(const std::vector<float> &original_buffer);

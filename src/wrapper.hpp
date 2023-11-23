@@ -8,8 +8,6 @@
 
 #define BSC_FEATURES (LIBBSC_FEATURE_FASTMODE | LIBBSC_FEATURE_MULTITHREADING)
 
-static bool bsc_initialised = false;
-
 struct Bsc
 {
     inline static const std::string name = "Bsc";

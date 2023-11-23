@@ -2,6 +2,7 @@
 #include "zstd.h"
 #include <cassert>
 #include <cstddef>
+#include <stdexcept>
 
 std::vector<std::byte> Zstd::compress(std::span<const std::byte> input)
 {
@@ -9,7 +10,10 @@ std::vector<std::byte> Zstd::compress(std::span<const std::byte> input)
     std::vector<std::byte> output_buffer(ZSTD_compressBound(input_sz) + sizeof(size_t));
     size_t compressed_sz =
         ZSTD_compress(output_buffer.data() + sizeof(size_t), output_buffer.size(), input.data(), input_sz, 3);
-    assert(!ZSTD_isError(compressed_sz));
+    if (ZSTD_isError(compressed_sz))
+    {
+        throw std::runtime_error("ZSTD compression failed");
+    }
     auto sz_span = std::as_bytes(std::span<size_t, 1>(&input_sz, 1));
     std::copy(sz_span.begin(), sz_span.end(), output_buffer.begin());
     output_buffer.resize(compressed_sz + sizeof(size_t));
@@ -22,6 +26,9 @@ std::vector<std::byte> Zstd::decompress(std::span<const std::byte> input)
     std::vector<std::byte> output_buffer(decompressed_sz);
     size_t res = ZSTD_decompress(output_buffer.data(), decompressed_sz, input.data() + sizeof(size_t),
                                  input.size() - sizeof(size_t));
-    assert(!ZSTD_isError(res));
+    if (ZSTD_isError(res))
+    {
+        throw std::runtime_error("ZSTD decompression failed");
+    }
     return output_buffer;
 }

@@ -4,6 +4,8 @@
 #include <cstdint>
 #include <vector>
 
+bool bsc_initialised = false;
+
 void init_bsc()
 {
     if (!bsc_initialised)
