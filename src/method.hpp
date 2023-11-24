@@ -45,11 +45,11 @@ template <class LosslessWrapper> class Lfzip
 
 template <class LosslessWrapper> class Quantise
 {
+    static constexpr float error = 1.0f;
     std::vector<std::byte> compressed_buffer;
-    std::vector<std::byte> decompressed_buffer;
 
   public:
     inline static const std::string name = "Quantise with " + LosslessWrapper::name;
     size_t compress(const std::vector<float> &input);
-    std::span <const float> decompress();
+    std::vector<float> decompress();
 };

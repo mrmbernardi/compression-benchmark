@@ -24,6 +24,7 @@ int main(/* int argc, char **argv */)
     // results.emplace_back(benchmark<Lossless<Zstd>>(original_buffer));
     // results.emplace_back(benchmark<Lfzip<Bsc>>(original_buffer));
     results.emplace_back(benchmark<Lfzip<Zstd>>(original_buffer));
+    results.emplace_back(benchmark<Quantise<Zstd>>(original_buffer));
     // results.emplace_back(benchmark<Sz3>(original_buffer));
 
     table.add_row({"Method", "Ratio", "Compression Time (s)", "Deompression Time (s)", "Max Error", "MAE"});

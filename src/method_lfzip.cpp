@@ -82,7 +82,7 @@ template <class LosslessWrapper> size_t Lfzip<LosslessWrapper>::compress(const s
         else
         {
             indices.push_back(index);
-            recon.push_back(predval + error * index * 2.0);
+            recon.push_back(reconstruction);
         }
     }
 
@@ -122,6 +122,7 @@ template <class LosslessWrapper> std::vector<float> Lfzip<LosslessWrapper>::deco
             result.push_back(predval + error * v * 2.0);
         }
     }
+    // std::cout << "magic sum: " << std::accumulate(result.begin(), result.end(), 0.0L) << std::endl;
     // assert(result == test);
     return result;
 }

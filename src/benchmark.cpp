@@ -87,4 +87,6 @@ template bench_result benchmark<Lossless<Bsc>>(const std::vector<float> &origina
 template bench_result benchmark<Lossless<Zstd>>(const std::vector<float> &original_buffer);
 template bench_result benchmark<Lfzip<Bsc>>(const std::vector<float> &original_buffer);
 template bench_result benchmark<Lfzip<Zstd>>(const std::vector<float> &original_buffer);
+template bench_result benchmark<Quantise<Bsc>>(const std::vector<float> &original_buffer);
+template bench_result benchmark<Quantise<Zstd>>(const std::vector<float> &original_buffer);
 template bench_result benchmark<Sz3>(const std::vector<float> &original_buffer);
