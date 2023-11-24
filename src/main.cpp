@@ -13,19 +13,20 @@ using namespace tabulate;
 
 int main(/* int argc, char **argv */)
 {
-    std::vector<float> original_buffer = generate_random_data(2000000); // 20000000);
+    std::vector<float> original_buffer = generate_random_data(200000); // 20000000);
     // for (float &v : original_buffer)
-    //     v *= 500;
+    //     v *= 50000;
     vec_to_file("input.vec", original_buffer);
 
     std::vector<bench_result> results;
     Table table;
-    // results.emplace_back(benchmark<Lossless<Bsc>>(original_buffer));
-    // results.emplace_back(benchmark<Lossless<Zstd>>(original_buffer));
-    // results.emplace_back(benchmark<Lfzip<Bsc>>(original_buffer));
+    results.emplace_back(benchmark<Lossless<Bsc>>(original_buffer));
+    results.emplace_back(benchmark<Lossless<Zstd>>(original_buffer));
+    results.emplace_back(benchmark<Lfzip<Bsc>>(original_buffer));
     results.emplace_back(benchmark<Lfzip<Zstd>>(original_buffer));
+    results.emplace_back(benchmark<Quantise<Bsc>>(original_buffer));
     results.emplace_back(benchmark<Quantise<Zstd>>(original_buffer));
-    // results.emplace_back(benchmark<Sz3>(original_buffer));
+    results.emplace_back(benchmark<Sz3>(original_buffer));
 
     table.add_row({"Method", "Ratio", "Compression Time (s)", "Deompression Time (s)", "Max Error", "MAE"});
     for (bench_result r : results)
@@ -35,6 +36,8 @@ int main(/* int argc, char **argv */)
                        string_format("%f", r.max_error), string_format("%f", r.mean_absolute_error)});
     }
 
+    for (size_t col = 0; col < table.row(0).size(); col++)
+        table[0][col].format().font_align(FontAlign::center);
     for (size_t col = 1; col < table.row(0).size(); col++)
         for (size_t row = 1; row < table.size(); row++)
             table[row][col].format().font_align(FontAlign::right);

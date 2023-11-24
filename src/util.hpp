@@ -29,7 +29,7 @@ template <typename... Args> std::string string_format(const std::string &format,
     return std::string(buf.get(), buf.get() + size - 1); // We don't want the '\0' inside
 }
 
-template <typename... Vecs> void _do_pack_streams(std::vector<std::byte> &data)
+inline void _do_pack_streams(std::vector<std::byte> &data)
 {
 }
 
@@ -45,7 +45,7 @@ void _do_pack_streams(std::vector<std::byte> &data, std::vector<Type> vec, Vecs.
     return;
 }
 
-template <typename... Vecs> size_t _get_packed_length()
+inline size_t _get_packed_length()
 {
     return 0;
 }
