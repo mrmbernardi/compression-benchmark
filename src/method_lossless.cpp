@@ -19,3 +19,4 @@ template <class LosslessWrapper> std::span<const float> Lossless<LosslessWrapper
 
 template class Lossless<Bsc>;
 template class Lossless<Zstd>;
+template class Lossless<Lz4>;

@@ -50,6 +50,18 @@ target_include_directories(compression-benchmark PRIVATE ${BINARY_DIR}/include)
 target_link_libraries(compression-benchmark PRIVATE ${BINARY_DIR}/tools/zstd/libzstd.so)
 add_dependencies(compression-benchmark libsz3)
 
+ExternalProject_Add(liblz4
+  GIT_REPOSITORY    https://github.com/lz4/lz4.git
+  GIT_TAG           5ff839680134437dbf4678f3d0c7b371d84f4964
+  CONFIGURE_COMMAND ""
+  BUILD_IN_SOURCE   1
+  INSTALL_COMMAND   ""
+)
+ExternalProject_Get_property(liblz4 SOURCE_DIR)
+target_include_directories(compression-benchmark PRIVATE ${SOURCE_DIR}/lib)
+target_link_libraries(compression-benchmark PRIVATE ${SOURCE_DIR}/lib/liblz4.so)
+add_dependencies(compression-benchmark liblz4)
+
 ExternalProject_Add(tabulate
   GIT_REPOSITORY    https://github.com/p-ranav/tabulate.git
   GIT_TAG           b35db4cce50a4b296290b0ae827305cdeb23751e

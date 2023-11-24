@@ -21,3 +21,10 @@ struct Zstd
     static std::vector<std::byte> compress(std::span<const std::byte> input);
     static std::vector<std::byte> decompress(std::span<const std::byte> input);
 };
+
+struct Lz4
+{
+    inline static const std::string name = "Lz4";
+    static std::vector<std::byte> compress(std::span<const std::byte> input);
+    static std::vector<std::byte> decompress(std::span<const std::byte> input);
+};

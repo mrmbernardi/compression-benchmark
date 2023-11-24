@@ -22,10 +22,16 @@ int main(/* int argc, char **argv */)
     Table table;
     results.emplace_back(benchmark<Lossless<Bsc>>(original_buffer));
     results.emplace_back(benchmark<Lossless<Zstd>>(original_buffer));
+    results.emplace_back(benchmark<Lossless<Lz4>>(original_buffer));
+
     results.emplace_back(benchmark<Lfzip<Bsc>>(original_buffer));
     results.emplace_back(benchmark<Lfzip<Zstd>>(original_buffer));
+    results.emplace_back(benchmark<Lfzip<Lz4>>(original_buffer));
+
     results.emplace_back(benchmark<Quantise<Bsc>>(original_buffer));
     results.emplace_back(benchmark<Quantise<Zstd>>(original_buffer));
+    results.emplace_back(benchmark<Quantise<Lz4>>(original_buffer));
+
     results.emplace_back(benchmark<Sz3>(original_buffer));
 
     table.add_row({"Method", "Ratio", "Compression Time (s)", "Deompression Time (s)", "Max Error", "MAE"});

@@ -8,8 +8,8 @@ std::vector<std::byte> Zstd::compress(std::span<const std::byte> input)
 {
     size_t input_sz = input.size_bytes();
     std::vector<std::byte> output_buffer(ZSTD_compressBound(input_sz) + sizeof(size_t));
-    size_t compressed_sz =
-        ZSTD_compress(output_buffer.data() + sizeof(size_t), output_buffer.size(), input.data(), input_sz, 3);
+    size_t compressed_sz = ZSTD_compress(output_buffer.data() + sizeof(size_t), output_buffer.size() - sizeof(size_t),
+                                         input.data(), input_sz, 3);
     if (ZSTD_isError(compressed_sz))
     {
         throw std::runtime_error("ZSTD compression failed");

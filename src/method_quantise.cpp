@@ -60,3 +60,4 @@ template <class LosslessWrapper> std::vector<float> Quantise<LosslessWrapper>::d
 
 template class Quantise<Bsc>;
 template class Quantise<Zstd>;
+template class Quantise<Lz4>;

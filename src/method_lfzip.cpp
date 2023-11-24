@@ -129,3 +129,4 @@ template <class LosslessWrapper> std::vector<float> Lfzip<LosslessWrapper>::deco
 
 template class Lfzip<Bsc>;
 template class Lfzip<Zstd>;
+template class Lfzip<Lz4>;
