@@ -34,7 +34,7 @@ template <class LosslessWrapper> class Lfzip
 {
     float error = 1.0f - 1e-06f; // this is nonsense which i'm only replicating to match the lfzip code.
     float maxerror_original = 1.0f;
-    static const size_t filter_size = 32;
+    static constexpr size_t filter_size = 32;
     std::vector<std::byte> compressed_buffer;
 
   public:

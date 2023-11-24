@@ -1,5 +1,6 @@
 #include "benchmark.hpp"
 #include "method.hpp"
+#include "util.hpp"
 #include "wrapper.hpp"
 #include <algorithm>
 #include <array>
@@ -17,8 +18,8 @@
 
 template <size_t N> class NlmsFilter
 {
-    const float mu = 0.5;
-    const float eps = 1.0;
+    static constexpr float mu = 0.5;
+    static constexpr float eps = 1.0;
     std::array<float, N> w = {};
 
   public:
@@ -87,16 +88,7 @@ template <class LosslessWrapper> size_t Lfzip<LosslessWrapper>::compress(const s
 
     // assert(indices == test);
 
-    std::vector<std::byte> stream;
-    size_t indices_stream_size = indices.size();
-    auto s1 = std::as_bytes(std::span<size_t, 1>(&indices_stream_size, 1));
-    auto s2 = std::as_bytes(std::span(indices));
-    auto s3 = std::as_bytes(std::span(outliers));
-    stream.reserve(s1.size_bytes() + s2.size_bytes() + s3.size_bytes());
-    stream.insert(stream.end(), s1.begin(), s1.end());
-    stream.insert(stream.end(), s2.begin(), s2.end());
-    stream.insert(stream.end(), s3.begin(), s3.end());
-
+    auto stream = pack_streams(outliers, indices);
     // std::cout << "Lfzip before compression: " << stream.size() << std::endl;
     compressed_buffer = LosslessWrapper::compress(stream);
     // std::cout << "Lfzip after compression: " << compressed_buffer.size() << std::endl;
@@ -108,12 +100,9 @@ template <class LosslessWrapper> std::vector<float> Lfzip<LosslessWrapper>::deco
     // std::vector<float> test = vec_from_file<float>("../../LFZip/debug/recon.bin");
 
     std::vector<std::byte> decompressed_buffer = LosslessWrapper::decompress(compressed_buffer);
-    size_t indicies_count = *reinterpret_cast<const size_t *>(decompressed_buffer.data());
-    auto indices_start = decompressed_buffer.data() + sizeof(size_t);
-    auto outliers_start = indices_start + sizeof(int16_t) * indicies_count;
-    auto outliers_end = reinterpret_cast<const float *>(decompressed_buffer.data() + decompressed_buffer.size());
-    auto indices = std::span<const int16_t>(reinterpret_cast<const int16_t *>(indices_start), indicies_count);
-    auto outliers = std::span<const float>(reinterpret_cast<const float *>(outliers_start), outliers_end);
+    std::span<const float> outliers;
+    std::span<const int16_t> indices;
+    unpack_streams(decompressed_buffer, outliers, indices);
 
     std::vector<float> result;
     result.reserve(indices.size());

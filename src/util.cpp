@@ -1,5 +1,4 @@
 #include "util.hpp"
-#include <cassert>
 #include <cstdint>
 #include <stdexcept>
 
