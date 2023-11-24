@@ -16,7 +16,6 @@ int main(/* int argc, char **argv */)
     std::vector<float> original_buffer = generate_random_data(200000); // 20000000);
     // for (float &v : original_buffer)
     //     v *= 50000;
-    vec_to_file("input.vec", original_buffer);
 
     std::vector<bench_result> results;
     Table table;
