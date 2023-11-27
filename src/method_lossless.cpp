@@ -5,18 +5,14 @@
 #include <cstdint>
 #include <span>
 
-template <class LosslessWrapper> size_t Lossless<LosslessWrapper>::compress(const std::vector<float> &input)
+size_t Lossless::compress(const std::vector<float> &input)
 {
-    compressed_buffer = LosslessWrapper::encode(std::as_bytes(std::span(input)));
+    compressed_buffer = wrapper.encode(std::as_bytes(std::span(input)));
     return compressed_buffer.size() * sizeof(compressed_buffer[0]);
 }
 
-template <class LosslessWrapper> std::span<const float> Lossless<LosslessWrapper>::decompress()
+std::span<const float> Lossless::decompress()
 {
-    decompressed_buffer = LosslessWrapper::decode(compressed_buffer);
+    decompressed_buffer = wrapper.decode(compressed_buffer);
     return as_float_span(decompressed_buffer);
 }
-
-template class Lossless<Bsc>;
-template class Lossless<Zstd>;
-template class Lossless<Lz4>;

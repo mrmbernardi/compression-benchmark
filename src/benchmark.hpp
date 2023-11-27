@@ -21,13 +21,25 @@ struct bench_result
     double decompression_time;
     double max_error;
     double mean_absolute_error;
+    double mbytes()
+    {
+        return (double)(original_size) / (1024.0l * 1024.0l);
+    };
+    double compression_data_rate()
+    {
+        return mbytes() / compression_time;
+    }
+    double decompression_data_rate()
+    {
+        return mbytes() / decompression_time;
+    }
 
     std::string to_string();
 };
 
-template <class T> bench_result benchmark(const std::vector<float> &original_buffer)
+template <class T, typename... Args> bench_result benchmark(const std::vector<float> &original_buffer, Args... args)
 {
-    T method;
+    T method(args...);
     std::cout << std::endl;
     std::cout << "Using method " << method.name << std::endl;
     std::cout << "Compressing... ";

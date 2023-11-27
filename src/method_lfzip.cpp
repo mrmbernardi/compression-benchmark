@@ -55,7 +55,7 @@ template <size_t N> class NlmsFilter
     }
 };
 
-template <class LosslessWrapper> size_t Lfzip<LosslessWrapper>::compress(const std::vector<float> &input)
+size_t Lfzip::compress(const std::vector<float> &input)
 {
     // std::vector<int16_t> test = vec_from_file<int16_t>("../../LFZip/debug/bin_idx.0");
 
@@ -90,16 +90,16 @@ template <class LosslessWrapper> size_t Lfzip<LosslessWrapper>::compress(const s
 
     auto stream = pack_streams(outliers, indices);
     // std::cout << "Lfzip before compression: " << stream.size() << std::endl;
-    compressed_buffer = LosslessWrapper::encode(stream);
+    compressed_buffer = wrapper.encode(stream);
     // std::cout << "Lfzip after compression: " << compressed_buffer.size() << std::endl;
     return compressed_buffer.size();
 }
 
-template <class LosslessWrapper> std::vector<float> Lfzip<LosslessWrapper>::decompress()
+std::vector<float> Lfzip::decompress()
 {
     // std::vector<float> test = vec_from_file<float>("../../LFZip/debug/recon.bin");
 
-    std::vector<std::byte> decompressed_buffer = LosslessWrapper::decode(compressed_buffer);
+    std::vector<std::byte> decompressed_buffer = wrapper.decode(compressed_buffer);
     std::span<const float> outliers;
     std::span<const int16_t> indices;
     unpack_streams(decompressed_buffer, outliers, indices);
@@ -126,7 +126,3 @@ template <class LosslessWrapper> std::vector<float> Lfzip<LosslessWrapper>::deco
     // assert(result == test);
     return result;
 }
-
-template class Lfzip<Bsc>;
-template class Lfzip<Zstd>;
-template class Lfzip<Lz4>;

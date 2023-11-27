@@ -5,7 +5,7 @@
 #include <limits>
 #include <vector>
 
-template <class LosslessWrapper> size_t Quantise<LosslessWrapper>::compress(const std::vector<float> &input)
+size_t Quantise::compress(const std::vector<float> &input)
 {
     std::vector<float> outliers;
     std::vector<int16_t> indices;
@@ -28,13 +28,13 @@ template <class LosslessWrapper> size_t Quantise<LosslessWrapper>::compress(cons
             prev = reconstruction;
         }
     }
-    compressed_buffer = LosslessWrapper::encode(pack_streams(outliers, indices));
+    compressed_buffer = wrapper.encode(pack_streams(outliers, indices));
     return compressed_buffer.size() * sizeof(compressed_buffer[0]);
 }
 
-template <class LosslessWrapper> std::vector<float> Quantise<LosslessWrapper>::decompress()
+std::vector<float> Quantise::decompress()
 {
-    std::vector<std::byte> decompressed_buffer = LosslessWrapper::decode(compressed_buffer);
+    std::vector<std::byte> decompressed_buffer = wrapper.decode(compressed_buffer);
     std::span<const float> outliers;
     std::span<const int16_t> indices;
     unpack_streams(decompressed_buffer, outliers, indices);
@@ -57,7 +57,3 @@ template <class LosslessWrapper> std::vector<float> Quantise<LosslessWrapper>::d
     }
     return result;
 }
-
-template class Quantise<Bsc>;
-template class Quantise<Zstd>;
-template class Quantise<Lz4>;

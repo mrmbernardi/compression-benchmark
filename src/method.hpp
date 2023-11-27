@@ -1,4 +1,5 @@
 #pragma once
+#include "wrapper.hpp"
 #include <cstddef>
 #include <cstdint>
 #include <memory>
@@ -6,13 +7,15 @@
 #include <string>
 #include <vector>
 
-template <class LosslessWrapper> class Lossless
+class Lossless
 {
     std::vector<std::byte> compressed_buffer;
     std::vector<std::byte> decompressed_buffer;
+    Wrapper &wrapper;
 
   public:
-    inline static const std::string name = LosslessWrapper::name + " (lossless)";
+    const std::string name;
+    Lossless(Wrapper &w) : wrapper(w), name(w.name() + " (lossless)"){};
     size_t compress(const std::vector<float> &input);
     std::span<const float> decompress();
 };
@@ -30,26 +33,30 @@ class Sz3
     std::span<const float> decompress();
 };
 
-template <class LosslessWrapper> class Lfzip
+class Lfzip
 {
     float error = 1.0f - 1e-06f; // this is nonsense which i'm only replicating to match the lfzip code.
     float maxerror_original = 1.0f;
     static constexpr size_t filter_size = 32;
     std::vector<std::byte> compressed_buffer;
+    Wrapper &wrapper;
 
   public:
-    inline static const std::string name = "LfZip with " + LosslessWrapper::name;
+    const std::string name;
+    Lfzip(Wrapper &w) : wrapper(w), name("LfZip with " + w.name()){};
     size_t compress(const std::vector<float> &input);
     std::vector<float> decompress();
 };
 
-template <class LosslessWrapper> class Quantise
+class Quantise
 {
     static constexpr float error = 1.0f;
     std::vector<std::byte> compressed_buffer;
+    Wrapper &wrapper;
 
   public:
-    inline static const std::string name = "Quantise with " + LosslessWrapper::name;
+    const std::string name;
+    Quantise(Wrapper &w) : wrapper(w), name("Quantise with " + w.name()){};
     size_t compress(const std::vector<float> &input);
     std::vector<float> decompress();
 };

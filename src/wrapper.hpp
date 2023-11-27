@@ -6,44 +6,67 @@
 #include <string>
 #include <vector>
 
-
-struct Bsc
+struct Wrapper
 {
-    inline static const std::string name = "Bsc";
-    static std::vector<std::byte> encode(std::span<const std::byte> input);
-    static std::vector<std::byte> decode(std::span<const std::byte> input);
+    virtual std::string name() = 0;
+    virtual std::vector<std::byte> encode(std::span<const std::byte> input) = 0;
+    virtual std::vector<std::byte> decode(std::span<const std::byte> input) = 0;
 };
 
-struct Zstd
+struct Bsc : Wrapper
 {
-    inline static const std::string name = "Zstd";
-    static std::vector<std::byte> encode(std::span<const std::byte> input);
-    static std::vector<std::byte> decode(std::span<const std::byte> input);
-};
-
-struct Lz4
-{
-    inline static const std::string name = "Lz4";
-    static std::vector<std::byte> encode(std::span<const std::byte> input);
-    static std::vector<std::byte> decode(std::span<const std::byte> input);
-};
-
-template <typename T> struct StreamSplit
-{
-    inline static const std::string name = "Stream Split";
-    static std::vector<std::byte> encode(std::span<const std::byte> input);
-    static std::vector<std::byte> decode(std::span<const std::byte> input);
-};
-
-template <typename W1, typename W2> struct Compose
-{
-    inline static const std::string name = W1::name + " with " + W2::name;
-    static std::vector<std::byte> encode(std::span<const std::byte> input)
+    std::string name() override
     {
-        return W2::encode(W1::encode(input));
+        return "Bsc";
+    };
+    std::vector<std::byte> encode(std::span<const std::byte> input) override;
+    std::vector<std::byte> decode(std::span<const std::byte> input) override;
+};
+
+struct Zstd : Wrapper
+{
+    std::string name() override
+    {
+        return "Zstd";
     }
-    static std::vector<std::byte> decode(std::span<const std::byte> input)
+    std::vector<std::byte> encode(std::span<const std::byte> input) override;
+    std::vector<std::byte> decode(std::span<const std::byte> input) override;
+};
+
+struct Lz4 : Wrapper
+{
+    std::string name() override
     {
-        return W1::decode(W2::decode(input));
+        return "Lz4";
+    };
+    std::vector<std::byte> encode(std::span<const std::byte> input) override;
+    std::vector<std::byte> decode(std::span<const std::byte> input) override;
+};
+
+template <typename T> struct StreamSplit : Wrapper
+{
+    std::string name() override
+    {
+        return "Stream Split";
+    };
+    std::vector<std::byte> encode(std::span<const std::byte> input) override;
+    std::vector<std::byte> decode(std::span<const std::byte> input) override;
+};
+
+template <typename W1, typename W2> struct Compose : Wrapper
+{
+    W1 w1;
+    W2 w2;
+    std::string name() override
+    {
+        return w1.name() + " with " + w2.name();
+    };
+    std::vector<std::byte> encode(std::span<const std::byte> input) override
+    {
+        return w2.encode(w1.encode(input));
+    }
+    std::vector<std::byte> decode(std::span<const std::byte> input) override
+    {
+        return w1.decode(w2.decode(input));
     }
 };
