@@ -4,6 +4,8 @@
 #include <cstdint>
 #include <vector>
 
+#define BSC_FEATURES (LIBBSC_FEATURE_FASTMODE | LIBBSC_FEATURE_MULTITHREADING)
+
 bool bsc_initialised = false;
 
 void init_bsc()
@@ -15,7 +17,7 @@ void init_bsc()
     }
 }
 
-std::vector<std::byte> Bsc::compress(std::span<const std::byte> input)
+std::vector<std::byte> Bsc::encode(std::span<const std::byte> input)
 {
     init_bsc();
 
@@ -28,7 +30,7 @@ std::vector<std::byte> Bsc::compress(std::span<const std::byte> input)
     return output_buffer;
 }
 
-std::vector<std::byte> Bsc::decompress(std::span<const std::byte> input)
+std::vector<std::byte> Bsc::decode(std::span<const std::byte> input)
 {
     init_bsc();
 

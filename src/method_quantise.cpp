@@ -28,13 +28,13 @@ template <class LosslessWrapper> size_t Quantise<LosslessWrapper>::compress(cons
             prev = reconstruction;
         }
     }
-    compressed_buffer = LosslessWrapper::compress(pack_streams(outliers, indices));
+    compressed_buffer = LosslessWrapper::encode(pack_streams(outliers, indices));
     return compressed_buffer.size() * sizeof(compressed_buffer[0]);
 }
 
 template <class LosslessWrapper> std::vector<float> Quantise<LosslessWrapper>::decompress()
 {
-    std::vector<std::byte> decompressed_buffer = LosslessWrapper::decompress(compressed_buffer);
+    std::vector<std::byte> decompressed_buffer = LosslessWrapper::decode(compressed_buffer);
     std::span<const float> outliers;
     std::span<const int16_t> indices;
     unpack_streams(decompressed_buffer, outliers, indices);

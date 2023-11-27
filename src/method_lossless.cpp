@@ -7,13 +7,13 @@
 
 template <class LosslessWrapper> size_t Lossless<LosslessWrapper>::compress(const std::vector<float> &input)
 {
-    compressed_buffer = LosslessWrapper::compress(std::as_bytes(std::span(input)));
+    compressed_buffer = LosslessWrapper::encode(std::as_bytes(std::span(input)));
     return compressed_buffer.size() * sizeof(compressed_buffer[0]);
 }
 
 template <class LosslessWrapper> std::span<const float> Lossless<LosslessWrapper>::decompress()
 {
-    decompressed_buffer = LosslessWrapper::decompress(compressed_buffer);
+    decompressed_buffer = LosslessWrapper::decode(compressed_buffer);
     return as_float_span(decompressed_buffer);
 }
 

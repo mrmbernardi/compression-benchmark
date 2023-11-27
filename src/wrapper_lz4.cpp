@@ -4,7 +4,7 @@
 #include <cstddef>
 #include <stdexcept>
 
-std::vector<std::byte> Lz4::compress(std::span<const std::byte> input)
+std::vector<std::byte> Lz4::encode(std::span<const std::byte> input)
 {
     size_t input_sz = input.size_bytes();
     std::vector<std::byte> output_buffer(LZ4_compressBound(input_sz) + sizeof(size_t));
@@ -21,7 +21,7 @@ std::vector<std::byte> Lz4::compress(std::span<const std::byte> input)
     return output_buffer;
 }
 
-std::vector<std::byte> Lz4::decompress(std::span<const std::byte> input)
+std::vector<std::byte> Lz4::decode(std::span<const std::byte> input)
 {
     size_t decompressed_sz = *reinterpret_cast<const size_t *>(input.data());
     std::vector<std::byte> output_buffer(decompressed_sz);
