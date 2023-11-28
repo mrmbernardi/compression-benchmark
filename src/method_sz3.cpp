@@ -1,7 +1,7 @@
 #include "SZ3/api/sz.hpp"
 #include "method.hpp"
 
-size_t Sz3::compress(const std::vector<float> &input)
+size_t Sz3::compress(std::span<const float> input)
 {
     SZ3::Config conf(input.size());
     conf.cmprAlgo = SZ3::ALGO_INTERP_LORENZO;

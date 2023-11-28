@@ -1,11 +1,11 @@
+#include "encoding.hpp"
 #include "method.hpp"
 #include "util.hpp"
-#include "encoding.hpp"
 #include <cmath>
 #include <limits>
 #include <vector>
 
-size_t Quantise::compress(const std::vector<float> &input)
+size_t Quantise::compress(std::span<const float> input)
 {
     std::vector<float> outliers;
     std::vector<int16_t> indices;
@@ -28,18 +28,18 @@ size_t Quantise::compress(const std::vector<float> &input)
             prev = reconstruction;
         }
     }
-    compressed_buffer = encoding.encode(pack_streams(outliers, indices));
+    compressed_buffer = encoding->encode(pack_streams(outliers, indices));
     return compressed_buffer.size() * sizeof(compressed_buffer[0]);
 }
 
-std::vector<float> Quantise::decompress()
+std::span<const float> Quantise::decompress()
 {
-    std::vector<std::byte> decompressed_buffer = encoding.decode(compressed_buffer);
+    std::vector<std::byte> decompressed_buffer = encoding->decode(compressed_buffer);
     std::span<const float> outliers;
     std::span<const int16_t> indices;
     unpack_streams(decompressed_buffer, outliers, indices);
 
-    std::vector<float> result;
+    result.clear();
     result.reserve(indices.size());
 
     auto outlier = outliers.begin();

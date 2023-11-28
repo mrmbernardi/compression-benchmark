@@ -48,7 +48,7 @@ template <typename T> struct StreamSplit : Encoding
 {
     std::string name() override
     {
-        return "Stream Split";
+        return "Stream Split (" + std::to_string(sizeof(T)) + ")";
     };
     std::vector<std::byte> encode(std::span<const std::byte> input) override;
     std::vector<std::byte> decode(std::span<const std::byte> input) override;

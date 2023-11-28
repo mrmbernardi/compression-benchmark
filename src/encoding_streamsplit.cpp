@@ -12,7 +12,7 @@ template <typename T> std::vector<std::byte> StreamSplit<T>::encode(std::span<co
     size_t num_vals = input.size_bytes() / sizeof(T);
 
     std::vector<std::byte> output_buffer = std::vector<std::byte>(input.size_bytes());
-    ByteStreamSplitEncodeAvx2<float>(reinterpret_cast<const uint8_t *>(input.data()), num_vals,
+    ByteStreamSplitEncodeAvx2<T>(reinterpret_cast<const uint8_t *>(input.data()), num_vals,
                                      reinterpret_cast<uint8_t *>(output_buffer.data()));
     return output_buffer;
 }

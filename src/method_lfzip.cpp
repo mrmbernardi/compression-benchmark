@@ -1,7 +1,7 @@
 #include "benchmark.hpp"
+#include "encoding.hpp"
 #include "method.hpp"
 #include "util.hpp"
-#include "encoding.hpp"
 #include <algorithm>
 #include <array>
 #include <cassert>
@@ -55,7 +55,7 @@ template <size_t N> class NlmsFilter
     }
 };
 
-size_t Lfzip::compress(const std::vector<float> &input)
+size_t Lfzip::compress(std::span<const float> input)
 {
     // std::vector<int16_t> test = vec_from_file<int16_t>("../../LFZip/debug/bin_idx.0");
 
@@ -90,21 +90,21 @@ size_t Lfzip::compress(const std::vector<float> &input)
 
     auto stream = pack_streams(outliers, indices);
     // std::cout << "Lfzip before compression: " << stream.size() << std::endl;
-    compressed_buffer = encoding.encode(stream);
+    compressed_buffer = encoding->encode(stream);
     // std::cout << "Lfzip after compression: " << compressed_buffer.size() << std::endl;
     return compressed_buffer.size();
 }
 
-std::vector<float> Lfzip::decompress()
+std::span<const float> Lfzip::decompress()
 {
     // std::vector<float> test = vec_from_file<float>("../../LFZip/debug/recon.bin");
 
-    std::vector<std::byte> decompressed_buffer = encoding.decode(compressed_buffer);
+    std::vector<std::byte> decompressed_buffer = encoding->decode(compressed_buffer);
     std::span<const float> outliers;
     std::span<const int16_t> indices;
     unpack_streams(decompressed_buffer, outliers, indices);
 
-    std::vector<float> result;
+    result.clear();
     result.reserve(indices.size());
     NlmsFilter<filter_size> nlms;
     auto outlier = outliers.begin();

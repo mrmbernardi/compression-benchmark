@@ -1,11 +1,12 @@
 #include "benchmark.hpp"
+#include "encoding.hpp"
 #include "method.hpp"
 #include "tabulate/font_align.hpp"
 #include "tabulate/table.hpp"
 #include "util.hpp"
-#include "encoding.hpp"
 #include <cstddef>
 #include <cstdint>
+#include <memory>
 #include <ostream>
 #include <vector>
 
@@ -17,32 +18,29 @@ int main(/* int argc, char **argv */)
     // for (float &v : original_buffer)
     //     v *= 50000;
 
+    std::vector<std::shared_ptr<Encoding>> encodings;
+    encodings.emplace_back(std::make_shared<Bsc>());
+    encodings.emplace_back(std::make_shared<Zstd>());
+    encodings.emplace_back(std::make_shared<Lz4>());
+    encodings.emplace_back(std::make_shared<Compose<StreamSplit<float>, Bsc>>());
+    encodings.emplace_back(std::make_shared<Compose<StreamSplit<float>, Zstd>>());
+    encodings.emplace_back(std::make_shared<Compose<StreamSplit<float>, Lz4>>());
+
+    std::vector<std::shared_ptr<Method>> methods;
+    for (auto &e : encodings)
+        methods.emplace_back(std::make_shared<Lossless>(e));
+    for (auto &e : encodings)
+        methods.emplace_back(std::make_shared<Lfzip>(e));
+    for (auto &e : encodings)
+        methods.emplace_back(std::make_shared<Quantise>(e));
+
+    methods.emplace_back(std::make_shared<Sz3>());
+
     std::vector<bench_result> results;
-    results.emplace_back(benchmark<Lossless>(original_buffer, Bsc()));
-    results.emplace_back(benchmark<Lossless>(original_buffer, Zstd()));
-    results.emplace_back(benchmark<Lossless>(original_buffer, Lz4()));
-
-    results.emplace_back(benchmark<Lossless>(original_buffer, Compose<StreamSplit<float>, Bsc>()));
-    results.emplace_back(benchmark<Lossless>(original_buffer, Compose<StreamSplit<float>, Zstd>()));
-    results.emplace_back(benchmark<Lossless>(original_buffer, Compose<StreamSplit<float>, Lz4>()));
-
-    results.emplace_back(benchmark<Lfzip>(original_buffer, Bsc()));
-    results.emplace_back(benchmark<Lfzip>(original_buffer, Zstd()));
-    results.emplace_back(benchmark<Lfzip>(original_buffer, Lz4()));
-
-    results.emplace_back(benchmark<Lfzip>(original_buffer, Compose<StreamSplit<float>, Bsc>()));
-    results.emplace_back(benchmark<Lfzip>(original_buffer, Compose<StreamSplit<float>, Zstd>()));
-    results.emplace_back(benchmark<Lfzip>(original_buffer, Compose<StreamSplit<float>, Lz4>()));
-
-    results.emplace_back(benchmark<Quantise>(original_buffer, Bsc()));
-    results.emplace_back(benchmark<Quantise>(original_buffer, Zstd()));
-    results.emplace_back(benchmark<Quantise>(original_buffer, Lz4()));
-
-    results.emplace_back(benchmark<Quantise>(original_buffer, Compose<StreamSplit<float>, Bsc>()));
-    results.emplace_back(benchmark<Quantise>(original_buffer, Compose<StreamSplit<float>, Zstd>()));
-    results.emplace_back(benchmark<Quantise>(original_buffer, Compose<StreamSplit<float>, Lz4>()));
-
-    results.emplace_back(benchmark<Sz3>(original_buffer));
+    for (auto &m : methods)
+    {
+        results.emplace_back(benchmark(original_buffer, *m));
+    }
 
     Table table;
     table.add_row({"Method", "Ratio", "Compression Time (s)", "Rate (MB/s)", "Decompression Time (s)", "Rate (MB/s)",
