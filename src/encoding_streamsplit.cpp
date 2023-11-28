@@ -1,5 +1,5 @@
 #include "byte_stream_split_internal.hpp"
-#include "wrapper.hpp"
+#include "encoding.hpp"
 #include <cassert>
 #include <cstddef>
 #include <vector>

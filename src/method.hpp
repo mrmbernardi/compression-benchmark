@@ -1,5 +1,5 @@
 #pragma once
-#include "wrapper.hpp"
+#include "encoding.hpp"
 #include <cstddef>
 #include <cstdint>
 #include <memory>
@@ -11,11 +11,11 @@ class Lossless
 {
     std::vector<std::byte> compressed_buffer;
     std::vector<std::byte> decompressed_buffer;
-    Wrapper &wrapper;
+    Encoding &encoding;
 
   public:
     const std::string name;
-    Lossless(Wrapper &w) : wrapper(w), name(w.name() + " (lossless)"){};
+    Lossless(Encoding &e) : encoding(e), name(e.name() + " (lossless)"){};
     size_t compress(const std::vector<float> &input);
     std::span<const float> decompress();
 };
@@ -39,11 +39,11 @@ class Lfzip
     float maxerror_original = 1.0f;
     static constexpr size_t filter_size = 32;
     std::vector<std::byte> compressed_buffer;
-    Wrapper &wrapper;
+    Encoding &encoding;
 
   public:
     const std::string name;
-    Lfzip(Wrapper &w) : wrapper(w), name("LfZip with " + w.name()){};
+    Lfzip(Encoding &e) : encoding(e), name("LfZip with " + e.name()){};
     size_t compress(const std::vector<float> &input);
     std::vector<float> decompress();
 };
@@ -52,11 +52,11 @@ class Quantise
 {
     static constexpr float error = 1.0f;
     std::vector<std::byte> compressed_buffer;
-    Wrapper &wrapper;
+    Encoding &encoding;
 
   public:
     const std::string name;
-    Quantise(Wrapper &w) : wrapper(w), name("Quantise with " + w.name()){};
+    Quantise(Encoding &e) : encoding(e), name("Quantise with " + e.name()){};
     size_t compress(const std::vector<float> &input);
     std::vector<float> decompress();
 };

@@ -1,7 +1,7 @@
 #include "benchmark.hpp"
 #include "method.hpp"
 #include "util.hpp"
-#include "wrapper.hpp"
+#include "encoding.hpp"
 #include <algorithm>
 #include <array>
 #include <cassert>
@@ -90,7 +90,7 @@ size_t Lfzip::compress(const std::vector<float> &input)
 
     auto stream = pack_streams(outliers, indices);
     // std::cout << "Lfzip before compression: " << stream.size() << std::endl;
-    compressed_buffer = wrapper.encode(stream);
+    compressed_buffer = encoding.encode(stream);
     // std::cout << "Lfzip after compression: " << compressed_buffer.size() << std::endl;
     return compressed_buffer.size();
 }
@@ -99,7 +99,7 @@ std::vector<float> Lfzip::decompress()
 {
     // std::vector<float> test = vec_from_file<float>("../../LFZip/debug/recon.bin");
 
-    std::vector<std::byte> decompressed_buffer = wrapper.decode(compressed_buffer);
+    std::vector<std::byte> decompressed_buffer = encoding.decode(compressed_buffer);
     std::span<const float> outliers;
     std::span<const int16_t> indices;
     unpack_streams(decompressed_buffer, outliers, indices);

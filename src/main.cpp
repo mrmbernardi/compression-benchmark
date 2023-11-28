@@ -3,7 +3,7 @@
 #include "tabulate/font_align.hpp"
 #include "tabulate/table.hpp"
 #include "util.hpp"
-#include "wrapper.hpp"
+#include "encoding.hpp"
 #include <cstddef>
 #include <cstdint>
 #include <ostream>

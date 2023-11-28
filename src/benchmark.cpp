@@ -1,6 +1,6 @@
 #include "benchmark.hpp"
 #include "method.hpp"
-#include "wrapper.hpp"
+#include "encoding.hpp"
 #include <random>
 
 std::vector<float> generate_random_data(size_t size)
