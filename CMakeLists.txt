@@ -62,6 +62,19 @@ target_include_directories(compression-benchmark PRIVATE ${SOURCE_DIR}/lib)
 target_link_libraries(compression-benchmark PRIVATE ${SOURCE_DIR}/lib/liblz4.so)
 add_dependencies(compression-benchmark liblz4)
 
+ExternalProject_Add(machete
+  GIT_REPOSITORY    https://github.com/Gyhanis/Machete.git
+  GIT_TAG           792aa17bd3953a52d0fe131d1529f837b05e3e8f
+  CONFIGURE_COMMAND ""
+  PATCH_COMMAND     bash -c "test $(wc -l <  machete/util.h) -ne 40 || sed -i '4i #include <cstdint>\\n#include <cstddef>' machete/util.h"
+  BUILD_IN_SOURCE   1
+  INSTALL_COMMAND   ""
+)
+ExternalProject_Get_property(machete SOURCE_DIR)
+target_include_directories(compression-benchmark PRIVATE ${SOURCE_DIR}/machete)
+target_link_libraries(compression-benchmark PRIVATE ${SOURCE_DIR}/lib/libmach.a)
+add_dependencies(compression-benchmark machete)
+
 ExternalProject_Add(tabulate
   GIT_REPOSITORY    https://github.com/p-ranav/tabulate.git
   GIT_TAG           b35db4cce50a4b296290b0ae827305cdeb23751e

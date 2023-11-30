@@ -85,3 +85,16 @@ class Quantise : public Method
     size_t compress(std::span<const float> input) override;
     std::span<const float> decompress() override;
 };
+
+class Machete : public Method
+{
+    uint8_t* compressed_buffer = nullptr;
+
+  public:
+    std::string name() override
+    {
+        return "Machete";
+    };
+    size_t compress(std::span<const float> input) override;
+    std::span<const float> decompress() override;
+};
