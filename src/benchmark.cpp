@@ -57,16 +57,11 @@ template <typename F> bench_result benchmark(std::span<const F> original_buffer,
 
     double mae = 0;
     double max_error = 0;
-    ssize_t max_error_idx = -1;
     for (size_t i = 0; i < original_buffer.size(); i++)
     {
         double e = std::abs(decompressed[i] - original_buffer[i]);
         mae += e;
-        if(e > max_error)
-        {
-            max_error = e;
-            max_error_idx = i;
-        }
+        max_error = std::max(max_error, e);
     }
     mae /= original_buffer.size();
     std::cout << "done" << std::endl;
