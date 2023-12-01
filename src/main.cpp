@@ -14,32 +14,33 @@ using namespace tabulate;
 
 int main(/* int argc, char **argv */)
 {
-    std::vector<float> original_buffer = generate_random_data(200000); // 20000000);
+    std::vector<double> original_buffer = generate_random_data<double>(200000); // 20000000);
     // for (float &v : original_buffer)
     //     v *= 50000;
 
-    std::vector<std::shared_ptr<Encoding>> encodings;
-    encodings.emplace_back(std::make_shared<Bsc>());
-    encodings.emplace_back(std::make_shared<Zstd>());
-    encodings.emplace_back(std::make_shared<Lz4>());
-    encodings.emplace_back(std::make_shared<Compose<StreamSplit<float>, Bsc>>());
-    encodings.emplace_back(std::make_shared<Compose<StreamSplit<float>, Zstd>>());
-    encodings.emplace_back(std::make_shared<Compose<StreamSplit<float>, Lz4>>());
+    // std::vector<std::shared_ptr<Encoding>> encodings;
+    // encodings.emplace_back(std::make_shared<Bsc>());
+    // encodings.emplace_back(std::make_shared<Zstd>());
+    // encodings.emplace_back(std::make_shared<Lz4>());
+    // encodings.emplace_back(std::make_shared<Compose<StreamSplit<float>, Bsc>>());
+    // encodings.emplace_back(std::make_shared<Compose<StreamSplit<float>, Zstd>>());
+    // encodings.emplace_back(std::make_shared<Compose<StreamSplit<float>, Lz4>>());
 
-    std::vector<std::shared_ptr<Method>> methods;
-    for (auto &e : encodings)
-        methods.emplace_back(std::make_shared<Lossless>(e));
-    for (auto &e : encodings)
-        methods.emplace_back(std::make_shared<Lfzip>(e));
-    for (auto &e : encodings)
-        methods.emplace_back(std::make_shared<Quantise>(e));
+    std::vector<std::shared_ptr<Method<double>>> methods;
+    // for (auto &e : encodings)
+    //     methods.emplace_back(std::make_shared<Lossless>(e));
+    // for (auto &e : encodings)
+    //     methods.emplace_back(std::make_shared<Lfzip>(e));
+    // for (auto &e : encodings)
+    //     methods.emplace_back(std::make_shared<Quantise>(e));
 
-    methods.emplace_back(std::make_shared<Sz3>());
+    methods.emplace_back(std::make_shared<Machete>());
+    methods.emplace_back(std::make_shared<Sz3<double>>());
 
     std::vector<bench_result> results;
     for (auto &m : methods)
     {
-        results.emplace_back(benchmark(original_buffer, *m));
+        results.emplace_back(benchmark<double>(original_buffer, *m));
     }
 
     Table table;

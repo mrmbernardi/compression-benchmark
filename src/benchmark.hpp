@@ -10,7 +10,7 @@
 #include <string>
 #include <vector>
 
-std::vector<float> generate_random_data(size_t size);
+template<typename F> std::vector<F> generate_random_data(size_t size);
 
 struct bench_result
 {
@@ -37,4 +37,4 @@ struct bench_result
     std::string to_string();
 };
 
-bench_result benchmark(std::span<const float> original_buffer, Method &method);
+template<typename F> bench_result benchmark(std::span<const F> original_buffer, Method<F> &method);

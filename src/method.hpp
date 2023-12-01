@@ -9,16 +9,16 @@
 #include <string>
 #include <vector>
 
-class Method
+template <typename F> class Method
 {
   public:
     virtual std::string name() = 0;
-    virtual size_t compress(std::span<const float> input) = 0;
-    virtual std::span<const float> decompress() = 0;
+    virtual size_t compress(std::span<const F> input) = 0;
+    virtual std::span<const F> decompress() = 0;
     virtual ~Method(){};
 };
 
-class Lossless : public Method
+class Lossless : public Method<float>
 {
     std::vector<std::byte> compressed_buffer;
     std::vector<std::byte> decompressed_buffer;
@@ -34,11 +34,11 @@ class Lossless : public Method
     std::span<const float> decompress() override;
 };
 
-class Sz3 : public Method
+template <typename F> class Sz3 : public Method<F>
 {
     std::unique_ptr<char[]> compressed_data;
     size_t compressed_size;
-    std::unique_ptr<float[]> decompressed_data;
+    std::unique_ptr<F[]> decompressed_data;
     size_t decompressed_size;
 
   public:
@@ -46,11 +46,11 @@ class Sz3 : public Method
     {
         return "Sz3";
     };
-    size_t compress(std::span<const float> input) override;
-    std::span<const float> decompress() override;
+    size_t compress(std::span<const F> input) override;
+    std::span<const F> decompress() override;
 };
 
-class Lfzip : public Method
+class Lfzip : public Method<float>
 {
     float error = 1.0f - 1e-06f; // this is nonsense which i'm only replicating to match the lfzip code.
     float maxerror_original = 1.0f;
@@ -69,7 +69,7 @@ class Lfzip : public Method
     std::span<const float> decompress() override;
 };
 
-class Quantise : public Method
+class Quantise : public Method<float>
 {
     static constexpr float error = 1.0f;
     std::vector<std::byte> compressed_buffer;
@@ -86,15 +86,33 @@ class Quantise : public Method
     std::span<const float> decompress() override;
 };
 
-class Machete : public Method
+class Machete : public Method<double>
 {
-    uint8_t* compressed_buffer = nullptr;
+    size_t in_sz = 0; // sort of cheating compared to the other methods.
+    size_t out_sz = 0;
+    uint8_t *compressed_buffer = nullptr;
+    std::vector<double> results;
+
+    void free_data()
+    {
+        if (compressed_buffer)
+        {
+            std::free(compressed_buffer);
+            compressed_buffer = nullptr;
+            out_sz = 0;
+            in_sz = 0;
+        }
+    }
 
   public:
     std::string name() override
     {
         return "Machete";
     };
-    size_t compress(std::span<const float> input) override;
-    std::span<const float> decompress() override;
+    size_t compress(std::span<const double> input) override;
+    std::span<const double> decompress() override;
+    ~Machete()
+    {
+        free_data();
+    }
 };

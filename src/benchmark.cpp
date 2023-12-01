@@ -1,22 +1,25 @@
 #include "benchmark.hpp"
-#include "method.hpp"
 #include "encoding.hpp"
+#include "method.hpp"
+#include <cstddef>
 #include <random>
 
-std::vector<float> generate_random_data(size_t size)
+template <typename F> std::vector<F> generate_random_data(size_t size)
 {
-    std::vector<float> data(size);
+    std::vector<F> data(size);
     std::mt19937 gen;
-    std::uniform_real_distribution<> dis(-500, +500);
+    std::uniform_real_distribution<F> dis(-500, +500);
     std::cout << "Generating random floating point data... ";
     std::cout.flush();
-    for (float &x : data)
+    for (F &x : data)
     {
         x = dis(gen);
     }
     std::cout << "done." << std::endl;
     return data;
 }
+template std::vector<float> generate_random_data(size_t size);
+template std::vector<double> generate_random_data(size_t size);
 
 std::string bench_result::to_string()
 {
@@ -31,7 +34,7 @@ std::string bench_result::to_string()
     return s.str();
 }
 
-bench_result benchmark(std::span<const float> original_buffer, Method &method)
+template <typename F> bench_result benchmark(std::span<const F> original_buffer, Method<F> &method)
 {
     std::cout << std::endl;
     std::cout << "Using method " << method.name() << std::endl;
@@ -54,11 +57,16 @@ bench_result benchmark(std::span<const float> original_buffer, Method &method)
 
     double mae = 0;
     double max_error = 0;
+    ssize_t max_error_idx = -1;
     for (size_t i = 0; i < original_buffer.size(); i++)
     {
         double e = std::abs(decompressed[i] - original_buffer[i]);
         mae += e;
-        max_error = std::max(max_error, e);
+        if(e > max_error)
+        {
+            max_error = e;
+            max_error_idx = i;
+        }
     }
     mae /= original_buffer.size();
     std::cout << "done" << std::endl;
@@ -75,3 +83,5 @@ bench_result benchmark(std::span<const float> original_buffer, Method &method)
     std::cout.flush();
     return b;
 }
+template bench_result benchmark(std::span<const float> original_buffer, Method<float> &method);
+template bench_result benchmark(std::span<const double> original_buffer, Method<double> &method);
