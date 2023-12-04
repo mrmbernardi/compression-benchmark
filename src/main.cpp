@@ -14,9 +14,10 @@ using namespace tabulate;
 
 int main(/* int argc, char **argv */)
 {
-    std::vector<double> original_buffer = generate_random_data<double>(200000); // 20000000);
+    std::vector<double> original_buffer = generate_random_data<double>(65536); // 20000000);
     // for (float &v : original_buffer)
     //     v *= 50000;
+    //vec_to_file("data.vec", original_buffer);
 
     // std::vector<std::shared_ptr<Encoding>> encodings;
     // encodings.emplace_back(std::make_shared<Bsc>());

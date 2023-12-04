@@ -28,8 +28,9 @@ template <typename T> void vec_to_file(std::string path, const std::vector<T> &d
         throw std::runtime_error("cannot open file");
     }
 }
-template void vec_to_file(std::string path, const std::vector<float> &data);
 template void vec_to_file(std::string path, const std::vector<uint16_t> &data);
+template void vec_to_file(std::string path, const std::vector<float> &data);
+template void vec_to_file(std::string path, const std::vector<double> &data);
 
 template <typename T> std::vector<T> vec_from_file(std::string path)
 {
