@@ -32,8 +32,8 @@ int main(/* int argc, char **argv */)
     std::vector<std::shared_ptr<Method<real>>> methods;
     for (auto &e : encodings)
         methods.emplace_back(std::make_shared<Lossless<real>>(e));
-    // for (auto &e : encodings)
-    //      methods.emplace_back(std::make_shared<Lfzip>(e));
+    for (auto &e : encodings)
+        methods.emplace_back(std::make_shared<Lfzip<real>>(e));
     for (auto &e : encodings)
         methods.emplace_back(std::make_shared<Quantise<real>>(e));
 

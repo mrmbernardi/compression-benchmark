@@ -16,19 +16,19 @@
 #include <span>
 #include <vector>
 
-template <size_t N> class NlmsFilter
+template <typename F, size_t N> class NlmsFilter
 {
-    static constexpr float mu = 0.5;
-    static constexpr float eps = 1.0;
-    std::array<float, N> w = {};
+    static constexpr F mu = 0.5;
+    static constexpr F eps = 1.0;
+    std::array<F, N> w = {};
 
   public:
-    float predict(std::span<const float> signal)
+    F predict(std::span<const F> signal)
     {
         assert(signal.size() <= N + 1);
         if (signal.size() == N + 1)
         {
-            auto signal_static = signal.subspan<0, N + 1>();
+            auto signal_static = signal.template subspan<0, N + 1>();
             adapt(signal_static);
             return std::inner_product(signal_static.begin() + 1, signal_static.end(), w.begin(), 0.0f);
         }
@@ -41,13 +41,13 @@ template <size_t N> class NlmsFilter
             return signal.back();
         }
     }
-    void adapt(std::span<const float, N + 1> signal)
+    void adapt(std::span<const F, N + 1> signal)
     {
-        float true_val = signal.back();
-        float y = std::inner_product(signal.begin(), signal.end() - 1, w.begin(), 0.0f);
-        float e = true_val - y;
-        float dot = std::inner_product(signal.begin(), signal.end() - 1, signal.begin(), 0.0f);
-        float nu = mu / (eps + dot);
+        F true_val = signal.back();
+        F y = std::inner_product(signal.begin(), signal.end() - 1, w.begin(), 0.0f);
+        F e = true_val - y;
+        F dot = std::inner_product(signal.begin(), signal.end() - 1, signal.begin(), 0.0f);
+        F nu = mu / (eps + dot);
         for (size_t i = 0; i < N; i++)
         {
             w[i] += nu * e * signal[i];
@@ -55,24 +55,24 @@ template <size_t N> class NlmsFilter
     }
 };
 
-size_t Lfzip::compress(std::span<const float> input)
+template <typename F> size_t Lfzip<F>::compress(std::span<const F> input)
 {
     // std::vector<int16_t> test = vec_from_file<int16_t>("../../LFZip/debug/bin_idx.0");
 
-    NlmsFilter<filter_size> nlms;
+    NlmsFilter<F, filter_size> nlms;
     std::vector<int16_t> indices;
-    std::vector<float> outliers;
-    std::vector<float> recon;
+    std::vector<F> outliers;
+    std::vector<F> recon;
     recon.reserve(input.size());
     indices.reserve(input.size());
 
-    for (const float v : input)
+    for (const F v : input)
     {
         auto sample_start = std::max(recon.end() - filter_size - 1, recon.begin());
-        float predval = nlms.predict(std::span<const float>(sample_start, recon.end()));
-        float diff = v - predval;
+        F predval = nlms.predict(std::span<const F>(sample_start, recon.end()));
+        F diff = v - predval;
         int16_t index = std::round(diff / (2.0 * error));
-        float reconstruction = predval + error * index * 2.0;
+        F reconstruction = predval + error * index * 2.0;
         if (std::abs(v - reconstruction) > maxerror_original || index == std::numeric_limits<int16_t>::min())
         {
             indices.push_back(std::numeric_limits<int16_t>::min());
@@ -95,23 +95,23 @@ size_t Lfzip::compress(std::span<const float> input)
     return compressed_buffer.size();
 }
 
-std::span<const float> Lfzip::decompress()
+template <typename F> std::span<const F> Lfzip<F>::decompress()
 {
-    // std::vector<float> test = vec_from_file<float>("../../LFZip/debug/recon.bin");
+    // std::vector<F> test = vec_from_file<F>("../../LFZip/debug/recon.bin");
 
     std::vector<std::byte> decompressed_buffer = encoding->decode(compressed_buffer);
-    std::span<const float> outliers;
+    std::span<const F> outliers;
     std::span<const int16_t> indices;
     unpack_streams(decompressed_buffer, outliers, indices);
 
     result.clear();
     result.reserve(indices.size());
-    NlmsFilter<filter_size> nlms;
+    NlmsFilter<F, filter_size> nlms;
     auto outlier = outliers.begin();
     for (const int16_t v : indices)
     {
         auto sample_start = std::max(result.end() - filter_size - 1, result.begin());
-        float predval = nlms.predict(std::span<const float>(sample_start, result.end()));
+        F predval = nlms.predict(std::span<const F>(sample_start, result.end()));
         if (v == std::numeric_limits<int16_t>::min())
         {
             assert(outlier != outliers.end());
@@ -126,3 +126,5 @@ std::span<const float> Lfzip::decompress()
     // assert(result == test);
     return result;
 }
+template class Lfzip<float>;
+template class Lfzip<double>;

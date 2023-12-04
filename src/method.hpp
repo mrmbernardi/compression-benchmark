@@ -50,13 +50,13 @@ template <typename F> class Sz3 : public Method<F>
     std::span<const F> decompress() override;
 };
 
-class Lfzip : public Method<float>
+template <typename F> class Lfzip : public Method<F>
 {
-    float error = 1.0f - 1e-06f; // this is nonsense which i'm only replicating to match the lfzip code.
-    float maxerror_original = 1.0f;
+    F error = 1.0f - 1e-06f; // this is nonsense which i'm only replicating to match the lfzip code.
+    F maxerror_original = 1.0f;
     static constexpr size_t filter_size = 32;
     std::vector<std::byte> compressed_buffer;
-    std::vector<float> result;
+    std::vector<F> result;
     std::shared_ptr<Encoding> encoding;
 
   public:
@@ -65,8 +65,8 @@ class Lfzip : public Method<float>
     {
         return "LfZip with " + encoding->name();
     };
-    size_t compress(std::span<const float> input) override;
-    std::span<const float> decompress() override;
+    size_t compress(std::span<const F> input) override;
+    std::span<const F> decompress() override;
 };
 
 template <typename F> class Quantise : public Method<F>

@@ -54,5 +54,6 @@ template <typename T> std::vector<T> vec_from_file(std::string path)
     }
     return data;
 }
-template std::vector<float> vec_from_file(std::string path);
 template std::vector<int16_t> vec_from_file(std::string path);
+template std::vector<float> vec_from_file(std::string path);
+template std::vector<double> vec_from_file(std::string path);
