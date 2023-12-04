@@ -7,9 +7,9 @@
 #include <string>
 #include <vector>
 
-std::span<const float> as_float_span(const std::vector<std::byte> &input);
+template<typename F> std::span<const F> as_float_span(const std::vector<std::byte> &input);
 
-std::span<float> as_float_span(std::vector<std::byte> &input);
+template<typename F> std::span<F> as_float_span(std::vector<std::byte> &input);
 
 template <typename T> void vec_to_file(std::string path, const std::vector<T> &data);
 

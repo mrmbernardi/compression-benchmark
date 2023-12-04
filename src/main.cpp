@@ -12,36 +12,38 @@
 
 using namespace tabulate;
 
+typedef double real;
+
 int main(/* int argc, char **argv */)
 {
-    std::vector<double> original_buffer = generate_random_data<double>(65536); // 20000000);
-    // for (float &v : original_buffer)
+    std::vector<real> original_buffer = generate_random_data<real>(65536); // 20000000);
+    // for (real &v : original_buffer)
     //     v *= 50000;
-    //vec_to_file("data.vec", original_buffer);
+    // vec_to_file("data.vec", original_buffer);
 
-    // std::vector<std::shared_ptr<Encoding>> encodings;
-    // encodings.emplace_back(std::make_shared<Bsc>());
-    // encodings.emplace_back(std::make_shared<Zstd>());
-    // encodings.emplace_back(std::make_shared<Lz4>());
-    // encodings.emplace_back(std::make_shared<Compose<StreamSplit<float>, Bsc>>());
-    // encodings.emplace_back(std::make_shared<Compose<StreamSplit<float>, Zstd>>());
-    // encodings.emplace_back(std::make_shared<Compose<StreamSplit<float>, Lz4>>());
+    std::vector<std::shared_ptr<Encoding>> encodings;
+    encodings.emplace_back(std::make_shared<Bsc>());
+    encodings.emplace_back(std::make_shared<Zstd>());
+    encodings.emplace_back(std::make_shared<Lz4>());
+    encodings.emplace_back(std::make_shared<Compose<StreamSplit<real>, Bsc>>());
+    encodings.emplace_back(std::make_shared<Compose<StreamSplit<real>, Zstd>>());
+    encodings.emplace_back(std::make_shared<Compose<StreamSplit<real>, Lz4>>());
 
-    std::vector<std::shared_ptr<Method<double>>> methods;
+    std::vector<std::shared_ptr<Method<real>>> methods;
+    for (auto &e : encodings)
+        methods.emplace_back(std::make_shared<Lossless<real>>(e));
     // for (auto &e : encodings)
-    //     methods.emplace_back(std::make_shared<Lossless>(e));
-    // for (auto &e : encodings)
-    //     methods.emplace_back(std::make_shared<Lfzip>(e));
-    // for (auto &e : encodings)
-    //     methods.emplace_back(std::make_shared<Quantise>(e));
+    //      methods.emplace_back(std::make_shared<Lfzip>(e));
+    for (auto &e : encodings)
+        methods.emplace_back(std::make_shared<Quantise<real>>(e));
 
     methods.emplace_back(std::make_shared<Machete>());
-    methods.emplace_back(std::make_shared<Sz3<double>>());
+    methods.emplace_back(std::make_shared<Sz3<real>>());
 
     std::vector<bench_result> results;
     for (auto &m : methods)
     {
-        results.emplace_back(benchmark<double>(original_buffer, *m));
+        results.emplace_back(benchmark<real>(original_buffer, *m));
     }
 
     Table table;

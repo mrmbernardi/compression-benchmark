@@ -5,17 +5,17 @@
 #include <limits>
 #include <vector>
 
-size_t Quantise::compress(std::span<const float> input)
+template <typename F> size_t Quantise<F>::compress(std::span<const F> input)
 {
-    std::vector<float> outliers;
+    std::vector<F> outliers;
     std::vector<int16_t> indices;
     indices.reserve(input.size());
-    float prev = 0.0f;
-    for (const float v : input)
+    F prev = 0.0f;
+    for (const F v : input)
     {
-        float diff = v - prev;
+        F diff = v - prev;
         int16_t index = std::round(diff / (2.0 * error));
-        float reconstruction = prev + error * index * 2.0;
+        F reconstruction = prev + error * index * 2.0;
         if (std::abs(v - reconstruction) > error || index == std::numeric_limits<int16_t>::min())
         {
             indices.push_back(std::numeric_limits<int16_t>::min());
@@ -32,10 +32,10 @@ size_t Quantise::compress(std::span<const float> input)
     return compressed_buffer.size() * sizeof(compressed_buffer[0]);
 }
 
-std::span<const float> Quantise::decompress()
+template <typename F> std::span<const F> Quantise<F>::decompress()
 {
     std::vector<std::byte> decompressed_buffer = encoding->decode(compressed_buffer);
-    std::span<const float> outliers;
+    std::span<const F> outliers;
     std::span<const int16_t> indices;
     unpack_streams(decompressed_buffer, outliers, indices);
 
@@ -57,3 +57,5 @@ std::span<const float> Quantise::decompress()
     }
     return result;
 }
+template class Quantise<float>;
+template class Quantise<double>;

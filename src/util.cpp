@@ -2,19 +2,23 @@
 #include <cstdint>
 #include <stdexcept>
 
-std::span<const float> as_float_span(const std::vector<std::byte> &input)
+template <typename F> std::span<const F> as_float_span(const std::vector<std::byte> &input)
 {
-    assert(input.size() % sizeof(float) == 0);
-    auto data_ptr = reinterpret_cast<const float *>(input.data());
-    return std::span<const float>(data_ptr, input.size() / sizeof(float));
+    assert(input.size() % sizeof(F) == 0);
+    auto data_ptr = reinterpret_cast<const F *>(input.data());
+    return std::span<const F>(data_ptr, input.size() / sizeof(F));
 }
+template std::span<const float> as_float_span(const std::vector<std::byte> &input);
+template std::span<const double> as_float_span(const std::vector<std::byte> &input);
 
-std::span<float> as_float_span(std::vector<std::byte> &input)
+template <typename F> std::span<F> as_float_span(std::vector<std::byte> &input)
 {
-    assert(input.size() % sizeof(float) == 0);
-    auto data_ptr = reinterpret_cast<float *>(input.data());
-    return std::span<float>(data_ptr, input.size() / sizeof(float));
+    assert(input.size() % sizeof(F) == 0);
+    auto data_ptr = reinterpret_cast<F *>(input.data());
+    return std::span<F>(data_ptr, input.size() / sizeof(F));
 }
+template std::span<float> as_float_span(std::vector<std::byte> &input);
+template std::span<double> as_float_span(std::vector<std::byte> &input);
 
 template <typename T> void vec_to_file(std::string path, const std::vector<T> &data)
 {

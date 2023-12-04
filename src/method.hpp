@@ -18,7 +18,7 @@ template <typename F> class Method
     virtual ~Method(){};
 };
 
-class Lossless : public Method<float>
+template <typename F> class Lossless : public Method<F>
 {
     std::vector<std::byte> compressed_buffer;
     std::vector<std::byte> decompressed_buffer;
@@ -30,8 +30,8 @@ class Lossless : public Method<float>
     {
         return encoding->name() + " (lossless)";
     };
-    size_t compress(const std::span<const float> input) override;
-    std::span<const float> decompress() override;
+    size_t compress(const std::span<const F> input) override;
+    std::span<const F> decompress() override;
 };
 
 template <typename F> class Sz3 : public Method<F>
@@ -69,11 +69,11 @@ class Lfzip : public Method<float>
     std::span<const float> decompress() override;
 };
 
-class Quantise : public Method<float>
+template <typename F> class Quantise : public Method<F>
 {
-    static constexpr float error = 1.0f;
+    static constexpr F error = 1.0f;
     std::vector<std::byte> compressed_buffer;
-    std::vector<float> result;
+    std::vector<F> result;
     std::shared_ptr<Encoding> encoding;
 
   public:
@@ -82,8 +82,8 @@ class Quantise : public Method<float>
     {
         return "Quantise with " + encoding->name();
     };
-    size_t compress(std::span<const float> input) override;
-    std::span<const float> decompress() override;
+    size_t compress(std::span<const F> input) override;
+    std::span<const F> decompress() override;
 };
 
 class Machete : public Method<double>
