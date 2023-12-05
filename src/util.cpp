@@ -1,6 +1,36 @@
 #include "util.hpp"
 #include <cstdint>
+#include <cstdio>
+#include <fstream>
+#include <iostream>
 #include <stdexcept>
+
+void table_to_file(std::string path, tabulate::Table &table)
+{
+    std::ofstream csv;
+    csv.open(path);
+    if (csv.is_open())
+    {
+        for (auto &row : table)
+        {
+            bool first = true;
+            for (auto &cell : row)
+            {
+                if (!first)
+                    csv << ", ";
+                else
+                    first = false;
+                csv << cell.get_text();
+            }
+            csv << '\n';
+        }
+        csv.close();
+    }
+    else
+    {
+        throw std::runtime_error("cannot open file");
+    }
+}
 
 template <typename F> std::span<const F> as_float_span(const std::vector<std::byte> &input)
 {

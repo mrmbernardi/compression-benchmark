@@ -12,7 +12,7 @@
             "preLaunchTask": "make",
             "args": [],
             "stopAtEntry": false,
-            "cwd": "${fileDirname}",
+            "cwd": "${workspaceFolder}",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
@@ -36,7 +36,7 @@
             "program": "${workspaceFolder}/build/compression-benchmark",
             "preLaunchTask": "make",
             "args": [],
-            "cwd": "${fileDirname}"
+            "cwd": "${workspaceFolder}"
         }
     ]
 }

@@ -29,12 +29,21 @@ int main(/* int argc, char **argv */)
     encodings.emplace_back(std::make_shared<Compose<StreamSplit<real>, Zstd>>());
     encodings.emplace_back(std::make_shared<Compose<StreamSplit<real>, Lz4>>());
 
+    std::vector<std::shared_ptr<Encoding>> shortSplits;
+    shortSplits.emplace_back(std::make_shared<Compose<StreamSplit<uint16_t>, Bsc>>());
+    shortSplits.emplace_back(std::make_shared<Compose<StreamSplit<uint16_t>, Zstd>>());
+    shortSplits.emplace_back(std::make_shared<Compose<StreamSplit<uint16_t>, Lz4>>());
+
     std::vector<std::shared_ptr<Method<real>>> methods;
     for (auto &e : encodings)
         methods.emplace_back(std::make_shared<Lossless<real>>(e));
     for (auto &e : encodings)
         methods.emplace_back(std::make_shared<Lfzip<real>>(e));
+    for (auto &e : shortSplits)
+        methods.emplace_back(std::make_shared<Lfzip<real>>(e));
     for (auto &e : encodings)
+        methods.emplace_back(std::make_shared<Quantise<real>>(e));
+    for (auto &e : shortSplits)
         methods.emplace_back(std::make_shared<Quantise<real>>(e));
 
     methods.emplace_back(std::make_shared<Machete>());
@@ -64,5 +73,6 @@ int main(/* int argc, char **argv */)
             table[row][col].format().font_align(FontAlign::right);
 
     std::cout << table << std::endl;
+    table_to_file("results.csv", table);
     return 0;
 }

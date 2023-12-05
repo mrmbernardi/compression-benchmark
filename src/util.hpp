@@ -1,3 +1,4 @@
+#include "tabulate/table.hpp"
 #include <cassert>
 #include <cstddef>
 #include <exception>
@@ -7,9 +8,11 @@
 #include <string>
 #include <vector>
 
-template<typename F> std::span<const F> as_float_span(const std::vector<std::byte> &input);
+void table_to_file(std::string path, tabulate::Table &table);
 
-template<typename F> std::span<F> as_float_span(std::vector<std::byte> &input);
+template <typename F> std::span<const F> as_float_span(const std::vector<std::byte> &input);
+
+template <typename F> std::span<F> as_float_span(std::vector<std::byte> &input);
 
 template <typename T> void vec_to_file(std::string path, const std::vector<T> &data);
 
