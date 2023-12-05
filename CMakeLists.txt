@@ -5,6 +5,13 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} -march=native)
 
+find_program(CCACHE_PROGRAM ccache)
+if(CCACHE_PROGRAM)
+  set(CMAKE_CXX_COMPILER_LAUNCHER "${CCACHE_PROGRAM}")
+  set(CMAKE_CXX_LINKER_LAUNCHER   "${CCACHE_PROGRAM}")
+endif()
+
+
 project(compression-benchmark)
 file(GLOB_RECURSE CPP_SOURCES "${CMAKE_CURRENT_LIST_DIR}/src/*.cpp")
 file(GLOB_RECURSE CPP_HEADERS "${CMAKE_CURRENT_LIST_DIR}/src/*.hpp")
@@ -40,7 +47,7 @@ ExternalProject_Add(libsz3
   GIT_TAG           162674f8743b8a6ff2042ef9236471a772bdbd3f
   BUILD_COMMAND     cmake --build . --target zstd
   INSTALL_COMMAND   ""
-  CMAKE_ARGS        -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DSZ3_USE_BUNDLED_ZSTD=ON
+  CMAKE_ARGS        -DCMAKE_BUILD_TYPE=Release -DSZ3_USE_BUNDLED_ZSTD=ON
 )
 ExternalProject_Get_property(libsz3 SOURCE_DIR)
 target_include_directories(compression-benchmark PRIVATE ${SOURCE_DIR}/include)
