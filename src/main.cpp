@@ -56,14 +56,15 @@ int main(/* int argc, char **argv */)
     }
 
     Table table;
-    table.add_row({"Method", "Ratio", "Compression Time (s)", "Rate (MB/s)", "Decompression Time (s)", "Rate (MB/s)",
-                   "Max Error", "MAE"});
+    table.add_row({"Method", "Ratio (%)", "Compression Time (ms)", "Rate (MB/s)", "Decompression Time (ms)",
+                   "Rate (MB/s)", "Max Error", "MAE"});
     for (bench_result r : results)
     {
-        table.add_row({r.name, string_format("%.2f%%", (r.compressed_size * 100.f / r.original_size)),
-                       string_format("%f", r.compression_time), string_format("%f", r.compression_data_rate()),
-                       string_format("%f", r.decompression_time), string_format("%f", r.decompression_data_rate()),
-                       string_format("%f", r.max_error), string_format("%f", r.mean_absolute_error)});
+        table.add_row({r.name, string_format("%.2f", (r.compressed_size * 100.f / r.original_size)),
+                       string_format("%f", r.compression_time * 1000.f), string_format("%f", r.compression_data_rate()),
+                       string_format("%f", r.decompression_time * 1000.f),
+                       string_format("%f", r.decompression_data_rate()), string_format("%f", r.max_error),
+                       string_format("%f", r.mean_absolute_error)});
     }
 
     for (size_t col = 0; col < table.row(0).size(); col++)

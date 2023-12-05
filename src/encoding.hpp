@@ -26,10 +26,7 @@ struct Bsc : Encoding
 
 struct Zstd : Encoding
 {
-    std::string name() override
-    {
-        return "Zstd";
-    }
+    std::string name() override;
     std::vector<std::byte> encode(std::span<const std::byte> input) override;
     std::vector<std::byte> decode(std::span<const std::byte> input) override;
 };
