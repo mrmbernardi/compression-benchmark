@@ -10,17 +10,21 @@
 #include <string>
 #include <vector>
 
-template<typename F> std::vector<F> generate_random_data(size_t size);
+template <typename F> std::vector<F> generate_random_data(size_t size);
 
 struct bench_result
 {
-    std::string name;
     size_t original_size;
     size_t compressed_size;
     double compression_time;
     double decompression_time;
     double max_error;
     double mean_absolute_error;
+};
+
+struct bench_result_ex : bench_result
+{
+    std::string name;
     double mbytes()
     {
         return (double)(original_size) / (1024.0l * 1024.0l);
@@ -37,4 +41,6 @@ struct bench_result
     std::string to_string();
 };
 
-template<typename F> bench_result benchmark(std::span<const F> original_buffer, Method<F> &method);
+template <typename F>
+bench_result_ex benchmark(std::span<const F> original_buffer, Method<F> &method,
+                          std::span<F> output_buffer = std::span<F>());

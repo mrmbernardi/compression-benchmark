@@ -3,6 +3,10 @@
 
 template <typename F> size_t Sz3<F>::compress(std::span<const F> input)
 {
+    if (input.size() < 5)
+    {
+        throw std::runtime_error("Sz requires at least 5 values");
+    }
     SZ3::Config conf(input.size());
     conf.cmprAlgo = SZ3::ALGO_INTERP_LORENZO;
     conf.errorBoundMode = SZ3::EB_ABS;

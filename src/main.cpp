@@ -36,20 +36,20 @@ int main(/* int argc, char **argv */)
 
     std::vector<std::shared_ptr<Method<real>>> methods;
     for (auto &e : encodings)
-        methods.emplace_back(std::make_shared<Lossless<real>>(e));
+    methods.emplace_back(std::make_shared<Lossless<real>>(e));
     for (auto &e : encodings)
-        methods.emplace_back(std::make_shared<Lfzip<real>>(e));
+    methods.emplace_back(std::make_shared<Lfzip<real>>(e));
     for (auto &e : shortSplits)
-        methods.emplace_back(std::make_shared<Lfzip<real>>(e));
+    methods.emplace_back(std::make_shared<Lfzip<real>>(e));
     for (auto &e : encodings)
-        methods.emplace_back(std::make_shared<Quantise<real>>(e));
+    methods.emplace_back(std::make_shared<Quantise<real>>(e));
     for (auto &e : shortSplits)
-        methods.emplace_back(std::make_shared<Quantise<real>>(e));
+    methods.emplace_back(std::make_shared<Quantise<real>>(e));
 
     methods.emplace_back(std::make_shared<Machete>());
     methods.emplace_back(std::make_shared<Sz3<real>>());
 
-    std::vector<bench_result> results;
+    std::vector<bench_result_ex> results;
     for (auto &m : methods)
     {
         results.emplace_back(benchmark<real>(original_buffer, *m));
@@ -58,7 +58,7 @@ int main(/* int argc, char **argv */)
     Table table;
     table.add_row({"Method", "Ratio (%)", "Compression Time (ms)", "Rate (MB/s)", "Decompression Time (ms)",
                    "Rate (MB/s)", "Max Error", "MAE"});
-    for (bench_result r : results)
+    for (bench_result_ex r : results)
     {
         table.add_row({r.name, string_format("%.2f", (r.compressed_size * 100.f / r.original_size)),
                        string_format("%f", r.compression_time * 1000.f), string_format("%f", r.compression_data_rate()),

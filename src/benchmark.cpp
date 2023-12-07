@@ -21,7 +21,7 @@ template <typename F> std::vector<F> generate_random_data(size_t size)
 template std::vector<float> generate_random_data(size_t size);
 template std::vector<double> generate_random_data(size_t size);
 
-std::string bench_result::to_string()
+std::string bench_result_ex::to_string()
 {
     std::ostringstream s;
     s << "Original size:        " << original_size << std::endl;
@@ -34,7 +34,8 @@ std::string bench_result::to_string()
     return s.str();
 }
 
-template <typename F> bench_result benchmark(std::span<const F> original_buffer, Method<F> &method)
+template <typename F>
+bench_result_ex benchmark(std::span<const F> original_buffer, Method<F> &method, std::span<F> output_buffer)
 {
     std::cout << std::endl;
     std::cout << "Using method " << method.name() << std::endl;
@@ -66,7 +67,7 @@ template <typename F> bench_result benchmark(std::span<const F> original_buffer,
     mae /= original_buffer.size();
     std::cout << "done" << std::endl;
 
-    bench_result b;
+    bench_result_ex b;
     b.name = method.name();
     b.original_size = original_buffer.size() * sizeof(original_buffer[0]);
     b.compressed_size = compressed_sz;
@@ -76,7 +77,15 @@ template <typename F> bench_result benchmark(std::span<const F> original_buffer,
     b.max_error = max_error;
     std::cout << b.to_string();
     std::cout.flush();
+
+    if (decompressed.size() == output_buffer.size())
+    {
+        std::copy(decompressed.begin(), decompressed.end(), output_buffer.begin());
+    }
+
     return b;
 }
-template bench_result benchmark(std::span<const float> original_buffer, Method<float> &method);
-template bench_result benchmark(std::span<const double> original_buffer, Method<double> &method);
+template bench_result_ex benchmark(std::span<const float> original_buffer, Method<float> &method,
+                                   std::span<float> output_buffer);
+template bench_result_ex benchmark(std::span<const double> original_buffer, Method<double> &method,
+                                   std::span<double> output_buffer);

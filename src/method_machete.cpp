@@ -6,7 +6,7 @@
 
 size_t Machete::compress(std::span<const double> input)
 {
-    if(input.size() > 65536) 
+    if (input.size() > 65536)
     {
         throw std::runtime_error("Machete only supports up to 65536 values at a time");
     }
