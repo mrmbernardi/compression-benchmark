@@ -89,3 +89,14 @@ template bench_result_ex benchmark(std::span<const float> original_buffer, Metho
                                    std::span<float> output_buffer);
 template bench_result_ex benchmark(std::span<const double> original_buffer, Method<double> &method,
                                    std::span<double> output_buffer);
+
+bench_result &bench_result::operator=(const bench_result_ex &other)
+{
+    original_size = other.original_size;
+    compressed_size = other.compressed_size;
+    compression_time = other.compression_time;
+    decompression_time = other.decompression_time;
+    max_error = other.max_error;
+    mean_absolute_error = other.mean_absolute_error;
+    return *this;
+}

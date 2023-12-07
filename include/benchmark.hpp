@@ -12,6 +12,7 @@
 
 template <typename F> std::vector<F> generate_random_data(size_t size);
 
+struct bench_result_ex;
 struct bench_result
 {
     size_t original_size;
@@ -20,6 +21,8 @@ struct bench_result
     double decompression_time;
     double max_error;
     double mean_absolute_error;
+
+    bench_result& operator=(const bench_result_ex& other);
 };
 
 struct bench_result_ex : bench_result

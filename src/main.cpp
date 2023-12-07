@@ -14,40 +14,20 @@ using namespace tabulate;
 
 typedef double real;
 
+// extern "C" int reconstruct(bench_result *results, char *method_name, char dtype, void *data, int size);
+
 int main(/* int argc, char **argv */)
 {
+    // bench_result r;
+    // std::array<float, 10> x = {1, 2, 3, 1, 5, 6, 7, 8, 9, 10};
+    // return reconstruct(&r, "Sz3", 'f', x.data(), x.size());
+
     std::vector<real> original_buffer = generate_random_data<real>(65536); // 20000000);
     // for (real &v : original_buffer)
     //     v *= 50000;
     // vec_to_file("data.vec", original_buffer);
 
-    std::vector<std::shared_ptr<Encoding>> encodings;
-    encodings.emplace_back(std::make_shared<Bsc>());
-    encodings.emplace_back(std::make_shared<Zstd>());
-    encodings.emplace_back(std::make_shared<Lz4>());
-    encodings.emplace_back(std::make_shared<Compose<StreamSplit<real>, Bsc>>());
-    encodings.emplace_back(std::make_shared<Compose<StreamSplit<real>, Zstd>>());
-    encodings.emplace_back(std::make_shared<Compose<StreamSplit<real>, Lz4>>());
-
-    std::vector<std::shared_ptr<Encoding>> shortSplits;
-    shortSplits.emplace_back(std::make_shared<Compose<StreamSplit<uint16_t>, Bsc>>());
-    shortSplits.emplace_back(std::make_shared<Compose<StreamSplit<uint16_t>, Zstd>>());
-    shortSplits.emplace_back(std::make_shared<Compose<StreamSplit<uint16_t>, Lz4>>());
-
-    std::vector<std::shared_ptr<Method<real>>> methods;
-    for (auto &e : encodings)
-    methods.emplace_back(std::make_shared<Lossless<real>>(e));
-    for (auto &e : encodings)
-    methods.emplace_back(std::make_shared<Lfzip<real>>(e));
-    for (auto &e : shortSplits)
-    methods.emplace_back(std::make_shared<Lfzip<real>>(e));
-    for (auto &e : encodings)
-    methods.emplace_back(std::make_shared<Quantise<real>>(e));
-    for (auto &e : shortSplits)
-    methods.emplace_back(std::make_shared<Quantise<real>>(e));
-
-    methods.emplace_back(std::make_shared<Machete>());
-    methods.emplace_back(std::make_shared<Sz3<real>>());
+    auto methods = get_all_methods<real>();
 
     std::vector<bench_result_ex> results;
     for (auto &m : methods)

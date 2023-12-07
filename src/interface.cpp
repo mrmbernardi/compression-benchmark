@@ -1,26 +1,49 @@
 #include "benchmark.hpp"
 #include "method.hpp"
+#include "util.hpp"
+#include <cstddef>
 #include <iostream>
+#include <stdexcept>
 
-extern "C" int recompress(bench_result *results, char dtype, void *data, int size)
+template <typename F> bench_result_ex run_recompress(std::string method_str, void *data, int size)
+{
+    auto span = std::span<F>((F *)data, size);
+    for (auto &method : get_all_methods<F>())
+    {
+        if (method->name() == method_str)
+        {
+            return benchmark<F>(span, *method);
+        }
+    }
+    throw std::runtime_error("Could not find method with name: " + method_str);
+}
+
+extern "C" int reconstruct(bench_result *results, char *method_name, char dtype, void *data, int size)
 {
     try
     {
-        auto span = std::span<double>((double *)data, size);
-        // auto method = Machete();
-        auto method = Sz3<double>();
-        auto results_ex = benchmark<double>(span, method);
-        (*results).original_size = results_ex.original_size;
-        (*results).compressed_size = results_ex.compressed_size;
-        (*results).compression_time = results_ex.compression_time;
-        (*results).decompression_time = results_ex.decompression_time;
-        (*results).max_error = results_ex.max_error;
-        (*results).mean_absolute_error = results_ex.mean_absolute_error;
+        std::string method_str(method_name);
+        if (dtype == 'f')
+        {
+            *results = run_recompress<float>(method_str, data, size);
+        }
+        else if (dtype == 'd')
+        {
+            *results = run_recompress<double>(method_str, data, size);
+        }
+        else
+        {
+            throw std::runtime_error(std::string("Unknown data type: ") + dtype);
+        }
+        return 0;
     }
-    catch (const std::exception& e)
+    catch (const std::exception &e)
     {
         std::cerr << "Exception: " << e.what() << std::endl;
-        return -1;
     }
-    return 0;
+    catch (...)
+    {
+        std::cerr << "Unknown error." << std::endl;
+    }
+    return -1;
 }

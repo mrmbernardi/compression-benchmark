@@ -8,6 +8,12 @@
 #include <string>
 #include <vector>
 
+template <typename F> class Method;
+
+template <typename F> std::vector<std::shared_ptr<Method<F>>> get_all_methods();
+
+std::vector<std::string> get_all_names();
+
 void table_to_file(std::string path, tabulate::Table &table);
 
 template <typename F> std::span<const F> as_float_span(const std::vector<std::byte> &input);

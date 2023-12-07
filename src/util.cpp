@@ -1,9 +1,61 @@
 #include "util.hpp"
+#include "method.hpp"
 #include <cstdint>
 #include <cstdio>
 #include <fstream>
 #include <iostream>
+#include <memory>
 #include <stdexcept>
+#include <string>
+#include <vector>
+
+template <typename F> std::vector<std::shared_ptr<Method<F>>> get_all_common_methods()
+{
+    std::vector<std::shared_ptr<Encoding>> encodings;
+    encodings.emplace_back(std::make_shared<Bsc>());
+    encodings.emplace_back(std::make_shared<Zstd>());
+    encodings.emplace_back(std::make_shared<Lz4>());
+    encodings.emplace_back(std::make_shared<Compose<StreamSplit<F>, Bsc>>());
+    encodings.emplace_back(std::make_shared<Compose<StreamSplit<F>, Zstd>>());
+    encodings.emplace_back(std::make_shared<Compose<StreamSplit<F>, Lz4>>());
+
+    std::vector<std::shared_ptr<Encoding>> shortSplits;
+    shortSplits.emplace_back(std::make_shared<Compose<StreamSplit<uint16_t>, Bsc>>());
+    shortSplits.emplace_back(std::make_shared<Compose<StreamSplit<uint16_t>, Zstd>>());
+    shortSplits.emplace_back(std::make_shared<Compose<StreamSplit<uint16_t>, Lz4>>());
+
+    std::vector<std::shared_ptr<Method<F>>> methods;
+    for (auto &e : encodings)
+        methods.emplace_back(std::make_shared<Lossless<F>>(e));
+    for (auto &e : encodings)
+        methods.emplace_back(std::make_shared<Lfzip<F>>(e));
+    for (auto &e : shortSplits)
+        methods.emplace_back(std::make_shared<Lfzip<F>>(e));
+    for (auto &e : encodings)
+        methods.emplace_back(std::make_shared<Quantise<F>>(e));
+    for (auto &e : shortSplits)
+        methods.emplace_back(std::make_shared<Quantise<F>>(e));
+
+    methods.emplace_back(std::make_shared<Sz3<F>>());
+    return methods;
+}
+
+template <> std::vector<std::shared_ptr<Method<float>>> get_all_methods()
+{
+    return get_all_common_methods<float>();
+}
+template <> std::vector<std::shared_ptr<Method<double>>> get_all_methods()
+{
+    auto methods = get_all_common_methods<double>();
+    methods.emplace_back(std::make_shared<Machete>());
+    return methods;
+}
+
+std::vector<std::string> get_all_names()
+{
+    // todo
+    return std::vector<std::string>();
+}
 
 void table_to_file(std::string path, tabulate::Table &table)
 {
