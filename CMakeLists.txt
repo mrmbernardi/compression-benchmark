@@ -21,10 +21,12 @@ file(GLOB_RECURSE CPP_HEADERS "${CMAKE_CURRENT_LIST_DIR}/include/*.hpp")
 add_library(compression-benchmark-library SHARED ${CPP_SOURCES} ${CPP_HEADERS})
 target_include_directories(compression-benchmark-library PUBLIC "${CMAKE_CURRENT_LIST_DIR}/include")
 set_property(TARGET compression-benchmark-library PROPERTY POSITION_INDEPENDENT_CODE ON)
+set_property(TARGET compression-benchmark-library PROPERTY OUTPUT_NAME "compression-benchmark")
 
-add_executable(compression-benchmark "${MAIN_CPP}")
-add_dependencies(compression-benchmark compression-benchmark-library)
-target_link_libraries(compression-benchmark compression-benchmark-library)
+add_executable(compression-benchmark-app "${MAIN_CPP}")
+add_dependencies(compression-benchmark-app compression-benchmark-library)
+target_link_libraries(compression-benchmark-app compression-benchmark-library)
+set_property(TARGET compression-benchmark-app PROPERTY OUTPUT_NAME "compression-benchmark")
 
 set_source_files_properties(
   ${CPP_SOURCES}
@@ -98,6 +100,6 @@ ExternalProject_Add(tabulate
 )
 ExternalProject_Get_property(tabulate SOURCE_DIR)
 target_include_directories(compression-benchmark-library PRIVATE ${SOURCE_DIR}/include)
-target_include_directories(compression-benchmark PRIVATE ${SOURCE_DIR}/include)
+target_include_directories(compression-benchmark-app PRIVATE ${SOURCE_DIR}/include)
 add_dependencies(compression-benchmark-library tabulate)
-add_dependencies(compression-benchmark tabulate)
+add_dependencies(compression-benchmark-app tabulate)
