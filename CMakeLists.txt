@@ -11,13 +11,20 @@ if(CCACHE_PROGRAM)
   set(CMAKE_CXX_LINKER_LAUNCHER   "${CCACHE_PROGRAM}")
 endif()
 
+set(MAIN_CPP "${CMAKE_CURRENT_LIST_DIR}/src/main.cpp")
+
 project(compression-benchmark)
 file(GLOB_RECURSE CPP_SOURCES "${CMAKE_CURRENT_LIST_DIR}/src/*.cpp")
+list(REMOVE_ITEM CPP_SOURCES "${MAIN_CPP}")
 file(GLOB_RECURSE CPP_HEADERS "${CMAKE_CURRENT_LIST_DIR}/include/*.hpp")
+
 add_library(compression-benchmark-library SHARED ${CPP_SOURCES} ${CPP_HEADERS})
 target_include_directories(compression-benchmark-library PUBLIC "${CMAKE_CURRENT_LIST_DIR}/include")
 set_property(TARGET compression-benchmark-library PROPERTY POSITION_INDEPENDENT_CODE ON)
-#add_executable(compression-benchmark-app "${CMAKE_CURRENT_LIST_DIR}/src/main.cpp")
+
+add_executable(compression-benchmark "${MAIN_CPP}")
+add_dependencies(compression-benchmark compression-benchmark-library)
+target_link_libraries(compression-benchmark compression-benchmark-library)
 
 set_source_files_properties(
   ${CPP_SOURCES}
@@ -75,7 +82,7 @@ ExternalProject_Add(machete
   GIT_REPOSITORY    https://github.com/Gyhanis/Machete.git
   GIT_TAG           792aa17bd3953a52d0fe131d1529f837b05e3e8f
   CONFIGURE_COMMAND ""
-  PATCH_COMMAND     bash -c "test $(wc -l <  machete/util.h) -ne 40 || sed -i '4i #include <cstdint>\\n#include <cstddef>' machete/util.h"
+  PATCH_COMMAND     bash -c "test $(wc -l <  machete/util.h) -ne 40 || (sed -i '4i #include <cstdint>\\n#include <cstddef>' machete/util.h && sed -i '7i CFLAG += -fPIC' machete/Makefile)"
   BUILD_IN_SOURCE   1
   INSTALL_COMMAND   ""
 )
@@ -91,4 +98,6 @@ ExternalProject_Add(tabulate
 )
 ExternalProject_Get_property(tabulate SOURCE_DIR)
 target_include_directories(compression-benchmark-library PRIVATE ${SOURCE_DIR}/include)
+target_include_directories(compression-benchmark PRIVATE ${SOURCE_DIR}/include)
 add_dependencies(compression-benchmark-library tabulate)
+add_dependencies(compression-benchmark tabulate)
