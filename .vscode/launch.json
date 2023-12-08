@@ -13,7 +13,12 @@
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
-            "environment": [],
+            "environment": [
+                {
+                    "name": "ASAN_OPTIONS",
+                    "value": "detect_leaks=0" // leak sanitizer does not work with a debugger
+                }
+            ],
             "externalConsole": false,
             "MIMode": "gdb",
             "setupCommands": [
@@ -36,7 +41,10 @@
             "program": "${workspaceFolder}/build/compression-benchmark",
             "preLaunchTask": "make",
             "args": [],
-            "cwd": "${workspaceFolder}"
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "ASAN_OPTIONS": "detect_leaks=0" // leak sanitizer does not work with a debugger
+            }
         }
     ]
 }

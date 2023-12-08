@@ -28,6 +28,11 @@ add_dependencies(compression-benchmark-app compression-benchmark-library)
 target_link_libraries(compression-benchmark-app compression-benchmark-library)
 set_property(TARGET compression-benchmark-app PROPERTY OUTPUT_NAME "compression-benchmark")
 
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+  target_compile_options(compression-benchmark-library PUBLIC -fsanitize=address)
+  target_link_options(compression-benchmark-library PUBLIC -fsanitize=address)
+endif()
+
 set_source_files_properties(
   ${CPP_SOURCES}
   PROPERTIES

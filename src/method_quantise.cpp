@@ -43,17 +43,19 @@ template <typename F> std::span<const F> Quantise<F>::decompress()
     result.reserve(indices.size());
 
     auto outlier = outliers.begin();
+    F value = 0.0f;
     for (const int16_t v : indices)
     {
         if (v == std::numeric_limits<int16_t>::min())
         {
             assert(outlier != outliers.end());
-            result.push_back(*(outlier++));
+            value = *(outlier++);
         }
         else
         {
-            result.push_back(result.back() + error * v * 2.0);
+            value = value + error * v * 2.0;
         }
+        result.push_back(value);
     }
     return result;
 }
