@@ -10,7 +10,7 @@ consts="${consts// /}"
 consts="${consts^^}"
 array=$(sed 's/.*/    &,/' <(echo "$consts"))
 consts=$(sed 's/.*/& /' <(echo "$consts"))
-names=$(sed 's/.*/ \"&\" /' <(echo "$names"))
+names=$(sed 's/.*/ Method\(\"&\"\)/' <(echo "$names"))
 paste -d'=' <(echo "$consts") <(echo "$names")
 echo
 echo 'AllMethods = ['

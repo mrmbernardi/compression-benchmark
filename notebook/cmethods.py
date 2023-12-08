@@ -22,7 +22,12 @@ class bench_result(ctypes.Structure):
         return {field[0]: getattr(self, field[0]) for field in self._fields_}
 
 
-lib = ctypes.CDLL(os.path.abspath("../build/libcompression-benchmark.so"))
+lib = ctypes.CDLL(
+    os.path.join(
+        os.path.dirname(os.path.realpath(__file__)),
+        "../build/libcompression-benchmark.so",
+    )
+)
 lib.reconstruct.argtypes = [
     ctypes.POINTER(bench_result),
     ctypes.c_char_p,
@@ -51,44 +56,53 @@ def reconstruct(method_name: str, array: np.ndarray):
     )
     if ret != 0:
         raise Exception("Reconstruct failed")
-    return np.frombuffer(buf, dtype=array.dtype)
+    return np.frombuffer(buf, dtype=array.dtype), results.compressed_size
 
 
-BSC = "Bsc (lossless)"
-LFZIP_BSC = "LfZip with Bsc"
-LFZIP_LZ4 = "LfZip with Lz4"
-LFZIP_STREAMSPLIT2_BSC = "LfZip with Stream Split (2) with Bsc"
-LFZIP_STREAMSPLIT2_LZ4 = "LfZip with Stream Split (2) with Lz4"
-LFZIP_STREAMSPLIT2_ZSTD3 = "LfZip with Stream Split (2) with Zstd (3)"
-LFZIP_STREAMSPLIT4_BSC = "LfZip with Stream Split (4) with Bsc"
-LFZIP_STREAMSPLIT4_LZ4 = "LfZip with Stream Split (4) with Lz4"
-LFZIP_STREAMSPLIT4_ZSTD3 = "LfZip with Stream Split (4) with Zstd (3)"
-LFZIP_STREAMSPLIT8_BSC = "LfZip with Stream Split (8) with Bsc"
-LFZIP_STREAMSPLIT8_LZ4 = "LfZip with Stream Split (8) with Lz4"
-LFZIP_STREAMSPLIT8_ZSTD3 = "LfZip with Stream Split (8) with Zstd (3)"
-LFZIP_ZSTD3 = "LfZip with Zstd (3)"
-LZ4 = "Lz4 (lossless)"
-MACHETE = "Machete"
-QUANTISE_BSC = "Quantise with Bsc"
-QUANTISE_LZ4 = "Quantise with Lz4"
-QUANTISE_STREAMSPLIT2_BSC = "Quantise with Stream Split (2) with Bsc"
-QUANTISE_STREAMSPLIT2_LZ4 = "Quantise with Stream Split (2) with Lz4"
-QUANTISE_STREAMSPLIT2_ZSTD3 = "Quantise with Stream Split (2) with Zstd (3)"
-QUANTISE_STREAMSPLIT4_BSC = "Quantise with Stream Split (4) with Bsc"
-QUANTISE_STREAMSPLIT4_LZ4 = "Quantise with Stream Split (4) with Lz4"
-QUANTISE_STREAMSPLIT4_ZSTD3 = "Quantise with Stream Split (4) with Zstd (3)"
-QUANTISE_STREAMSPLIT8_BSC = "Quantise with Stream Split (8) with Bsc"
-QUANTISE_STREAMSPLIT8_LZ4 = "Quantise with Stream Split (8) with Lz4"
-QUANTISE_STREAMSPLIT8_ZSTD3 = "Quantise with Stream Split (8) with Zstd (3)"
-QUANTISE_ZSTD3 = "Quantise with Zstd (3)"
-STREAMSPLIT4_BSC = "Stream Split (4) with Bsc (lossless)"
-STREAMSPLIT4_LZ4 = "Stream Split (4) with Lz4 (lossless)"
-STREAMSPLIT4_ZSTD3 = "Stream Split (4) with Zstd (3) (lossless)"
-STREAMSPLIT8_BSC = "Stream Split (8) with Bsc (lossless)"
-STREAMSPLIT8_LZ4 = "Stream Split (8) with Lz4 (lossless)"
-STREAMSPLIT8_ZSTD3 = "Stream Split (8) with Zstd (3) (lossless)"
-SZ3 = "Sz3"
-ZSTD3 = "Zstd (3) (lossless)"
+class Method:
+    def __init__(self, method_name):
+        self.method_name = method_name
+        self.__name__ = method_name
+
+    def reconstruct(self, data: np.ndarray) -> [np.ndarray, int]:
+        return reconstruct(self.method_name, data)
+
+
+BSC = Method("Bsc (lossless)")
+LFZIP_BSC = Method("LfZip with Bsc")
+LFZIP_LZ4 = Method("LfZip with Lz4")
+LFZIP_STREAMSPLIT2_BSC = Method("LfZip with Stream Split (2) with Bsc")
+LFZIP_STREAMSPLIT2_LZ4 = Method("LfZip with Stream Split (2) with Lz4")
+LFZIP_STREAMSPLIT2_ZSTD3 = Method("LfZip with Stream Split (2) with Zstd (3)")
+LFZIP_STREAMSPLIT4_BSC = Method("LfZip with Stream Split (4) with Bsc")
+LFZIP_STREAMSPLIT4_LZ4 = Method("LfZip with Stream Split (4) with Lz4")
+LFZIP_STREAMSPLIT4_ZSTD3 = Method("LfZip with Stream Split (4) with Zstd (3)")
+LFZIP_STREAMSPLIT8_BSC = Method("LfZip with Stream Split (8) with Bsc")
+LFZIP_STREAMSPLIT8_LZ4 = Method("LfZip with Stream Split (8) with Lz4")
+LFZIP_STREAMSPLIT8_ZSTD3 = Method("LfZip with Stream Split (8) with Zstd (3)")
+LFZIP_ZSTD3 = Method("LfZip with Zstd (3)")
+LZ4 = Method("Lz4 (lossless)")
+MACHETE = Method("Machete")
+QUANTISE_BSC = Method("Quantise with Bsc")
+QUANTISE_LZ4 = Method("Quantise with Lz4")
+QUANTISE_STREAMSPLIT2_BSC = Method("Quantise with Stream Split (2) with Bsc")
+QUANTISE_STREAMSPLIT2_LZ4 = Method("Quantise with Stream Split (2) with Lz4")
+QUANTISE_STREAMSPLIT2_ZSTD3 = Method("Quantise with Stream Split (2) with Zstd (3)")
+QUANTISE_STREAMSPLIT4_BSC = Method("Quantise with Stream Split (4) with Bsc")
+QUANTISE_STREAMSPLIT4_LZ4 = Method("Quantise with Stream Split (4) with Lz4")
+QUANTISE_STREAMSPLIT4_ZSTD3 = Method("Quantise with Stream Split (4) with Zstd (3)")
+QUANTISE_STREAMSPLIT8_BSC = Method("Quantise with Stream Split (8) with Bsc")
+QUANTISE_STREAMSPLIT8_LZ4 = Method("Quantise with Stream Split (8) with Lz4")
+QUANTISE_STREAMSPLIT8_ZSTD3 = Method("Quantise with Stream Split (8) with Zstd (3)")
+QUANTISE_ZSTD3 = Method("Quantise with Zstd (3)")
+STREAMSPLIT4_BSC = Method("Stream Split (4) with Bsc (lossless)")
+STREAMSPLIT4_LZ4 = Method("Stream Split (4) with Lz4 (lossless)")
+STREAMSPLIT4_ZSTD3 = Method("Stream Split (4) with Zstd (3) (lossless)")
+STREAMSPLIT8_BSC = Method("Stream Split (8) with Bsc (lossless)")
+STREAMSPLIT8_LZ4 = Method("Stream Split (8) with Lz4 (lossless)")
+STREAMSPLIT8_ZSTD3 = Method("Stream Split (8) with Zstd (3) (lossless)")
+SZ3 = Method("Sz3")
+ZSTD3 = Method("Zstd (3) (lossless)")
 
 AllMethods = [
     BSC,
