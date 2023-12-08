@@ -4,6 +4,7 @@
 #include <cstddef>
 #include <iostream>
 #include <stdexcept>
+#include <string>
 
 template <typename F> bench_result_ex run_recompress(std::string method_str, void *data, int size)
 {
@@ -12,10 +13,11 @@ template <typename F> bench_result_ex run_recompress(std::string method_str, voi
     {
         if (method->name() == method_str)
         {
-            return benchmark<F>(span, *method);
+            return benchmark<F>(span, *method, span, true);
         }
     }
-    throw std::runtime_error("Could not find method with name: " + method_str);
+    throw std::runtime_error("Could not find method with name \"" + method_str + "\" for " +
+                             std::to_string(sizeof(F)) + " byte float.");
 }
 
 extern "C" int reconstruct(bench_result *results, char *method_name, char dtype, void *data, int size)

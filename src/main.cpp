@@ -6,8 +6,10 @@
 #include "util.hpp"
 #include <cstddef>
 #include <cstdint>
+#include <iostream>
 #include <memory>
 #include <ostream>
+#include <string>
 #include <vector>
 
 using namespace tabulate;
@@ -16,11 +18,20 @@ typedef double real;
 
 // extern "C" int reconstruct(bench_result *results, char *method_name, char dtype, void *data, int size);
 
-int main(/* int argc, char **argv */)
+int main(int argc, char **argv)
 {
     // bench_result r;
     // std::array<float, 10> x = {1, 2, 3, 1, 5, 6, 7, 8, 9, 10};
     // return reconstruct(&r, "Sz3", 'f', x.data(), x.size());
+    for (int i = 0; i < argc; i++)
+    {
+        if (std::string(argv[i]) == "--names")
+        {
+            for (auto &s : get_all_names())
+                std::cout << s << std::endl;
+            return 0;
+        }
+    }
 
     std::vector<real> original_buffer = generate_random_data<real>(65536); // 20000000);
     // for (real &v : original_buffer)

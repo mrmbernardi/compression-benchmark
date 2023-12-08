@@ -5,6 +5,7 @@
 #include <fstream>
 #include <iostream>
 #include <memory>
+#include <set>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -53,8 +54,16 @@ template <> std::vector<std::shared_ptr<Method<double>>> get_all_methods()
 
 std::vector<std::string> get_all_names()
 {
-    // todo
-    return std::vector<std::string>();
+    std::set<std::string> names;
+    for (auto &m : get_all_methods<float>())
+        names.insert(m->name());
+    for (auto &m : get_all_methods<double>())
+        names.insert(m->name());
+    std::vector<std::string> output;
+    output.reserve(names.size());
+    for (auto &n : names)
+        output.push_back(n);
+    return output;
 }
 
 void table_to_file(std::string path, tabulate::Table &table)

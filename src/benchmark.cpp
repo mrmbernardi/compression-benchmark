@@ -2,6 +2,7 @@
 #include "encoding.hpp"
 #include "method.hpp"
 #include <cstddef>
+#include <ostream>
 #include <random>
 
 template <typename F> std::vector<F> generate_random_data(size_t size)
@@ -35,24 +36,33 @@ std::string bench_result_ex::to_string()
 }
 
 template <typename F>
-bench_result_ex benchmark(std::span<const F> original_buffer, Method<F> &method, std::span<F> output_buffer)
+bench_result_ex benchmark(std::span<const F> original_buffer, Method<F> &method, std::span<F> output_buffer, bool quiet)
 {
-    std::cout << std::endl;
-    std::cout << "Using method " << method.name() << std::endl;
-    std::cout << "Compressing... ";
-    std::cout.flush();
+    if (!quiet)
+    {
+        std::cout << std::endl;
+        std::cout << "Using method " << method.name() << std::endl;
+        std::cout << "Compressing... ";
+        std::cout.flush();
+    }
     auto tstart = std::chrono::high_resolution_clock::now();
     size_t compressed_sz = method.compress(original_buffer);
     auto tend = std::chrono::high_resolution_clock::now();
     auto compress_duration = std::chrono::duration<double>(tend - tstart);
-    std::cout << "done" << std::endl << "Decompressing... ";
-    std::cout.flush();
+    if (!quiet)
+    {
+        std::cout << "done" << std::endl << "Decompressing... ";
+        std::cout.flush();
+    }
     tstart = std::chrono::high_resolution_clock::now();
     auto decompressed = method.decompress();
     tend = std::chrono::high_resolution_clock::now();
     auto decompress_duration = std::chrono::duration<double>(tend - tstart);
-    std::cout << "done" << std::endl << "Comparing... ";
-    std::cout.flush();
+    if (!quiet)
+    {
+        std::cout << "done" << std::endl << "Comparing... ";
+        std::cout.flush();
+    }
 
     assert(original_buffer.size() == decompressed.size());
 
@@ -65,7 +75,10 @@ bench_result_ex benchmark(std::span<const F> original_buffer, Method<F> &method,
         max_error = std::max(max_error, e);
     }
     mae /= original_buffer.size();
-    std::cout << "done" << std::endl;
+    if (!quiet)
+    {
+        std::cout << "done" << std::endl;
+    }
 
     bench_result_ex b;
     b.name = method.name();
@@ -75,8 +88,11 @@ bench_result_ex benchmark(std::span<const F> original_buffer, Method<F> &method,
     b.decompression_time = decompress_duration.count();
     b.mean_absolute_error = mae;
     b.max_error = max_error;
-    std::cout << b.to_string();
-    std::cout.flush();
+    if (!quiet)
+    {
+        std::cout << b.to_string();
+        std::cout.flush();
+    }
 
     if (decompressed.size() == output_buffer.size())
     {
@@ -86,9 +102,9 @@ bench_result_ex benchmark(std::span<const F> original_buffer, Method<F> &method,
     return b;
 }
 template bench_result_ex benchmark(std::span<const float> original_buffer, Method<float> &method,
-                                   std::span<float> output_buffer);
+                                   std::span<float> output_buffer, bool quiet);
 template bench_result_ex benchmark(std::span<const double> original_buffer, Method<double> &method,
-                                   std::span<double> output_buffer);
+                                   std::span<double> output_buffer, bool quiet);
 
 bench_result &bench_result::operator=(const bench_result_ex &other)
 {
