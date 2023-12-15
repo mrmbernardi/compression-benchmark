@@ -1,12 +1,5 @@
 #pragma once
 #include "method.hpp"
-#include <algorithm>
-#include <cassert>
-#include <chrono>
-#include <cstddef>
-#include <cstdint>
-#include <iostream>
-#include <sstream>
 #include <string>
 #include <vector>
 
@@ -22,7 +15,7 @@ struct bench_result
     double max_error;
     double mean_absolute_error;
 
-    bench_result& operator=(const bench_result_ex& other);
+    bench_result &operator=(const bench_result_ex &other);
 };
 
 struct bench_result_ex : bench_result
@@ -46,4 +39,4 @@ struct bench_result_ex : bench_result
 
 template <typename F>
 bench_result_ex benchmark(std::span<const F> original_buffer, Method<F> &method,
-                          std::span<F> output_buffer = std::span<F>(), bool quiet = false);
+                          std::span<F> output_buffer = std::span<F>(), bool quiet = false, bool skip_metrics = false);

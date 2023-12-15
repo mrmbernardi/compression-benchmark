@@ -56,7 +56,12 @@ def reconstruct(method_name: str, array: np.ndarray):
     )
     if ret != 0:
         raise Exception("Reconstruct failed")
-    return np.frombuffer(buf, dtype=array.dtype), results.compressed_size
+    return (
+        np.frombuffer(buf, dtype=array.dtype),
+        results.compressed_size,
+        results.compression_time,
+        results.decompression_time,
+    )
 
 
 class Method:
@@ -75,29 +80,53 @@ class Method:
 BSC = Method("Bsc (lossless)", ["float", "double"])
 LFZIP_BSC = Method("LfZip with Bsc", ["float", "double"])
 LFZIP_LZ4 = Method("LfZip with Lz4", ["float", "double"])
-LFZIP_STREAMSPLIT2_BSC = Method("LfZip with Stream Split (2) with Bsc", ["float", "double"])
-LFZIP_STREAMSPLIT2_LZ4 = Method("LfZip with Stream Split (2) with Lz4", ["float", "double"])
-LFZIP_STREAMSPLIT2_ZSTD3 = Method("LfZip with Stream Split (2) with Zstd (3)", ["float", "double"])
+LFZIP_STREAMSPLIT2_BSC = Method(
+    "LfZip with Stream Split (2) with Bsc", ["float", "double"]
+)
+LFZIP_STREAMSPLIT2_LZ4 = Method(
+    "LfZip with Stream Split (2) with Lz4", ["float", "double"]
+)
+LFZIP_STREAMSPLIT2_ZSTD3 = Method(
+    "LfZip with Stream Split (2) with Zstd (3)", ["float", "double"]
+)
 LFZIP_STREAMSPLIT4_BSC = Method("LfZip with Stream Split (4) with Bsc", ["float"])
 LFZIP_STREAMSPLIT4_LZ4 = Method("LfZip with Stream Split (4) with Lz4", ["float"])
-LFZIP_STREAMSPLIT4_ZSTD3 = Method("LfZip with Stream Split (4) with Zstd (3)", ["float"])
+LFZIP_STREAMSPLIT4_ZSTD3 = Method(
+    "LfZip with Stream Split (4) with Zstd (3)", ["float"]
+)
 LFZIP_STREAMSPLIT8_BSC = Method("LfZip with Stream Split (8) with Bsc", ["double"])
 LFZIP_STREAMSPLIT8_LZ4 = Method("LfZip with Stream Split (8) with Lz4", ["double"])
-LFZIP_STREAMSPLIT8_ZSTD3 = Method("LfZip with Stream Split (8) with Zstd (3)", ["double"])
+LFZIP_STREAMSPLIT8_ZSTD3 = Method(
+    "LfZip with Stream Split (8) with Zstd (3)", ["double"]
+)
 LFZIP_ZSTD3 = Method("LfZip with Zstd (3)", ["float", "double"])
 LZ4 = Method("Lz4 (lossless)", ["float", "double"])
 MACHETE = Method("Machete", ["double"])
 QUANTISE_BSC = Method("Quantise with Bsc", ["float", "double"])
 QUANTISE_LZ4 = Method("Quantise with Lz4", ["float", "double"])
-QUANTISE_STREAMSPLIT2_BSC = Method("Quantise with Stream Split (2) with Bsc", ["float", "double"])
-QUANTISE_STREAMSPLIT2_LZ4 = Method("Quantise with Stream Split (2) with Lz4", ["float", "double"])
-QUANTISE_STREAMSPLIT2_ZSTD3 = Method("Quantise with Stream Split (2) with Zstd (3)", ["float", "double"])
+QUANTISE_STREAMSPLIT2_BSC = Method(
+    "Quantise with Stream Split (2) with Bsc", ["float", "double"]
+)
+QUANTISE_STREAMSPLIT2_LZ4 = Method(
+    "Quantise with Stream Split (2) with Lz4", ["float", "double"]
+)
+QUANTISE_STREAMSPLIT2_ZSTD3 = Method(
+    "Quantise with Stream Split (2) with Zstd (3)", ["float", "double"]
+)
 QUANTISE_STREAMSPLIT4_BSC = Method("Quantise with Stream Split (4) with Bsc", ["float"])
 QUANTISE_STREAMSPLIT4_LZ4 = Method("Quantise with Stream Split (4) with Lz4", ["float"])
-QUANTISE_STREAMSPLIT4_ZSTD3 = Method("Quantise with Stream Split (4) with Zstd (3)", ["float"])
-QUANTISE_STREAMSPLIT8_BSC = Method("Quantise with Stream Split (8) with Bsc", ["double"])
-QUANTISE_STREAMSPLIT8_LZ4 = Method("Quantise with Stream Split (8) with Lz4", ["double"])
-QUANTISE_STREAMSPLIT8_ZSTD3 = Method("Quantise with Stream Split (8) with Zstd (3)", ["double"])
+QUANTISE_STREAMSPLIT4_ZSTD3 = Method(
+    "Quantise with Stream Split (4) with Zstd (3)", ["float"]
+)
+QUANTISE_STREAMSPLIT8_BSC = Method(
+    "Quantise with Stream Split (8) with Bsc", ["double"]
+)
+QUANTISE_STREAMSPLIT8_LZ4 = Method(
+    "Quantise with Stream Split (8) with Lz4", ["double"]
+)
+QUANTISE_STREAMSPLIT8_ZSTD3 = Method(
+    "Quantise with Stream Split (8) with Zstd (3)", ["double"]
+)
 QUANTISE_ZSTD3 = Method("Quantise with Zstd (3)", ["float", "double"])
 STREAMSPLIT4_BSC = Method("Stream Split (4) with Bsc (lossless)", ["float"])
 STREAMSPLIT4_LZ4 = Method("Stream Split (4) with Lz4 (lossless)", ["float"])

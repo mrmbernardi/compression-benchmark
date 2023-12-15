@@ -1,9 +1,15 @@
 #include "benchmark.hpp"
 #include "encoding.hpp"
 #include "method.hpp"
+#include <algorithm>
+#include <cassert>
+#include <chrono>
 #include <cstddef>
+#include <cstdint>
+#include <iostream>
 #include <ostream>
 #include <random>
+#include <sstream>
 
 template <typename F> std::vector<F> generate_random_data(size_t size)
 {
@@ -36,7 +42,8 @@ std::string bench_result_ex::to_string()
 }
 
 template <typename F>
-bench_result_ex benchmark(std::span<const F> original_buffer, Method<F> &method, std::span<F> output_buffer, bool quiet)
+bench_result_ex benchmark(std::span<const F> original_buffer, Method<F> &method, std::span<F> output_buffer, bool quiet,
+                          bool skip_metrics)
 {
     if (!quiet)
     {
@@ -60,7 +67,7 @@ bench_result_ex benchmark(std::span<const F> original_buffer, Method<F> &method,
     auto decompress_duration = std::chrono::duration<double>(tend - tstart);
     if (!quiet)
     {
-        std::cout << "done" << std::endl << "Comparing... ";
+        std::cout << "done" << std::endl;
         std::cout.flush();
     }
 
@@ -68,16 +75,24 @@ bench_result_ex benchmark(std::span<const F> original_buffer, Method<F> &method,
 
     double mae = 0;
     double max_error = 0;
-    for (size_t i = 0; i < original_buffer.size(); i++)
+
+    if (!skip_metrics)
     {
-        double e = std::abs(decompressed[i] - original_buffer[i]);
-        mae += e;
-        max_error = std::max(max_error, e);
-    }
-    mae /= original_buffer.size();
-    if (!quiet)
-    {
-        std::cout << "done" << std::endl;
+        if (!quiet)
+        {
+            std::cout << "Comparing... ";
+        }
+        for (size_t i = 0; i < original_buffer.size(); i++)
+        {
+            double e = std::abs(decompressed[i] - original_buffer[i]);
+            mae += e;
+            max_error = std::max(max_error, e);
+        }
+        mae /= original_buffer.size();
+        if (!quiet)
+        {
+            std::cout << "done" << std::endl;
+        }
     }
 
     bench_result_ex b;
@@ -102,9 +117,9 @@ bench_result_ex benchmark(std::span<const F> original_buffer, Method<F> &method,
     return b;
 }
 template bench_result_ex benchmark(std::span<const float> original_buffer, Method<float> &method,
-                                   std::span<float> output_buffer, bool quiet);
+                                   std::span<float> output_buffer, bool quiet, bool skip_metrics);
 template bench_result_ex benchmark(std::span<const double> original_buffer, Method<double> &method,
-                                   std::span<double> output_buffer, bool quiet);
+                                   std::span<double> output_buffer, bool quiet, bool skip_metrics);
 
 bench_result &bench_result::operator=(const bench_result_ex &other)
 {

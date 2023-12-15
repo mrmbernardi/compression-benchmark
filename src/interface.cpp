@@ -13,7 +13,7 @@ template <typename F> bench_result_ex run_recompress(std::string method_str, voi
     {
         if (method->name() == method_str)
         {
-            return benchmark<F>(span, *method, span, true);
+            return benchmark<F>(span, *method, span, true, true);
         }
     }
     throw std::runtime_error("Could not find method with name \"" + method_str + "\" for " +
