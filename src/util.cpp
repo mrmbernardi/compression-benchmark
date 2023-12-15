@@ -4,8 +4,8 @@
 #include <cstdio>
 #include <fstream>
 #include <iostream>
+#include <map>
 #include <memory>
-#include <set>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -54,15 +54,23 @@ template <> std::vector<std::shared_ptr<Method<double>>> get_all_methods()
 
 std::vector<std::string> get_all_names()
 {
-    std::set<std::string> names;
+    std::map<std::string, std::string> names;
     for (auto &m : get_all_methods<float>())
-        names.insert(m->name());
+    {
+        names.insert({m->name(), std::string("float")});
+    }
     for (auto &m : get_all_methods<double>())
-        names.insert(m->name());
+    {
+        auto val = names.find(m->name());
+        if (val == names.end())
+            names.insert({m->name(), std::string("double")});
+        else
+            val->second = val->second + ",double";
+    }
     std::vector<std::string> output;
     output.reserve(names.size());
     for (auto &n : names)
-        output.push_back(n);
+        output.push_back(n.first + ": " + n.second);
     return output;
 }
 
