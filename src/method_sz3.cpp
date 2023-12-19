@@ -10,7 +10,7 @@ template <typename F> size_t Sz3<F>::compress(std::span<const F> input)
     SZ3::Config conf(input.size());
     conf.cmprAlgo = SZ3::ALGO_INTERP_LORENZO;
     conf.errorBoundMode = SZ3::EB_ABS;
-    conf.absErrorBound = 1;
+    conf.absErrorBound = Method<F>::error;
     compressed_data.reset(SZ_compress<F>(conf, input.data(), compressed_size));
     return compressed_size;
 }

@@ -34,11 +34,12 @@ lib.reconstruct.argtypes = [
     ctypes.c_char,
     ctypes.c_void_p,
     ctypes.c_int,
+    ctypes.c_double,
 ]
 lib.reconstruct.restype = ctypes.c_int
 
 
-def reconstruct(method_name: str, array: np.ndarray):
+def reconstruct(method_name: str, array: np.ndarray, error_bound: float):
     if array.dtype == np.float32:
         dtype_char = ord("f")
     elif array.dtype == np.float64:
@@ -53,6 +54,7 @@ def reconstruct(method_name: str, array: np.ndarray):
         dtype_char,
         buf,
         array.size,
+        error_bound
     )
     if ret != 0:
         raise Exception("Reconstruct failed")
@@ -73,8 +75,8 @@ class Method:
     def __repr__(self) -> str:
         return f"Method({self.method_name.__repr__()}, {self.supported.__repr__()})"
 
-    def reconstruct(self, data: np.ndarray) -> [np.ndarray, int]:
-        return reconstruct(self.method_name, data)
+    def reconstruct(self, data: np.ndarray, error_bound=1.0) -> [np.ndarray, int]:
+        return reconstruct(self.method_name, data, error_bound)
 
 
 BSC = Method("Bsc (lossless)", ["float", "double"])

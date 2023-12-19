@@ -14,9 +14,9 @@ template <typename F> size_t Quantise<F>::compress(std::span<const F> input)
     for (const F v : input)
     {
         F diff = v - prev;
-        int16_t index = std::round(diff / (2.0 * error));
-        F reconstruction = prev + error * index * 2.0;
-        if (std::abs(v - reconstruction) > error || index == std::numeric_limits<int16_t>::min())
+        int16_t index = std::round(diff / (2.0 * Method<F>::error));
+        F reconstruction = prev + Method<F>::error * index * 2.0;
+        if (std::abs(v - reconstruction) > Method<F>::error || index == std::numeric_limits<int16_t>::min())
         {
             indices.push_back(std::numeric_limits<int16_t>::min());
             outliers.push_back(v);
@@ -53,7 +53,7 @@ template <typename F> std::span<const F> Quantise<F>::decompress()
         }
         else
         {
-            value = value + error * v * 2.0;
+            value = value + Method<F>::error * v * 2.0;
         }
         result.push_back(value);
     }

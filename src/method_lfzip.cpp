@@ -71,9 +71,9 @@ template <typename F> size_t Lfzip<F>::compress(std::span<const F> input)
         auto sample_start = std::max(recon.end() - filter_size - 1, recon.begin());
         F predval = nlms.predict(std::span<const F>(sample_start, recon.end()));
         F diff = v - predval;
-        int16_t index = std::round(diff / (2.0 * error));
-        F reconstruction = predval + error * index * 2.0;
-        if (std::abs(v - reconstruction) > maxerror_original || index == std::numeric_limits<int16_t>::min())
+        int16_t index = std::round(diff / (2.0 * Method<F>::error));
+        F reconstruction = predval + Method<F>::error * index * 2.0;
+        if (std::abs(v - reconstruction) > Method<F>::error || index == std::numeric_limits<int16_t>::min())
         {
             indices.push_back(std::numeric_limits<int16_t>::min());
             outliers.push_back(v);
@@ -119,7 +119,7 @@ template <typename F> std::span<const F> Lfzip<F>::decompress()
         }
         else
         {
-            result.push_back(predval + error * v * 2.0);
+            result.push_back(predval + Method<F>::error * v * 2.0);
         }
     }
     // std::cout << "magic sum: " << std::accumulate(result.begin(), result.end(), 0.0L) << std::endl;

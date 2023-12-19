@@ -16,7 +16,7 @@ using namespace tabulate;
 
 typedef double real;
 
-// extern "C" int reconstruct(bench_result *results, char *method_name, char dtype, void *data, int size);
+// extern "C" int reconstruct(bench_result *results, char *method_name, char dtype, void *data, int size, double error_bound);
 
 int main(int argc, char **argv)
 {
@@ -43,7 +43,7 @@ int main(int argc, char **argv)
     std::vector<bench_result_ex> results;
     for (auto &m : methods)
     {
-        results.emplace_back(benchmark<real>(original_buffer, *m));
+        results.emplace_back(benchmark<real>(original_buffer, *m, 1.0));
     }
 
     Table table;

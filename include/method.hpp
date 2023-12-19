@@ -11,11 +11,18 @@
 
 template <typename F> class Method
 {
+  protected:
+    F error = 1.0;
+
   public:
     virtual std::string name() = 0;
     virtual size_t compress(std::span<const F> input) = 0;
     virtual std::span<const F> decompress() = 0;
     virtual ~Method(){};
+    void set_error_bound(F error)
+    {
+        this->error = error;
+    }
 };
 
 template <typename F> class Lossless : public Method<F>
@@ -52,8 +59,6 @@ template <typename F> class Sz3 : public Method<F>
 
 template <typename F> class Lfzip : public Method<F>
 {
-    F error = 1.0f - 1e-06f; // this is nonsense which i'm only replicating to match the lfzip code.
-    F maxerror_original = 1.0f;
     static constexpr size_t filter_size = 32;
     std::vector<std::byte> compressed_buffer;
     std::vector<F> result;
@@ -71,7 +76,6 @@ template <typename F> class Lfzip : public Method<F>
 
 template <typename F> class Quantise : public Method<F>
 {
-    static constexpr F error = 1.0f;
     std::vector<std::byte> compressed_buffer;
     std::vector<F> result;
     std::shared_ptr<Encoding> encoding;

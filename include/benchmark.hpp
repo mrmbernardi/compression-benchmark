@@ -38,5 +38,5 @@ struct bench_result_ex : bench_result
 };
 
 template <typename F>
-bench_result_ex benchmark(std::span<const F> original_buffer, Method<F> &method,
+bench_result_ex benchmark(std::span<const F> original_buffer, Method<F> &method, F error_bound = 1.0,
                           std::span<F> output_buffer = std::span<F>(), bool quiet = false, bool skip_metrics = false);

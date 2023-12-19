@@ -42,8 +42,8 @@ std::string bench_result_ex::to_string()
 }
 
 template <typename F>
-bench_result_ex benchmark(std::span<const F> original_buffer, Method<F> &method, std::span<F> output_buffer, bool quiet,
-                          bool skip_metrics)
+bench_result_ex benchmark(std::span<const F> original_buffer, Method<F> &method, F error_bound,
+                          std::span<F> output_buffer, bool quiet, bool skip_metrics)
 {
     if (!quiet)
     {
@@ -52,6 +52,7 @@ bench_result_ex benchmark(std::span<const F> original_buffer, Method<F> &method,
         std::cout << "Compressing... ";
         std::cout.flush();
     }
+    method.set_error_bound(error_bound);
     auto tstart = std::chrono::high_resolution_clock::now();
     size_t compressed_sz = method.compress(original_buffer);
     auto tend = std::chrono::high_resolution_clock::now();
@@ -116,9 +117,9 @@ bench_result_ex benchmark(std::span<const F> original_buffer, Method<F> &method,
 
     return b;
 }
-template bench_result_ex benchmark(std::span<const float> original_buffer, Method<float> &method,
+template bench_result_ex benchmark(std::span<const float> original_buffer, Method<float> &method, float error_bound,
                                    std::span<float> output_buffer, bool quiet, bool skip_metrics);
-template bench_result_ex benchmark(std::span<const double> original_buffer, Method<double> &method,
+template bench_result_ex benchmark(std::span<const double> original_buffer, Method<double> &method, double error_bound,
                                    std::span<double> output_buffer, bool quiet, bool skip_metrics);
 
 bench_result &bench_result::operator=(const bench_result_ex &other)
