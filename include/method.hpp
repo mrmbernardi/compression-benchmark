@@ -57,7 +57,7 @@ template <typename F> class Sz3 : public Method<F>
     std::span<const F> decompress() override;
 };
 
-template <typename F> class Lfzip : public Method<F>
+template <typename F, bool split> class Lfzip : public Method<F>
 {
     static constexpr size_t filter_size = 32;
     std::vector<std::byte> compressed_buffer;
@@ -68,13 +68,17 @@ template <typename F> class Lfzip : public Method<F>
     Lfzip(std::shared_ptr<Encoding> e) : encoding(e){};
     std::string name() override
     {
+        if constexpr (split)
+        {
+            return "LfZip with Stream Split (V) with " + encoding->name();
+        }
         return "LfZip with " + encoding->name();
     };
     size_t compress(std::span<const F> input) override;
     std::span<const F> decompress() override;
 };
 
-template <typename F> class Quantise : public Method<F>
+template <typename F, bool split> class Quantise : public Method<F>
 {
     std::vector<std::byte> compressed_buffer;
     std::vector<F> result;
@@ -84,6 +88,10 @@ template <typename F> class Quantise : public Method<F>
     Quantise(std::shared_ptr<Encoding> e) : encoding(e){};
     std::string name() override
     {
+        if constexpr (split)
+        {
+            return "Quantise with Stream Split (V) with " + encoding->name();
+        }
         return "Quantise with " + encoding->name();
     };
     size_t compress(std::span<const F> input) override;

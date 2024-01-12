@@ -14,7 +14,7 @@ template <typename F> size_t Lossless<F>::compress(std::span<const F> input)
 template <typename F> std::span<const F> Lossless<F>::decompress()
 {
     decompressed_buffer = encoding->decode(compressed_buffer);
-    return as_float_span<F>(decompressed_buffer);
+    return as_span<F>(decompressed_buffer);
 }
 template class Lossless<float>;
 template class Lossless<double>;

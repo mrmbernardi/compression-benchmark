@@ -7,7 +7,7 @@
 
 using namespace arrow::util::internal;
 
-template <typename T> std::vector<std::byte> StreamSplit<T>::encode(std::span<const std::byte> input)
+template <typename T> std::vector<std::byte> streamsplit_enc(std::span<const std::byte> input)
 {
     assert(input.size_bytes() % sizeof(T) == 0);
     size_t num_vals = input.size_bytes() / sizeof(T);
@@ -17,8 +17,9 @@ template <typename T> std::vector<std::byte> StreamSplit<T>::encode(std::span<co
                                  reinterpret_cast<uint8_t *>(output_buffer.data()));
     return output_buffer;
 }
-
-template <typename T> std::vector<std::byte> StreamSplit<T>::decode(std::span<const std::byte> input)
+template std::vector<std::byte> streamsplit_enc<double>(std::span<const std::byte> input);
+template std::vector<std::byte> streamsplit_enc<float>(std::span<const std::byte> input);
+template <typename T> std::vector<std::byte> streamsplit_dec(std::span<const std::byte> input)
 {
     assert(input.size_bytes() % sizeof(T) == 0);
     size_t num_vals = input.size_bytes() / sizeof(T);
@@ -28,10 +29,10 @@ template <typename T> std::vector<std::byte> StreamSplit<T>::decode(std::span<co
                                  reinterpret_cast<T *>(output_buffer.data()));
     return output_buffer;
 }
-template struct StreamSplit<float>;
-template struct StreamSplit<double>;
+template std::vector<std::byte> streamsplit_dec<double>(std::span<const std::byte> input);
+template std::vector<std::byte> streamsplit_dec<float>(std::span<const std::byte> input);
 
-template <> std::vector<std::byte> StreamSplit<uint16_t>::encode(std::span<const std::byte> input)
+template <> std::vector<std::byte> streamsplit_enc<uint16_t>(std::span<const std::byte> input)
 {
     assert(input.size_bytes() % sizeof(uint16_t) == 0);
     size_t num_vals = input.size_bytes() / sizeof(uint16_t);
@@ -41,8 +42,7 @@ template <> std::vector<std::byte> StreamSplit<uint16_t>::encode(std::span<const
                                           reinterpret_cast<uint8_t *>(output_buffer.data()));
     return output_buffer;
 }
-
-template <> std::vector<std::byte> StreamSplit<uint16_t>::decode(std::span<const std::byte> input)
+template <> std::vector<std::byte> streamsplit_dec<uint16_t>(std::span<const std::byte> input)
 {
     assert(input.size_bytes() % sizeof(uint16_t) == 0);
     size_t num_vals = input.size_bytes() / sizeof(uint16_t);
@@ -52,4 +52,16 @@ template <> std::vector<std::byte> StreamSplit<uint16_t>::decode(std::span<const
                                           reinterpret_cast<uint16_t *>(output_buffer.data()));
     return output_buffer;
 }
+
+template <typename T> std::vector<std::byte> StreamSplit<T>::encode(std::span<const std::byte> input)
+{
+    return streamsplit_enc<T>(input);
+}
+
+template <typename T> std::vector<std::byte> StreamSplit<T>::decode(std::span<const std::byte> input)
+{
+    return streamsplit_dec<T>(input);
+}
+template struct StreamSplit<float>;
+template struct StreamSplit<double>;
 template struct StreamSplit<uint16_t>;

@@ -40,6 +40,8 @@ struct Lz4 : Encoding
     std::vector<std::byte> decode(std::span<const std::byte> input) override;
 };
 
+template <typename T> std::vector<std::byte> streamsplit_enc(std::span<const std::byte> input);
+template <typename T> std::vector<std::byte> streamsplit_dec(std::span<const std::byte> input);
 template <typename T> struct StreamSplit : Encoding
 {
     std::string name() override

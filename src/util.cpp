@@ -28,14 +28,22 @@ template <typename F> std::vector<std::shared_ptr<Method<F>>> get_all_common_met
     std::vector<std::shared_ptr<Method<F>>> methods;
     for (auto &e : encodings)
         methods.emplace_back(std::make_shared<Lossless<F>>(e));
+
     for (auto &e : encodings)
-        methods.emplace_back(std::make_shared<Lfzip<F>>(e));
+        methods.emplace_back(std::make_shared<Lfzip<F, false>>(e));
     for (auto &e : shortSplits)
-        methods.emplace_back(std::make_shared<Lfzip<F>>(e));
+        methods.emplace_back(std::make_shared<Lfzip<F, false>>(e));
+    methods.emplace_back(std::make_shared<Lfzip<F, true>>(std::make_shared<Bsc>()));
+    methods.emplace_back(std::make_shared<Lfzip<F, true>>(std::make_shared<Zstd>()));
+    methods.emplace_back(std::make_shared<Lfzip<F, true>>(std::make_shared<Lz4>()));
+
     for (auto &e : encodings)
-        methods.emplace_back(std::make_shared<Quantise<F>>(e));
+        methods.emplace_back(std::make_shared<Quantise<F, false>>(e));
     for (auto &e : shortSplits)
-        methods.emplace_back(std::make_shared<Quantise<F>>(e));
+        methods.emplace_back(std::make_shared<Quantise<F, false>>(e));
+    methods.emplace_back(std::make_shared<Quantise<F, true>>(std::make_shared<Bsc>()));
+    methods.emplace_back(std::make_shared<Quantise<F, true>>(std::make_shared<Zstd>()));
+    methods.emplace_back(std::make_shared<Quantise<F, true>>(std::make_shared<Lz4>()));
 
     methods.emplace_back(std::make_shared<Sz3<F>>());
     return methods;
@@ -101,23 +109,25 @@ void table_to_file(std::string path, tabulate::Table &table)
     }
 }
 
-template <typename F> std::span<const F> as_float_span(const std::vector<std::byte> &input)
+template <typename F> std::span<const F> as_span(const std::vector<std::byte> &input)
 {
     assert(input.size() % sizeof(F) == 0);
     auto data_ptr = reinterpret_cast<const F *>(input.data());
     return std::span<const F>(data_ptr, input.size() / sizeof(F));
 }
-template std::span<const float> as_float_span(const std::vector<std::byte> &input);
-template std::span<const double> as_float_span(const std::vector<std::byte> &input);
+template std::span<const float> as_span(const std::vector<std::byte> &input);
+template std::span<const double> as_span(const std::vector<std::byte> &input);
+template std::span<const int16_t> as_span(const std::vector<std::byte> &input);
 
-template <typename F> std::span<F> as_float_span(std::vector<std::byte> &input)
+template <typename F> std::span<F> as_span(std::vector<std::byte> &input)
 {
     assert(input.size() % sizeof(F) == 0);
     auto data_ptr = reinterpret_cast<F *>(input.data());
     return std::span<F>(data_ptr, input.size() / sizeof(F));
 }
-template std::span<float> as_float_span(std::vector<std::byte> &input);
-template std::span<double> as_float_span(std::vector<std::byte> &input);
+template std::span<float> as_span(std::vector<std::byte> &input);
+template std::span<double> as_span(std::vector<std::byte> &input);
+template std::span<int16_t> as_span(std::vector<std::byte> &input);
 
 template <typename T> void vec_to_file(std::string path, const std::vector<T> &data)
 {
