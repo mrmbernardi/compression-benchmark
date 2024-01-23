@@ -73,16 +73,16 @@ template <typename F, bool split> size_t Lfzip<F, split>::compress(std::span<con
         F diff = v - predval;
         int16_t index = std::round(diff / (2.0 * Method<F>::error));
         F reconstruction = predval + Method<F>::error * index * 2.0;
-        if (std::abs(v - reconstruction) > Method<F>::error || index == std::numeric_limits<int16_t>::min())
+        if (index != std::numeric_limits<int16_t>::min() && std::abs(v - reconstruction) <= Method<F>::error)
+        {
+            indices.push_back(index);
+            recon.push_back(reconstruction);
+        }
+        else
         {
             indices.push_back(std::numeric_limits<int16_t>::min());
             outliers.push_back(v);
             recon.push_back(v);
-        }
-        else
-        {
-            indices.push_back(index);
-            recon.push_back(reconstruction);
         }
     }
 

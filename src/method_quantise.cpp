@@ -16,16 +16,16 @@ template <typename F, bool split> size_t Quantise<F, split>::compress(std::span<
         F diff = v - prev;
         int16_t index = std::round(diff / (2.0 * Method<F>::error));
         F reconstruction = prev + Method<F>::error * index * 2.0;
-        if (std::abs(v - reconstruction) > Method<F>::error || index == std::numeric_limits<int16_t>::min())
+        if (index != std::numeric_limits<int16_t>::min() && std::abs(v - reconstruction) <= Method<F>::error)
+        {
+            indices.push_back(index);
+            prev = reconstruction;
+        }
+        else
         {
             indices.push_back(std::numeric_limits<int16_t>::min());
             outliers.push_back(v);
             prev = v;
-        }
-        else
-        {
-            indices.push_back(index);
-            prev = reconstruction;
         }
     }
 
