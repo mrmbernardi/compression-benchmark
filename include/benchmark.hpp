@@ -1,7 +1,9 @@
 #pragma once
-#include "method.hpp"
+#include <span>
 #include <string>
 #include <vector>
+
+template <typename F> class Method;
 
 template <typename F> std::vector<F> generate_random_data(size_t size);
 

@@ -97,6 +97,7 @@ LFZIP_STREAMSPLITV_ZSTD3 = Method("LfZip with Stream Split (V) with Zstd (3)", [
 LFZIP_ZSTD3 = Method("LfZip with Zstd (3)", ["float", "double"])
 LZ4 = Method("Lz4 (lossless)", ["float", "double"])
 MACHETE = Method("Machete", ["double"])
+PCODEC = Method("Pcodec (lossless)", ["float", "double"])
 QUANTISE_BSC = Method("Quantise with Bsc", ["float", "double"])
 QUANTISE_LZ4 = Method("Quantise with Lz4", ["float", "double"])
 QUANTISE_STREAMSPLIT2_BSC = Method("Quantise with Stream Split (2) with Bsc", ["float", "double"])
@@ -140,6 +141,7 @@ AllMethods = [
     LFZIP_ZSTD3,
     LZ4,
     MACHETE,
+    PCODEC,
     QUANTISE_BSC,
     QUANTISE_LZ4,
     QUANTISE_STREAMSPLIT2_BSC,

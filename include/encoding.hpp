@@ -1,4 +1,8 @@
 #pragma once
+extern "C"
+{
+#include "cpcodec.h"
+}
 #include <cstddef>
 #include <cstdint>
 #include <span>
@@ -38,6 +42,19 @@ struct Lz4 : Encoding
     };
     std::vector<std::byte> encode(std::span<const std::byte> input) override;
     std::vector<std::byte> decode(std::span<const std::byte> input) override;
+};
+
+template <typename T> struct Pcodec : Encoding
+{
+    PcoFfiVec enc_vec = {};
+    PcoFfiVec dec_vec = {};
+    std::string name() override
+    {
+        return "Pcodec";
+    };
+    std::vector<std::byte> encode(std::span<const std::byte> input) override;
+    std::vector<std::byte> decode(std::span<const std::byte> input) override;
+    ~Pcodec();
 };
 
 template <typename T> std::vector<std::byte> streamsplit_enc(std::span<const std::byte> input);

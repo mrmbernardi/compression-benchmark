@@ -25,7 +25,7 @@ set_property(TARGET compression-benchmark-library PROPERTY OUTPUT_NAME "compress
 
 add_executable(compression-benchmark-app "${MAIN_CPP}")
 add_dependencies(compression-benchmark-app compression-benchmark-library)
-target_link_libraries(compression-benchmark-app compression-benchmark-library)
+target_link_libraries(compression-benchmark-app PRIVATE compression-benchmark-library)
 set_property(TARGET compression-benchmark-app PROPERTY OUTPUT_NAME "compression-benchmark")
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -108,3 +108,16 @@ target_include_directories(compression-benchmark-library PRIVATE ${SOURCE_DIR}/i
 target_include_directories(compression-benchmark-app PRIVATE ${SOURCE_DIR}/include)
 add_dependencies(compression-benchmark-library tabulate)
 add_dependencies(compression-benchmark-app tabulate)
+
+ExternalProject_Add(pcodec
+  GIT_REPOSITORY    https://github.com/mwlon/pcodec.git
+  GIT_TAG           ec073a08802092db7f5a3e35a1d6ffceca79b6cb
+  CONFIGURE_COMMAND ""
+  BUILD_COMMAND     cargo build --release
+  BUILD_IN_SOURCE   1
+  INSTALL_COMMAND   ""
+)
+ExternalProject_Get_property(pcodec SOURCE_DIR)
+target_include_directories(compression-benchmark-library PRIVATE ${SOURCE_DIR}/pco_c/include)
+target_link_libraries(compression-benchmark-library PRIVATE ${SOURCE_DIR}/target/release/libcpcodec.so)
+add_dependencies(compression-benchmark-library pcodec)

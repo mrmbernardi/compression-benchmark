@@ -1,4 +1,5 @@
 #include "util.hpp"
+#include "encoding.hpp"
 #include "method.hpp"
 #include <cstdint>
 #include <cstdio>
@@ -28,6 +29,8 @@ template <typename F> std::vector<std::shared_ptr<Method<F>>> get_all_common_met
     std::vector<std::shared_ptr<Method<F>>> methods;
     for (auto &e : encodings)
         methods.emplace_back(std::make_shared<Lossless<F>>(e));
+    methods.emplace_back(std::make_shared<Lossless<F>>(std::make_shared<Pcodec<F>>()));
+
 
     for (auto &e : encodings)
         methods.emplace_back(std::make_shared<Lfzip<F, false>>(e));

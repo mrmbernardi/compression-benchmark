@@ -1,6 +1,4 @@
 #include "benchmark.hpp"
-#include "encoding.hpp"
-#include "method.hpp"
 #include "tabulate/font_align.hpp"
 #include "tabulate/table.hpp"
 #include "util.hpp"
@@ -16,6 +14,8 @@
 using namespace tabulate;
 
 typedef double real;
+
+template <typename F> class Method;
 
 extern "C" int reconstruct(bench_result *results, char *method_name, char dtype, void *data, int size, double error_bound);
 
@@ -34,22 +34,22 @@ int main(int argc, char **argv)
         }
     }
 
-    // std::vector<real> original_buffer = generate_random_data<real>(65536); // 20000000);
+    std::vector<real> original_buffer = generate_random_data<real>(65536); // 20000000);
     //  for (real &v : original_buffer)
     //      v *= 50000;
     //  vec_to_file("data.vec", original_buffer);
-    std::vector<real> original_buffer = vec_from_file<double>("/home/bem@PADNT/fpc/bin/obs_temp.trace.fpc.bin");
+    // std::vector<real> original_buffer = vec_from_file<double>("/home/bem@PADNT/fpc/bin/obs_temp.trace.fpc.bin");
     // bench_result res;
     // reconstruct(&res, "LfZip with Stream Split (V) with Lz4", 'd', void *data, original_buffer.size(), 1e-6);
     // return 0;
 
     std::vector<bench_result_ex> results;
-    // auto methods = get_all_methods<real>();
-    // for (auto &m : methods)
-    // {
-    //     results.emplace_back(benchmark<real>(original_buffer, *m, 1.0));
-    results.emplace_back(
-        benchmark<real>(original_buffer, *std::make_shared<Lfzip<real, true>>(std::make_shared<Lz4>()), 1e-6));
+    auto methods = get_all_methods<real>();
+    for (auto &m : methods)
+        results.emplace_back(benchmark<real>(original_buffer, *m, 1.0));
+    
+    // results.emplace_back(
+        // benchmark<real>(original_buffer, *std::make_shared<Lfzip<real, true>>(std::make_shared<Lz4>()), 1e-6));
 
     Table table;
     table.add_row({"Method", "Ratio (%)", "Compression Time (ms)", "Rate (MB/s)", "Decompression Time (ms)",
