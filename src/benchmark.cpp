@@ -11,11 +11,15 @@
 #include <random>
 #include <sstream>
 
-template <typename F> std::vector<F> generate_random_data(size_t size)
+template <typename F> std::vector<F> generate_random_data(size_t size, double lower, double upper, bool seed)
 {
     std::vector<F> data(size);
     std::mt19937 gen;
-    std::uniform_real_distribution<F> dis(-500, +500);
+    if(seed)
+    {
+        gen = std::mt19937(std::chrono::high_resolution_clock::now().time_since_epoch().count());
+    }
+    std::uniform_real_distribution<F> dis(lower, upper);
     std::cout << "Generating random floating point data... ";
     std::cout.flush();
     for (F &x : data)
@@ -25,8 +29,8 @@ template <typename F> std::vector<F> generate_random_data(size_t size)
     std::cout << "done." << std::endl;
     return data;
 }
-template std::vector<float> generate_random_data(size_t size);
-template std::vector<double> generate_random_data(size_t size);
+template std::vector<float> generate_random_data(size_t size, double lower, double upper, bool seed);
+template std::vector<double> generate_random_data(size_t size, double lower, double upper, bool seed);
 
 std::string bench_result_ex::to_string()
 {

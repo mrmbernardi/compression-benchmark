@@ -17,36 +17,26 @@ template <typename F> std::vector<std::shared_ptr<Method<F>>> get_all_common_met
     encodings.emplace_back(std::make_shared<Bsc>());
     encodings.emplace_back(std::make_shared<Zstd>());
     encodings.emplace_back(std::make_shared<Lz4>());
-    encodings.emplace_back(std::make_shared<Compose<StreamSplit<F>, Bsc>>());
-    encodings.emplace_back(std::make_shared<Compose<StreamSplit<F>, Zstd>>());
-    encodings.emplace_back(std::make_shared<Compose<StreamSplit<F>, Lz4>>());
-
-    std::vector<std::shared_ptr<Encoding>> shortSplits;
-    shortSplits.emplace_back(std::make_shared<Compose<StreamSplit<uint16_t>, Bsc>>());
-    shortSplits.emplace_back(std::make_shared<Compose<StreamSplit<uint16_t>, Zstd>>());
-    shortSplits.emplace_back(std::make_shared<Compose<StreamSplit<uint16_t>, Lz4>>());
 
     std::vector<std::shared_ptr<Method<F>>> methods;
     for (auto &e : encodings)
         methods.emplace_back(std::make_shared<Lossless<F>>(e));
     methods.emplace_back(std::make_shared<Lossless<F>>(std::make_shared<Pcodec<F>>()));
-
-
-    for (auto &e : encodings)
-        methods.emplace_back(std::make_shared<Lfzip<F, false>>(e));
-    for (auto &e : shortSplits)
-        methods.emplace_back(std::make_shared<Lfzip<F, false>>(e));
-    methods.emplace_back(std::make_shared<Lfzip<F, true>>(std::make_shared<Bsc>()));
-    methods.emplace_back(std::make_shared<Lfzip<F, true>>(std::make_shared<Zstd>()));
-    methods.emplace_back(std::make_shared<Lfzip<F, true>>(std::make_shared<Lz4>()));
+    methods.emplace_back(std::make_shared<Lossless<F>>(std::make_shared<Compose<StreamSplit<F>, Bsc>>()));
+    methods.emplace_back(std::make_shared<Lossless<F>>(std::make_shared<Compose<StreamSplit<F>, Zstd>>()));
+    methods.emplace_back(std::make_shared<Lossless<F>>(std::make_shared<Compose<StreamSplit<F>, Lz4>>()));
 
     for (auto &e : encodings)
+    {
+        methods.emplace_back(std::make_shared<Lfzip<F, false>>(e));
+        methods.emplace_back(std::make_shared<Lfzip<F, true>>(e));
+    }
+
+    for (auto &e : encodings)
+    {
         methods.emplace_back(std::make_shared<Quantise<F, false>>(e));
-    for (auto &e : shortSplits)
-        methods.emplace_back(std::make_shared<Quantise<F, false>>(e));
-    methods.emplace_back(std::make_shared<Quantise<F, true>>(std::make_shared<Bsc>()));
-    methods.emplace_back(std::make_shared<Quantise<F, true>>(std::make_shared<Zstd>()));
-    methods.emplace_back(std::make_shared<Quantise<F, true>>(std::make_shared<Lz4>()));
+        methods.emplace_back(std::make_shared<Quantise<F, true>>(e));
+    }
 
     methods.emplace_back(std::make_shared<Sz3<F>>());
     return methods;

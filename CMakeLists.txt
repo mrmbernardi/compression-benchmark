@@ -60,7 +60,7 @@ add_dependencies(compression-benchmark-library libbsc)
 
 ExternalProject_Add(libsz3
   GIT_REPOSITORY    https://github.com/szcompressor/SZ3.git
-  GIT_TAG           162674f8743b8a6ff2042ef9236471a772bdbd3f
+  GIT_TAG           47593621ff40350f83d8791fd2ea2a1966782e6a
   BUILD_COMMAND     cmake --build . --target zstd
   INSTALL_COMMAND   ""
   CMAKE_ARGS        -DCMAKE_BUILD_TYPE=Release -DSZ3_USE_BUNDLED_ZSTD=ON
@@ -86,10 +86,10 @@ target_link_libraries(compression-benchmark-library PRIVATE ${SOURCE_DIR}/lib/li
 add_dependencies(compression-benchmark-library liblz4)
 
 ExternalProject_Add(machete
-  GIT_REPOSITORY    https://github.com/Gyhanis/Machete.git
-  GIT_TAG           792aa17bd3953a52d0fe131d1529f837b05e3e8f
+  GIT_REPOSITORY    https://github.com/mrmbernardi/Machete.git # https://github.com/Gyhanis/Machete.git
+  GIT_TAG           556043d920bfe9ffe0b78bdfe5641cbfbf21d158
   CONFIGURE_COMMAND ""
-  PATCH_COMMAND     bash -c "test $(wc -l <  machete/util.h) -ne 40 || (sed -i '4i #include <cstdint>\\n#include <cstddef>' machete/util.h && sed -i '7i CFLAG += -fPIC' machete/Makefile)"
+  BUILD_COMMAND     CFLAG=-fpic make # MODE=DEBUG
   BUILD_IN_SOURCE   1
   INSTALL_COMMAND   ""
 )

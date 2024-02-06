@@ -6,6 +6,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <iostream>
+#include <limits>
 #include <memory>
 #include <ostream>
 #include <string>
@@ -17,13 +18,14 @@ typedef double real;
 
 template <typename F> class Method;
 
-extern "C" int reconstruct(bench_result *results, char *method_name, char dtype, void *data, int size, double error_bound);
+extern "C" int reconstruct(bench_result *results, const char *method_name, char dtype, void *data, int size, double error_bound);
 
 int main(int argc, char **argv)
 {
     // bench_result r;
-    // std::array<float, 10> x = {1, 2, 3, 1, 5, 6, 7, 8, 9, 10};
-    // return reconstruct(&r, "Sz3", 'f', x.data(), x.size());
+    // std::array<double, 1> x = {-364.52299570321952};
+    // return reconstruct(&r, "Sz3", 'd', x.data(), x.size(), 1.0);
+
     for (int i = 0; i < argc; i++)
     {
         if (std::string(argv[i]) == "--names")
@@ -34,9 +36,7 @@ int main(int argc, char **argv)
         }
     }
 
-    std::vector<real> original_buffer = generate_random_data<real>(65536); // 20000000);
-    //  for (real &v : original_buffer)
-    //      v *= 50000;
+    std::vector<real> original_buffer = generate_random_data<real>(65536, -500, 500); // 20000000);
     //  vec_to_file("data.vec", original_buffer);
     // std::vector<real> original_buffer = vec_from_file<double>("/home/bem@PADNT/fpc/bin/obs_temp.trace.fpc.bin");
     // bench_result res;
@@ -47,7 +47,7 @@ int main(int argc, char **argv)
     auto methods = get_all_methods<real>();
     for (auto &m : methods)
         results.emplace_back(benchmark<real>(original_buffer, *m, 1.0));
-    
+
     // results.emplace_back(
         // benchmark<real>(original_buffer, *std::make_shared<Lfzip<real, true>>(std::make_shared<Lz4>()), 1e-6));
 

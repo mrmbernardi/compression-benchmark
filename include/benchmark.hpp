@@ -5,7 +5,7 @@
 
 template <typename F> class Method;
 
-template <typename F> std::vector<F> generate_random_data(size_t size);
+template <typename F> std::vector<F> generate_random_data(size_t size, double lower, double upper, bool seed = false);
 
 struct bench_result_ex;
 struct bench_result

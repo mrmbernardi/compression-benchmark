@@ -20,7 +20,7 @@ template <typename F> bench_result_ex run_reconstruct(std::string method_str, vo
                              std::to_string(sizeof(F)) + " byte float.");
 }
 
-extern "C" int reconstruct(bench_result *results, char *method_name, char dtype, void *data, int size, double error_bound)
+extern "C" int reconstruct(bench_result *results, const char *method_name, char dtype, void *data, int size, double error_bound)
 {
     try
     {
