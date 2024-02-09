@@ -128,3 +128,19 @@ class Machete : public Method<double>
         free_data();
     }
 };
+
+template <typename F> class Mask : public Method<F>
+{
+    std::vector<std::byte> compressed_buffer;
+    std::vector<std::byte> decompressed_buffer;
+    std::shared_ptr<Encoding> encoding;
+
+  public:
+    Mask(std::shared_ptr<Encoding> e) : encoding(e){};
+    std::string name() override
+    {
+        return "Mask with " + encoding->name();
+    };
+    size_t compress(std::span<const F> input) override;
+    std::span<const F> decompress() override;
+};

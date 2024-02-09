@@ -14,7 +14,8 @@
 
 using namespace tabulate;
 
-typedef double real;
+typedef float real;
+// typedef double real;
 
 template <typename F> class Method;
 
