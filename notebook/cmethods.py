@@ -75,7 +75,7 @@ class Method:
     def __repr__(self) -> str:
         return f"Method({self.method_name.__repr__()}, {self.supported.__repr__()})"
 
-    def reconstruct(self, data: np.ndarray, error_bound=1.0) -> [np.ndarray, int]:
+    def reconstruct(self, data: np.ndarray, error_bound=1.0) -> tuple[np.ndarray, int]:
         return reconstruct(self.method_name, data, error_bound)
 
 
@@ -88,6 +88,16 @@ LFZIP_STREAMSPLITV_ZSTD3 = Method("LfZip with Stream Split (V) with Zstd (3)", [
 LFZIP_ZSTD3 = Method("LfZip with Zstd (3)", ["float", "double"])
 LZ4 = Method("Lz4 (lossless)", ["float", "double"])
 MACHETE = Method("Machete", ["double"])
+MASK_BSC = Method("Mask with Bsc", ["float", "double"])
+MASK_LZ4 = Method("Mask with Lz4", ["float", "double"])
+MASK_PCODEC = Method("Mask with Pcodec", ["float", "double"])
+MASK_STREAMSPLIT4_BSC = Method("Mask with Stream Split (4) with Bsc", ["float"])
+MASK_STREAMSPLIT4_LZ4 = Method("Mask with Stream Split (4) with Lz4", ["float"])
+MASK_STREAMSPLIT4_ZSTD3 = Method("Mask with Stream Split (4) with Zstd (3)", ["float"])
+MASK_STREAMSPLIT8_BSC = Method("Mask with Stream Split (8) with Bsc", ["double"])
+MASK_STREAMSPLIT8_LZ4 = Method("Mask with Stream Split (8) with Lz4", ["double"])
+MASK_STREAMSPLIT8_ZSTD3 = Method("Mask with Stream Split (8) with Zstd (3)", ["double"])
+MASK_ZSTD3 = Method("Mask with Zstd (3)", ["float", "double"])
 PCODEC = Method("Pcodec (lossless)", ["float", "double"])
 QUANTISE_BSC = Method("Quantise with Bsc", ["float", "double"])
 QUANTISE_LZ4 = Method("Quantise with Lz4", ["float", "double"])
@@ -114,6 +124,16 @@ AllMethods = [
     LFZIP_ZSTD3,
     LZ4,
     MACHETE,
+    MASK_BSC,
+    MASK_LZ4,
+    MASK_PCODEC,
+    MASK_STREAMSPLIT4_BSC,
+    MASK_STREAMSPLIT4_LZ4,
+    MASK_STREAMSPLIT4_ZSTD3,
+    MASK_STREAMSPLIT8_BSC,
+    MASK_STREAMSPLIT8_LZ4,
+    MASK_STREAMSPLIT8_ZSTD3,
+    MASK_ZSTD3,
     PCODEC,
     QUANTISE_BSC,
     QUANTISE_LZ4,
