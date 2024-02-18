@@ -13,6 +13,8 @@
 
 template <typename F> std::vector<std::shared_ptr<Method<F>>> get_all_common_methods()
 {
+    // return {std::make_shared<Lfzip<F, true>>(std::make_shared<Lz4>())}; // for debugging a single method
+
     std::vector<std::shared_ptr<Encoding>> encodings;
     encodings.emplace_back(std::make_shared<Bsc>());
     encodings.emplace_back(std::make_shared<Zstd>());

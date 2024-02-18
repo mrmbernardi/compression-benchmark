@@ -49,9 +49,6 @@ int main(int argc, char **argv)
     for (auto &m : methods)
         results.emplace_back(benchmark<real>(original_buffer, *m, 1.0));
 
-    // results.emplace_back(
-        // benchmark<real>(original_buffer, *std::make_shared<Lfzip<real, true>>(std::make_shared<Lz4>()), 1e-6));
-
     Table table;
     table.add_row({"Method", "Ratio (%)", "Compression Time (ms)", "Rate (MB/s)", "Decompression Time (ms)",
                    "Rate (MB/s)", "Max Error", "MAE"});

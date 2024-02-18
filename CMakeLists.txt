@@ -44,6 +44,9 @@ set_source_files_properties(
   COMPILE_FLAGS -Wno-all -Wno-extra -Wno-pedantic
 )
 
+find_package (Eigen3 REQUIRED NO_MODULE)
+target_link_libraries(compression-benchmark-library PRIVATE Eigen3::Eigen)
+
 include(ExternalProject)
 ExternalProject_Add(libbsc
   GIT_REPOSITORY    https://github.com/IlyaGrebnov/libbsc.git

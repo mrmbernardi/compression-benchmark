@@ -2,13 +2,11 @@
 #include "encoding.hpp"
 #include "method.hpp"
 #include "util.hpp"
-#include <algorithm>
-#include <array>
 #include <cassert>
 #include <cmath>
-#include <complex>
 #include <cstddef>
 #include <cstdint>
+#include <eigen3/Eigen/Core>
 #include <iostream>
 #include <iterator>
 #include <limits>
@@ -20,7 +18,7 @@ template <typename F, size_t N> class NlmsFilter
 {
     static constexpr F mu = 0.5;
     static constexpr F eps = 1.0;
-    std::array<F, N> w = {};
+    Eigen::Matrix<F, N, 1> w = Eigen::Matrix<F, N, 1>::Zero();
 
   public:
     F predict(std::span<const F> signal)
@@ -28,9 +26,15 @@ template <typename F, size_t N> class NlmsFilter
         assert(signal.size() <= N + 1);
         if (signal.size() == N + 1)
         {
-            auto signal_static = signal.template subspan<0, N + 1>();
-            adapt(signal_static);
-            return std::inner_product(signal_static.begin() + 1, signal_static.end(), w.begin(), 0.0f);
+            Eigen::Map<const Eigen::Matrix<F, N, 1>> signal_head(signal.data());
+            Eigen::Map<const Eigen::Matrix<F, N, 1>> signal_tail(signal.data() + 1);
+            F true_val = signal.back();
+            F y = w.dot(signal_head);
+            F e = true_val - y;
+            F dot = signal_head.squaredNorm();
+            F nu = mu / (eps + dot);
+            w += nu * e * signal_head;
+            return w.dot(signal_tail);
         }
         else if (signal.size() == 0)
         {
@@ -41,19 +45,47 @@ template <typename F, size_t N> class NlmsFilter
             return signal.back();
         }
     }
-    void adapt(std::span<const F, N + 1> signal)
-    {
-        F true_val = signal.back();
-        F y = std::inner_product(signal.begin(), signal.end() - 1, w.begin(), 0.0f);
-        F e = true_val - y;
-        F dot = std::inner_product(signal.begin(), signal.end() - 1, signal.begin(), 0.0f);
-        F nu = mu / (eps + dot);
-        for (size_t i = 0; i < N; i++)
-        {
-            w[i] += nu * e * signal[i];
-        }
-    }
 };
+
+// Slower scalar method:
+// template <typename F, size_t N> class NlmsFilter
+// {
+//     static constexpr F mu = 0.5;
+//     static constexpr F eps = 1.0;
+//     std::array<F, N> w = {};
+
+//   public:
+//     F predict(std::span<const F> signal)
+//     {
+//         assert(signal.size() <= N + 1);
+//         if (signal.size() == N + 1)
+//         {
+//             auto signal_static = signal.template subspan<0, N + 1>();
+//             adapt(signal_static);
+//             return std::inner_product(signal_static.begin() + 1, signal_static.end(), w.begin(), 0.0f);
+//         }
+//         else if (signal.size() == 0)
+//         {
+//             return 0.0f;
+//         }
+//         else
+//         {
+//             return signal.back();
+//         }
+//     }
+//     void adapt(std::span<const F, N + 1> signal)
+//     {
+//         F true_val = signal.back();
+//         F y = std::inner_product(signal.begin(), signal.end() - 1, w.begin(), 0.0f);
+//         F e = true_val - y;
+//         F dot = std::inner_product(signal.begin(), signal.end() - 1, signal.begin(), 0.0f);
+//         F nu = mu / (eps + dot);
+//         for (size_t i = 0; i < N; i++)
+//         {
+//             w[i] += nu * e * signal[i];
+//         }
+//     }
+// };
 
 template <typename F, bool split> size_t Lfzip<F, split>::compress(std::span<const F> input)
 {
