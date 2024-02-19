@@ -44,6 +44,17 @@ struct Lz4 : Encoding
     std::vector<std::byte> decode(std::span<const std::byte> input) override;
 };
 
+struct Snappy : Encoding
+{
+    std::string name() override
+    {
+        return "Snappy";
+    };
+    std::vector<std::byte> encode(std::span<const std::byte> input) override;
+    std::vector<std::byte> decode(std::span<const std::byte> input) override;
+};
+
+
 template <typename T> struct Pcodec : Encoding
 {
     PcoFfiVec enc_vec = {};

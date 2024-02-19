@@ -47,6 +47,9 @@ set_source_files_properties(
 find_package (Eigen3 REQUIRED NO_MODULE)
 target_link_libraries(compression-benchmark-library PRIVATE Eigen3::Eigen)
 
+find_package (Snappy 1.1 REQUIRED NO_MODULE)
+target_link_libraries(compression-benchmark-library PRIVATE Snappy::snappy)
+
 include(ExternalProject)
 ExternalProject_Add(libbsc
   GIT_REPOSITORY    https://github.com/IlyaGrebnov/libbsc.git
