@@ -5,7 +5,7 @@
 #include <libbsc.h>
 #include <vector>
 
-#define BSC_FEATURES (LIBBSC_FEATURE_FASTMODE | LIBBSC_FEATURE_MULTITHREADING)
+#define BSC_FEATURES (LIBBSC_FEATURE_FASTMODE)
 
 bool bsc_initialised = false;
 
@@ -13,7 +13,7 @@ void init_bsc()
 {
     if (!bsc_initialised)
     {
-        bsc_init(bsc_init(BSC_FEATURES));
+        bsc_init(BSC_FEATURES);
         bsc_initialised = true;
     }
 }
@@ -25,8 +25,8 @@ std::vector<std::byte> Bsc::encode(std::span<const std::byte> input)
     std::vector<std::byte> output_buffer(LIBBSC_HEADER_SIZE + input.size_bytes());
     auto input_ptr = reinterpret_cast<const unsigned char *>(input.data());
     auto output_ptr = reinterpret_cast<unsigned char *>(output_buffer.data());
-    auto compressed_sz = bsc_compress(input_ptr, output_ptr, input.size_bytes(), 0, 0, LIBBSC_BLOCKSORTER_BWT,
-                                      LIBBSC_CODER_QLFC_STATIC, BSC_FEATURES);
+    auto compressed_sz = bsc_compress(input_ptr, output_ptr, input.size_bytes(), 0, 0, LIBBSC_DEFAULT_BLOCKSORTER,
+                                      LIBBSC_CODER_QLFC_FAST, BSC_FEATURES);
     output_buffer.resize(compressed_sz);
     return output_buffer;
 }
