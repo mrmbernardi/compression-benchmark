@@ -1,5 +1,6 @@
 #include "method.hpp"
 #include "util.hpp"
+#include <chrono>
 #include <cstddef>
 #include <cstdint>
 #include <ieee754.h>
@@ -7,12 +8,12 @@
 #include <iostream>
 #include <iterator>
 #include <memory>
+#include <ostream>
 #include <system_error>
 #include <vector>
-#include <chrono>
-#include <ostream>
 
-void quantize(const float* input, size_t sz, float* out, float e) {
+void quantize(const float *input, size_t sz, float *out, float e)
+{
     ieee754_float error{e};
     auto error_exp = error.ieee.exponent;
     size_t i = 0;
@@ -28,9 +29,13 @@ void quantize(const float* input, size_t sz, float* out, float e) {
     }
 }
 
-template <> size_t Mask<float>::compress(std::span<const float> input)
+void quantize(const double *input, size_t sz, double *out, double e)
 {
-    std::unique_ptr<float[]> out(new float[input.size()]);
+    // TODO
+}
+
+template <typename F> size_t Mask<F>::compress(std::span<const F> input)
+{
     // TOOD FIX
     // uint32_t mant_mask = 0x007FFFFF;
     // size_t i = 0;
@@ -58,24 +63,15 @@ template <> size_t Mask<float>::compress(std::span<const float> input)
     //     out.get()[i] = v.f;
     // }
 
-    quantize(&input[0], input.size(), &out[0], Method::error);
-
-    compressed_buffer = encoding->encode(std::as_bytes(std::span(out.get(), input.size())));
-    return compressed_buffer.size() * sizeof(compressed_buffer[0]);
-}
-
-template <> size_t Mask<double>::compress(std::span<const double> input)
-{
-    // TODO: masking code
-
-    compressed_buffer = encoding->encode(std::as_bytes(input));
-    return compressed_buffer.size() * sizeof(compressed_buffer[0]);
+    std::unique_ptr<F[]> out(new F[input.size()]);
+    quantize(&input[0], input.size(), &out[0], Method<F>::error);
+    compressed_span = encoding->encode(std::as_bytes(std::span(out.get(), input.size())));
+    return compressed_span.size_bytes();
 }
 
 template <typename F> std::span<const F> Mask<F>::decompress()
 {
-    decompressed_buffer = encoding->decode(compressed_buffer);
-    return as_span<F>(decompressed_buffer);
+    return as_typed_span<F>(encoding->decode(compressed_span));
 }
 template class Mask<float>;
 template class Mask<double>;

@@ -116,26 +116,6 @@ void table_to_file(std::string path, tabulate::Table &table)
     }
 }
 
-template <typename F> std::span<const F> as_span(const std::vector<std::byte> &input)
-{
-    assert(input.size() % sizeof(F) == 0);
-    auto data_ptr = reinterpret_cast<const F *>(input.data());
-    return std::span<const F>(data_ptr, input.size() / sizeof(F));
-}
-template std::span<const float> as_span(const std::vector<std::byte> &input);
-template std::span<const double> as_span(const std::vector<std::byte> &input);
-template std::span<const int16_t> as_span(const std::vector<std::byte> &input);
-
-template <typename F> std::span<F> as_span(std::vector<std::byte> &input)
-{
-    assert(input.size() % sizeof(F) == 0);
-    auto data_ptr = reinterpret_cast<F *>(input.data());
-    return std::span<F>(data_ptr, input.size() / sizeof(F));
-}
-template std::span<float> as_span(std::vector<std::byte> &input);
-template std::span<double> as_span(std::vector<std::byte> &input);
-template std::span<int16_t> as_span(std::vector<std::byte> &input);
-
 template <typename T> void vec_to_file(std::string path, const std::vector<T> &data)
 {
     if (std::FILE *f = std::fopen(path.c_str(), "wb"))

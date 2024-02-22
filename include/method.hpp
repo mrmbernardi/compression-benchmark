@@ -27,8 +27,7 @@ template <typename F> class Method
 
 template <typename F> class Lossless : public Method<F>
 {
-    std::vector<std::byte> compressed_buffer;
-    std::vector<std::byte> decompressed_buffer;
+    std::span<const std::byte> compressed_span;
     std::shared_ptr<Encoding> encoding;
 
   public:
@@ -60,7 +59,7 @@ template <typename F> class Sz3 : public Method<F>
 template <typename F, bool split> class Lfzip : public Method<F>
 {
     static constexpr size_t filter_size = 32;
-    std::vector<std::byte> compressed_buffer;
+    std::span<const std::byte> compressed_span;
     std::vector<F> result;
     std::shared_ptr<Encoding> encoding;
 
@@ -80,7 +79,7 @@ template <typename F, bool split> class Lfzip : public Method<F>
 
 template <typename F, bool split> class Quantise : public Method<F>
 {
-    std::vector<std::byte> compressed_buffer;
+    std::span<const std::byte> compressed_span;
     std::vector<F> result;
     std::shared_ptr<Encoding> encoding;
 
@@ -131,8 +130,7 @@ class Machete : public Method<double>
 
 template <typename F> class Mask : public Method<F>
 {
-    std::vector<std::byte> compressed_buffer;
-    std::vector<std::byte> decompressed_buffer;
+    std::span<const std::byte> compressed_span;
     std::shared_ptr<Encoding> encoding;
 
   public:

@@ -53,15 +53,17 @@ template <> std::vector<std::byte> streamsplit_dec<uint16_t>(std::span<const std
     return output_buffer;
 }
 
-template <typename T> std::vector<std::byte> StreamSplit<T>::encode(std::span<const std::byte> input)
+template <typename T> std::span<const std::byte> StreamSplit<T>::encode(std::span<const std::byte> input)
 {
-    return streamsplit_enc<T>(input);
+    encoded_buffer = streamsplit_enc<T>(input);
+    return encoded_buffer;
 }
 
-template <typename T> std::vector<std::byte> StreamSplit<T>::decode(std::span<const std::byte> input)
+template <typename T> std::span<const std::byte> StreamSplit<T>::decode(std::span<const std::byte> input)
 {
-    return streamsplit_dec<T>(input);
+    decoded_buffer = streamsplit_dec<T>(input);
+    return decoded_buffer;
 }
-template struct StreamSplit<float>;
-template struct StreamSplit<double>;
-template struct StreamSplit<uint16_t>;
+template class StreamSplit<float>;
+template class StreamSplit<double>;
+template class StreamSplit<uint16_t>;

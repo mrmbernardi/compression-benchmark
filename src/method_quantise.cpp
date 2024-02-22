@@ -32,20 +32,21 @@ template <typename F, bool split> size_t Quantise<F, split>::compress(std::span<
     std::vector<std::byte> stream;
     if constexpr (split)
     {
-        stream = pack_streams(streamsplit_enc<F>(std::as_bytes(std::span(outliers))),
-                              streamsplit_enc<uint16_t>(std::as_bytes(std::span(indices))));
+        auto outlier_ss = streamsplit_enc<F>(std::as_bytes(std::span(outliers)));
+        auto indicies_ss = streamsplit_enc<uint16_t>(std::as_bytes(std::span(indices)));
+        stream = pack_streams(std::span(outlier_ss), std::span(indicies_ss));
     }
     else
     {
-        stream = pack_streams(outliers, indices);
+        stream = pack_streams(std::span(outliers), std::span(indices));
     }
-    compressed_buffer = encoding->encode(stream);
-    return compressed_buffer.size() * sizeof(compressed_buffer[0]);
+    compressed_span = encoding->encode(stream);
+    return compressed_span.size_bytes();
 }
 
 template <typename F, bool split> std::span<const F> Quantise<F, split>::decompress()
 {
-    std::vector<std::byte> decompressed_buffer = encoding->decode(compressed_buffer);
+    std::span<const std::byte> decompressed_buffer = encoding->decode(compressed_span);
     std::span<const F> outliers;
     std::span<const int16_t> indices;
 
@@ -58,8 +59,8 @@ template <typename F, bool split> std::span<const F> Quantise<F, split>::decompr
         unpack_streams(decompressed_buffer, outliers_tmp, indices_tmp);
         outliers_vec = streamsplit_dec<F>(outliers_tmp);
         indices_vec = streamsplit_dec<uint16_t>(indices_tmp);
-        outliers = as_span<F>(outliers_vec);
-        indices = as_span<int16_t>(indices_vec);
+        outliers = as_typed_span<F>(outliers_vec);
+        indices = as_typed_span<int16_t>(indices_vec);
     }
     else
     {

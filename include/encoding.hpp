@@ -9,90 +9,114 @@ extern "C"
 #include <string>
 #include <vector>
 
-struct Encoding
+class Encoding
 {
+  public:
     virtual std::string name() = 0;
-    virtual std::vector<std::byte> encode(std::span<const std::byte> input) = 0;
-    virtual std::vector<std::byte> decode(std::span<const std::byte> input) = 0;
+    virtual std::span<const std::byte> encode(std::span<const std::byte> input) = 0;
+    virtual std::span<const std::byte> decode(std::span<const std::byte> input) = 0;
     virtual ~Encoding(){};
 };
 
-struct Bsc : Encoding
+class Bsc : public Encoding
 {
+    std::vector<std::byte> compressed_buffer;
+    std::vector<std::byte> decompressed_buffer;
+
+  public:
     std::string name() override
     {
         return "Bsc";
     };
-    std::vector<std::byte> encode(std::span<const std::byte> input) override;
-    std::vector<std::byte> decode(std::span<const std::byte> input) override;
+    std::span<const std::byte> encode(std::span<const std::byte> input) override;
+    std::span<const std::byte> decode(std::span<const std::byte> input) override;
 };
 
-struct Zstd : Encoding
+class Zstd : public Encoding
 {
+    std::vector<std::byte> compressed_buffer;
+    std::vector<std::byte> decompressed_buffer;
+
+  public:
     std::string name() override;
-    std::vector<std::byte> encode(std::span<const std::byte> input) override;
-    std::vector<std::byte> decode(std::span<const std::byte> input) override;
+    std::span<const std::byte> encode(std::span<const std::byte> input) override;
+    std::span<const std::byte> decode(std::span<const std::byte> input) override;
 };
 
-struct Lz4 : Encoding
+class Lz4 : public Encoding
 {
+    std::vector<std::byte> compressed_buffer;
+    std::vector<std::byte> decompressed_buffer;
+
+  public:
     std::string name() override
     {
         return "Lz4";
     };
-    std::vector<std::byte> encode(std::span<const std::byte> input) override;
-    std::vector<std::byte> decode(std::span<const std::byte> input) override;
+    std::span<const std::byte> encode(std::span<const std::byte> input) override;
+    std::span<const std::byte> decode(std::span<const std::byte> input) override;
 };
 
-struct Snappy : Encoding
+class Snappy : public Encoding
 {
+    std::vector<std::byte> compressed_buffer;
+    std::vector<std::byte> decompressed_buffer;
+
+  public:
     std::string name() override
     {
         return "Snappy";
     };
-    std::vector<std::byte> encode(std::span<const std::byte> input) override;
-    std::vector<std::byte> decode(std::span<const std::byte> input) override;
+    std::span<const std::byte> encode(std::span<const std::byte> input) override;
+    std::span<const std::byte> decode(std::span<const std::byte> input) override;
 };
 
-
-template <typename T> struct Pcodec : Encoding
+template <typename T> class Pcodec : public Encoding
 {
     PcoFfiVec enc_vec = {};
     PcoFfiVec dec_vec = {};
+
+  public:
     std::string name() override
     {
         return "Pcodec";
     };
-    std::vector<std::byte> encode(std::span<const std::byte> input) override;
-    std::vector<std::byte> decode(std::span<const std::byte> input) override;
+    std::span<const std::byte> encode(std::span<const std::byte> input) override;
+    std::span<const std::byte> decode(std::span<const std::byte> input) override;
     ~Pcodec();
 };
 
 template <typename T> std::vector<std::byte> streamsplit_enc(std::span<const std::byte> input);
 template <typename T> std::vector<std::byte> streamsplit_dec(std::span<const std::byte> input);
-template <typename T> struct StreamSplit : Encoding
+template <typename T> class StreamSplit : public Encoding
 {
+    std::vector<std::byte> encoded_buffer;
+    std::vector<std::byte> decoded_buffer;
+
+  public:
     std::string name() override
     {
         return "Stream Split (" + std::to_string(sizeof(T)) + ")";
     };
-    std::vector<std::byte> encode(std::span<const std::byte> input) override;
-    std::vector<std::byte> decode(std::span<const std::byte> input) override;
+    std::span<const std::byte> encode(std::span<const std::byte> input) override;
+    std::span<const std::byte> decode(std::span<const std::byte> input) override;
 };
 
-template <typename E1, typename E2> struct Compose : Encoding
+template <typename E1, typename E2> class Compose : public Encoding
 {
     E1 e1;
     E2 e2;
+
+  public:
     std::string name() override
     {
         return e1.name() + " with " + e2.name();
     };
-    std::vector<std::byte> encode(std::span<const std::byte> input) override
+    std::span<const std::byte> encode(std::span<const std::byte> input) override
     {
         return e2.encode(e1.encode(input));
     }
-    std::vector<std::byte> decode(std::span<const std::byte> input) override
+    std::span<const std::byte> decode(std::span<const std::byte> input) override
     {
         return e1.decode(e2.decode(input));
     }
