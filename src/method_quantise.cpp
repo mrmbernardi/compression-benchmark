@@ -10,12 +10,12 @@ template <typename F, bool split> size_t Quantise<F, split>::compress(std::span<
     std::vector<F> outliers;
     std::vector<int16_t> indices;
     indices.reserve(input.size());
-    F prev = 0.0f;
+    F prev = 0;
     for (const F v : input)
     {
         F diff = v - prev;
-        int16_t index = std::round(diff / (2.0 * Method<F>::error));
-        F reconstruction = prev + Method<F>::error * index * 2.0;
+        int16_t index = std::round(diff / (2 * Method<F>::error));
+        F reconstruction = prev + Method<F>::error * index * 2;
         if (index != std::numeric_limits<int16_t>::min() && std::abs(v - reconstruction) <= Method<F>::error)
         {
             indices.push_back(index);
@@ -70,7 +70,7 @@ template <typename F, bool split> std::span<const F> Quantise<F, split>::decompr
     result.reserve(indices.size());
 
     auto outlier = outliers.begin();
-    F value = 0.0f;
+    F value = 0;
     for (const int16_t v : indices)
     {
         if (v == std::numeric_limits<int16_t>::min())
@@ -80,7 +80,7 @@ template <typename F, bool split> std::span<const F> Quantise<F, split>::decompr
         }
         else
         {
-            value = value + Method<F>::error * v * 2.0;
+            value = value + Method<F>::error * v * 2;
         }
         result.push_back(value);
     }

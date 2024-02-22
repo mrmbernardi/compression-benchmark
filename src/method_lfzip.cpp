@@ -38,7 +38,7 @@ template <typename F, size_t N> class NlmsFilter
         }
         else if (signal.size() == 0)
         {
-            return 0.0f;
+            return 0;
         }
         else
         {
@@ -66,7 +66,7 @@ template <typename F, size_t N> class NlmsFilter
 //         }
 //         else if (signal.size() == 0)
 //         {
-//             return 0.0f;
+//             return 0;
 //         }
 //         else
 //         {
@@ -103,8 +103,8 @@ template <typename F, bool split> size_t Lfzip<F, split>::compress(std::span<con
         auto sample_start = std::max(recon.end() - filter_size - 1, recon.begin());
         F predval = nlms.predict(std::span<const F>(sample_start, recon.end()));
         F diff = v - predval;
-        int16_t index = std::round(diff / (2.0 * Method<F>::error));
-        F reconstruction = predval + Method<F>::error * index * 2.0;
+        int16_t index = std::round(diff / (2 * Method<F>::error));
+        F reconstruction = predval + Method<F>::error * index * 2;
         if (index != std::numeric_limits<int16_t>::min() && std::abs(v - reconstruction) <= Method<F>::error)
         {
             indices.push_back(index);
@@ -176,7 +176,7 @@ template <typename F, bool split> std::span<const F> Lfzip<F, split>::decompress
         }
         else
         {
-            result.push_back(predval + Method<F>::error * v * 2.0);
+            result.push_back(predval + Method<F>::error * v * 2);
         }
     }
     // std::cout << "magic sum: " << std::accumulate(result.begin(), result.end(), 0.0L) << std::endl;
