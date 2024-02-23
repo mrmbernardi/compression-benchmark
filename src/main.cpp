@@ -46,8 +46,14 @@ int main(int argc, char **argv)
 
     std::vector<bench_result_ex> results;
     auto methods = get_all_methods<real>();
-    for (auto &m : methods)
-        results.emplace_back(benchmark<real>(original_buffer, *m, 1.0));
+    // reversing and popping back ensures the buffers in the encoders are freed as it goes which seems to give better
+    // performance.
+    std::reverse(methods.begin(), methods.end());
+    while(!methods.empty())
+    {
+        results.emplace_back(benchmark<real>(original_buffer, *methods.back(), 1.0));
+        methods.pop_back();
+    }
 
     Table table;
     table.add_row({"Method", "Ratio (%)", "Compression Time (ms)", "Rate (MB/s)", "Decompression Time (ms)",
