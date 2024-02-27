@@ -71,7 +71,14 @@ class Snappy : public Encoding
     std::span<const std::byte> decode(std::span<const std::byte> input) override;
 };
 
-template <typename T> class Pcodec : public Encoding
+enum PcodecEncType
+{
+    p_float,
+    p_uint,
+    p_int
+};
+
+template <typename T, PcodecEncType P> class Pcodec : public Encoding
 {
     PcoFfiVec enc_vec = {};
     PcoFfiVec dec_vec = {};
@@ -79,7 +86,12 @@ template <typename T> class Pcodec : public Encoding
   public:
     std::string name() override
     {
-        return "Pcodec";
+        if (P == p_int)
+            return "Pcodec (int)";
+        if (P == p_uint)
+            return "Pcodec (uint)";
+        if (P == p_float)
+            return "Pcodec";
     };
     std::span<const std::byte> encode(std::span<const std::byte> input) override;
     std::span<const std::byte> decode(std::span<const std::byte> input) override;

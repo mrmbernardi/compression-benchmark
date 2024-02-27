@@ -93,6 +93,8 @@ MACHETE = Method("Machete", ["double"])
 MASK_BSC = Method("Mask with Bsc", ["float", "double"])
 MASK_LZ4 = Method("Mask with Lz4", ["float", "double"])
 MASK_PCODEC = Method("Mask with Pcodec", ["float", "double"])
+MASK_PCODECINT = Method("Mask with Pcodec (int)", ["float", "double"])
+MASK_PCODECUINT = Method("Mask with Pcodec (uint)", ["float", "double"])
 MASK_SNAPPY = Method("Mask with Snappy", ["float", "double"])
 MASK_STREAMSPLIT4_BSC = Method("Mask with Stream Split (4) with Bsc", ["float"])
 MASK_STREAMSPLIT4_LZ4 = Method("Mask with Stream Split (4) with Lz4", ["float"])
@@ -103,7 +105,9 @@ MASK_STREAMSPLIT8_LZ4 = Method("Mask with Stream Split (8) with Lz4", ["double"]
 MASK_STREAMSPLIT8_SNAPPY = Method("Mask with Stream Split (8) with Snappy", ["double"])
 MASK_STREAMSPLIT8_ZSTD3 = Method("Mask with Stream Split (8) with Zstd (3)", ["double"])
 MASK_ZSTD3 = Method("Mask with Zstd (3)", ["float", "double"])
+PCODECINT = Method("Pcodec (int) (lossless)", ["float", "double"])
 PCODEC = Method("Pcodec (lossless)", ["float", "double"])
+PCODECUINT = Method("Pcodec (uint) (lossless)", ["float", "double"])
 QUANTISE_BSC = Method("Quantise with Bsc", ["float", "double"])
 QUANTISE_LZ4 = Method("Quantise with Lz4", ["float", "double"])
 QUANTISE_SNAPPY = Method("Quantise with Snappy", ["float", "double"])
@@ -139,6 +143,8 @@ AllMethods = [
     MASK_BSC,
     MASK_LZ4,
     MASK_PCODEC,
+    MASK_PCODECINT,
+    MASK_PCODECUINT,
     MASK_SNAPPY,
     MASK_STREAMSPLIT4_BSC,
     MASK_STREAMSPLIT4_LZ4,
@@ -149,7 +155,9 @@ AllMethods = [
     MASK_STREAMSPLIT8_SNAPPY,
     MASK_STREAMSPLIT8_ZSTD3,
     MASK_ZSTD3,
+    PCODECINT,
     PCODEC,
+    PCODECUINT,
     QUANTISE_BSC,
     QUANTISE_LZ4,
     QUANTISE_SNAPPY,

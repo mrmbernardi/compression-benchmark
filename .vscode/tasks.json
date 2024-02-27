@@ -4,7 +4,7 @@
 		{
 			"type": "shell",
 			"label": "make",
-			"command": "make",
+			"command": "make -j4",
 			"options": {"cwd": "${workspaceFolder}/build"},
 			"group": {
 				"kind": "build",
