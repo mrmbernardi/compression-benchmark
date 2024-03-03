@@ -51,7 +51,7 @@ int main(int argc, char **argv)
     std::reverse(methods.begin(), methods.end());
     while(!methods.empty())
     {
-        results.emplace_back(benchmark<real>(original_buffer, *methods.back(), 1.0));
+        results.emplace_back(benchmark<real>(original_buffer, *methods.back(), 1.0/32));
         methods.pop_back();
     }
 

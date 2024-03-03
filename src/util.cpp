@@ -56,6 +56,18 @@ template <typename F> std::vector<std::shared_ptr<Method<F>>> get_all_common_met
     methods.emplace_back(std::make_shared<Mask<F>>(std::make_shared<Compose<StreamSplit<F>, Lz4>>()));
     methods.emplace_back(std::make_shared<Mask<F>>(std::make_shared<Compose<StreamSplit<F>, Snappy>>()));
 
+    for (auto &e : encodings)
+    {
+        methods.emplace_back(std::make_shared<IntFloat<F>>(e));
+    }
+    methods.emplace_back(std::make_shared<IntFloat<F>>(std::make_shared<Pcodec<F, p_float>>()));
+    methods.emplace_back(std::make_shared<IntFloat<F>>(std::make_shared<Pcodec<F, p_int>>()));
+    methods.emplace_back(std::make_shared<IntFloat<F>>(std::make_shared<Pcodec<F, p_uint>>()));
+    methods.emplace_back(std::make_shared<IntFloat<F>>(std::make_shared<Compose<StreamSplit<F>, Bsc>>()));
+    methods.emplace_back(std::make_shared<IntFloat<F>>(std::make_shared<Compose<StreamSplit<F>, Zstd>>()));
+    methods.emplace_back(std::make_shared<IntFloat<F>>(std::make_shared<Compose<StreamSplit<F>, Lz4>>()));
+    methods.emplace_back(std::make_shared<IntFloat<F>>(std::make_shared<Compose<StreamSplit<F>, Snappy>>()));
+
     methods.emplace_back(std::make_shared<Sz3<F>>());
     return methods;
 }
