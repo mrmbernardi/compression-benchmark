@@ -80,6 +80,21 @@ class Method:
 
 
 BSC = Method("Bsc (lossless)", ["float", "double"])
+INTFLOAT_BSC = Method("IntFloat with Bsc", ["float", "double"])
+INTFLOAT_LZ4 = Method("IntFloat with Lz4", ["float", "double"])
+INTFLOAT_PCODEC = Method("IntFloat with Pcodec", ["float", "double"])
+INTFLOAT_PCODECINT = Method("IntFloat with Pcodec (int)", ["float", "double"])
+INTFLOAT_PCODECUINT = Method("IntFloat with Pcodec (uint)", ["float", "double"])
+INTFLOAT_SNAPPY = Method("IntFloat with Snappy", ["float", "double"])
+INTFLOAT_STREAMSPLIT4_BSC = Method("IntFloat with Stream Split (4) with Bsc", ["float"])
+INTFLOAT_STREAMSPLIT4_LZ4 = Method("IntFloat with Stream Split (4) with Lz4", ["float"])
+INTFLOAT_STREAMSPLIT4_SNAPPY = Method("IntFloat with Stream Split (4) with Snappy", ["float"])
+INTFLOAT_STREAMSPLIT4_ZSTD3 = Method("IntFloat with Stream Split (4) with Zstd (3)", ["float"])
+INTFLOAT_STREAMSPLIT8_BSC = Method("IntFloat with Stream Split (8) with Bsc", ["double"])
+INTFLOAT_STREAMSPLIT8_LZ4 = Method("IntFloat with Stream Split (8) with Lz4", ["double"])
+INTFLOAT_STREAMSPLIT8_SNAPPY = Method("IntFloat with Stream Split (8) with Snappy", ["double"])
+INTFLOAT_STREAMSPLIT8_ZSTD3 = Method("IntFloat with Stream Split (8) with Zstd (3)", ["double"])
+INTFLOAT_ZSTD3 = Method("IntFloat with Zstd (3)", ["float", "double"])
 LFZIP_BSC = Method("LfZip with Bsc", ["float", "double"])
 LFZIP_LZ4 = Method("LfZip with Lz4", ["float", "double"])
 LFZIP_SNAPPY = Method("LfZip with Snappy", ["float", "double"])
@@ -130,6 +145,21 @@ ZSTD3 = Method("Zstd (3) (lossless)", ["float", "double"])
 
 AllMethods = [
     BSC,
+    INTFLOAT_BSC,
+    INTFLOAT_LZ4,
+    INTFLOAT_PCODEC,
+    INTFLOAT_PCODECINT,
+    INTFLOAT_PCODECUINT,
+    INTFLOAT_SNAPPY,
+    INTFLOAT_STREAMSPLIT4_BSC,
+    INTFLOAT_STREAMSPLIT4_LZ4,
+    INTFLOAT_STREAMSPLIT4_SNAPPY,
+    INTFLOAT_STREAMSPLIT4_ZSTD3,
+    INTFLOAT_STREAMSPLIT8_BSC,
+    INTFLOAT_STREAMSPLIT8_LZ4,
+    INTFLOAT_STREAMSPLIT8_SNAPPY,
+    INTFLOAT_STREAMSPLIT8_ZSTD3,
+    INTFLOAT_ZSTD3,
     LFZIP_BSC,
     LFZIP_LZ4,
     LFZIP_SNAPPY,
