@@ -159,3 +159,20 @@ template <typename F> class IntFloat : public Method<F>
     size_t compress(std::span<const F> input) override;
     std::span<const F> decompress() override;
 };
+
+template <typename F> class Zfp : public Method<F>
+{
+    std::span<const std::byte> compressed_span;
+    std::shared_ptr<Encoding> encoding;
+
+    std::unique_ptr<F[]> results;
+
+  public:
+    Zfp(std::shared_ptr<Encoding> e);
+    std::string name() override
+    {
+        return "Zfp";
+    };
+    size_t compress(std::span<const F> input) override;
+    std::span<const F> decompress() override;
+};

@@ -127,3 +127,14 @@ ExternalProject_Get_property(pcodec SOURCE_DIR)
 target_include_directories(compression-benchmark-library PRIVATE ${SOURCE_DIR}/pco_c/include)
 target_link_libraries(compression-benchmark-library PRIVATE ${SOURCE_DIR}/target/release/libcpcodec.so)
 add_dependencies(compression-benchmark-library pcodec)
+
+ExternalProject_Add(zfp
+  GIT_REPOSITORY    https://github.com/LLNL/zfp.git
+  GIT_TAG           f40868a6a1c190c802e7d8b5987064f044bf7812
+  INSTALL_COMMAND   ""
+)
+ExternalProject_Get_property(zfp SOURCE_DIR)
+target_include_directories(compression-benchmark-library PRIVATE ${SOURCE_DIR}/include)
+ExternalProject_Get_property(zfp BINARY_DIR)
+target_link_libraries(compression-benchmark-library PRIVATE ${BINARY_DIR}/lib/libzfp.so)
+add_dependencies(compression-benchmark-library zfp)

@@ -52,6 +52,7 @@ void mask(const float *input, size_t sz, float *out, float e)
     // std::cout << "Magic number: " << magic << std::endl;
 }
 
+// clang-format off
 union my_ieee754_double {
     double d;
     /* This is the IEEE 754 double-precision format.  */
@@ -70,46 +71,47 @@ union my_ieee754_double {
     } ieee;
 #endif
 #endif /* Little endian.  */
-    };
+};
+// clang-format onI
 
-    void mask(const double *input, size_t sz, double *out, double e)
+void mask(const double *input, size_t sz, double *out, double e)
+{
+    const ieee754_double error{e};
+    const auto error_exp = error.ieee.exponent;
+    const uint64_t mant_mask = 0xFFFFFFFFFFFFF;
+    size_t i = 0;
+
+    for (; i < sz; i++)
     {
-        const ieee754_double error{e};
-        const auto error_exp = error.ieee.exponent;
-        const uint64_t mant_mask = 0xFFFFFFFFFFFFF;
-        size_t i = 0;
-
-        for (; i < sz; i++)
+        my_ieee754_double v = {input[i]};
+        if (v.ieee.exponent >= error_exp)
         {
-            my_ieee754_double v = {input[i]};
-            if (v.ieee.exponent >= error_exp)
-            {
-                v.ieee.mantissa &= ~(mant_mask >> (v.ieee.exponent - error_exp));
-                out[i] = v.d;
-            }
-            else
-            {
-                out[i] = 0;
-            }
+            v.ieee.mantissa &= ~(mant_mask >> (v.ieee.exponent - error_exp));
+            out[i] = v.d;
         }
-
-        // double magic = 0;
-        // for (i = 0; i < sz; i++)
-        //     magic += out[i];
-        // std::cout << "Magic number: " << magic << std::endl;
+        else
+        {
+            out[i] = 0;
+        }
     }
 
-    template <typename F> size_t Mask<F>::compress(std::span<const F> input)
-    {
-        std::unique_ptr<F[]> out(new F[input.size()]);
-        mask(&input[0], input.size(), &out[0], Method<F>::error);
-        compressed_span = encoding->encode(std::as_bytes(std::span(out.get(), input.size())));
-        return compressed_span.size_bytes();
-    }
+    // double magic = 0;
+    // for (i = 0; i < sz; i++)
+    //     magic += out[i];
+    // std::cout << "Magic number: " << magic << std::endl;
+}
 
-    template <typename F> std::span<const F> Mask<F>::decompress()
-    {
-        return as_typed_span<F>(encoding->decode(compressed_span));
-    }
-    template class Mask<float>;
-    template class Mask<double>;
+template <typename F> size_t Mask<F>::compress(std::span<const F> input)
+{
+    std::unique_ptr<F[]> out(new F[input.size()]);
+    mask(&input[0], input.size(), &out[0], Method<F>::error);
+    compressed_span = encoding->encode(std::as_bytes(std::span(out.get(), input.size())));
+    return compressed_span.size_bytes();
+}
+
+template <typename F> std::span<const F> Mask<F>::decompress()
+{
+    return as_typed_span<F>(encoding->decode(compressed_span));
+}
+template class Mask<float>;
+template class Mask<double>;
