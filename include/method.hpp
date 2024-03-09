@@ -162,13 +162,10 @@ template <typename F> class IntFloat : public Method<F>
 
 template <typename F> class Zfp : public Method<F>
 {
-    std::span<const std::byte> compressed_span;
-    std::shared_ptr<Encoding> encoding;
-
-    std::unique_ptr<F[]> results;
+    std::vector<std::byte> compressed_buffer;
+    std::vector<F> results;
 
   public:
-    Zfp(std::shared_ptr<Encoding> e);
     std::string name() override
     {
         return "Zfp";

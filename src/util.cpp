@@ -69,6 +69,7 @@ template <typename F> std::vector<std::shared_ptr<Method<F>>> get_all_common_met
     methods.emplace_back(std::make_shared<IntFloat<F>>(std::make_shared<Compose<StreamSplit<F>, Snappy>>()));
 
     methods.emplace_back(std::make_shared<Sz3<F>>());
+    methods.emplace_back(std::make_shared<Zfp<F>>());
     return methods;
 }
 

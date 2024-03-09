@@ -141,6 +141,7 @@ STREAMSPLIT8_LZ4 = Method("Stream Split (8) with Lz4 (lossless)", ["double"])
 STREAMSPLIT8_SNAPPY = Method("Stream Split (8) with Snappy (lossless)", ["double"])
 STREAMSPLIT8_ZSTD3 = Method("Stream Split (8) with Zstd (3) (lossless)", ["double"])
 SZ3 = Method("Sz3", ["float", "double"])
+ZFP = Method("Zfp", ["float", "double"])
 ZSTD3 = Method("Zstd (3) (lossless)", ["float", "double"])
 
 AllMethods = [
@@ -206,5 +207,6 @@ AllMethods = [
     STREAMSPLIT8_SNAPPY,
     STREAMSPLIT8_ZSTD3,
     SZ3,
+    ZFP,
     ZSTD3,
 ]
