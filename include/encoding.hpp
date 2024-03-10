@@ -98,6 +98,20 @@ template <typename T, PcodecEncType P> class Pcodec : public Encoding
     ~Pcodec();
 };
 
+template <typename T> class Gorilla : public Encoding
+{
+    std::vector<std::byte> compressed_buffer;
+    std::vector<std::byte> decompressed_buffer;
+
+  public:
+    std::string name() override
+    {
+        return "Gorilla";
+    };
+    std::span<const std::byte> encode(std::span<const std::byte> input) override;
+    std::span<const std::byte> decode(std::span<const std::byte> input) override;
+};
+
 template <typename T> std::vector<std::byte> streamsplit_enc(std::span<const std::byte> input);
 template <typename T> std::vector<std::byte> streamsplit_dec(std::span<const std::byte> input);
 template <typename T> class StreamSplit : public Encoding
