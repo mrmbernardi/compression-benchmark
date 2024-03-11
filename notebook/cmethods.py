@@ -80,7 +80,9 @@ class Method:
 
 
 BSC = Method("Bsc (lossless)", ["float", "double"])
+GORILLA = Method("Gorilla (lossless)", ["float", "double"])
 INTFLOAT_BSC = Method("IntFloat with Bsc", ["float", "double"])
+INTFLOAT_GORILLA = Method("IntFloat with Gorilla", ["float", "double"])
 INTFLOAT_LZ4 = Method("IntFloat with Lz4", ["float", "double"])
 INTFLOAT_PCODEC = Method("IntFloat with Pcodec", ["float", "double"])
 INTFLOAT_PCODECINT = Method("IntFloat with Pcodec (int)", ["float", "double"])
@@ -106,6 +108,7 @@ LFZIP_ZSTD3 = Method("LfZip with Zstd (3)", ["float", "double"])
 LZ4 = Method("Lz4 (lossless)", ["float", "double"])
 MACHETE = Method("Machete", ["double"])
 MASK_BSC = Method("Mask with Bsc", ["float", "double"])
+MASK_GORILLA = Method("Mask with Gorilla", ["float", "double"])
 MASK_LZ4 = Method("Mask with Lz4", ["float", "double"])
 MASK_PCODEC = Method("Mask with Pcodec", ["float", "double"])
 MASK_PCODECINT = Method("Mask with Pcodec (int)", ["float", "double"])
@@ -146,7 +149,9 @@ ZSTD3 = Method("Zstd (3) (lossless)", ["float", "double"])
 
 AllMethods = [
     BSC,
+    GORILLA,
     INTFLOAT_BSC,
+    INTFLOAT_GORILLA,
     INTFLOAT_LZ4,
     INTFLOAT_PCODEC,
     INTFLOAT_PCODECINT,
@@ -172,6 +177,7 @@ AllMethods = [
     LZ4,
     MACHETE,
     MASK_BSC,
+    MASK_GORILLA,
     MASK_LZ4,
     MASK_PCODEC,
     MASK_PCODECINT,
