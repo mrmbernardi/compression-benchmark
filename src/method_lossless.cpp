@@ -1,8 +1,5 @@
-#include "encoding.hpp"
 #include "method.hpp"
 #include "util.hpp"
-#include <cassert>
-#include <cstdint>
 #include <span>
 
 template <typename F> size_t Lossless<F>::compress(std::span<const F> input)

@@ -2,7 +2,6 @@
 #include <cstddef>
 #include <span>
 #include <stdexcept>
-#include <vector>
 
 template <typename T, PcodecEncType P> unsigned char get_pco_type();
 template <> unsigned char get_pco_type<float, p_float>()

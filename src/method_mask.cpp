@@ -1,16 +1,10 @@
 #include "method.hpp"
 #include "util.hpp"
-#include <chrono>
 #include <cstddef>
 #include <cstdint>
 #include <ieee754.h>
 #include <immintrin.h>
-#include <iostream>
-#include <iterator>
 #include <memory>
-#include <ostream>
-#include <system_error>
-#include <vector>
 
 void mask(const float *input, size_t sz, float *out, float e)
 {

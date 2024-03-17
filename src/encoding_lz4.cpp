@@ -1,6 +1,5 @@
 #include "lz4.h"
 #include "encoding.hpp"
-#include <cassert>
 #include <cstddef>
 #include <stdexcept>
 

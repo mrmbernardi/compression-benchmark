@@ -1,5 +1,4 @@
 #include "encoding.hpp"
-#include <cassert>
 #include <cstddef>
 #include <snappy.h>
 #include <stdexcept>

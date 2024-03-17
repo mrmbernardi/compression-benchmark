@@ -4,9 +4,7 @@
 #include <cmath>
 #include <cstddef>
 #include <cstdint>
-#include <numeric>
 #include <span>
-#include <valarray>
 
 // template <typename  F> constexpr F get_greatest_precise_int();
 // template <> constexpr double get_greatest_precise_int()

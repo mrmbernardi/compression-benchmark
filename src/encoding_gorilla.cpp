@@ -1,6 +1,5 @@
 #include "encoding.hpp"
 #include "gorilla.hpp"
-#include <cassert>
 #include <cstddef>
 #include <limits>
 #include <stdexcept>

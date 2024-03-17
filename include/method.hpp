@@ -2,8 +2,6 @@
 #include "encoding.hpp"
 #include <cstddef>
 #include <cstdint>
-#include <future>
-#include <iostream>
 #include <memory>
 #include <span>
 #include <string>

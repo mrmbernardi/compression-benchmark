@@ -2,7 +2,6 @@
 #include <cstddef>
 #include <machete.h>
 #include <stdexcept>
-#include <type_traits>
 
 size_t Machete::compress(std::span<const double> input)
 {

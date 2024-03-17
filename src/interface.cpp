@@ -1,15 +1,15 @@
 #include "benchmark.hpp"
 #include "method.hpp"
 #include "util.hpp"
-#include <cstddef>
 #include <iostream>
+#include <memory>
 #include <stdexcept>
 #include <string>
 
 template <typename F> bench_result_ex run_reconstruct(std::string method_str, void *data, int size, F error_bound)
 {
     auto span = std::span<F>((F *)data, size);
-    for (auto &method : get_all_methods<F>())
+    for (std::shared_ptr<Method<F>> &method : get_all_methods<F>())
     {
         if (method->name() == method_str)
         {

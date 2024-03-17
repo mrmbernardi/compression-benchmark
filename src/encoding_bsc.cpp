@@ -1,7 +1,5 @@
 #include "encoding.hpp"
-#include <cassert>
 #include <cstddef>
-#include <cstdint>
 #include <libbsc.h>
 #include <stdexcept>
 #include <string>

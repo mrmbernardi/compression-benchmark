@@ -19,12 +19,10 @@
 
 #pragma once
 
-#include <algorithm>
-#include <cassert>
+#include <array>
 #include <cstdint>
 #include <cstring>
 #include <immintrin.h>
-#include <memory>
 #include <type_traits>
 
 #define ARROW_HAVE_AVX2

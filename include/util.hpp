@@ -1,7 +1,6 @@
 #include "tabulate/table.hpp"
 #include <cassert>
 #include <cstddef>
-#include <exception>
 #include <memory>
 #include <span>
 #include <stdexcept>

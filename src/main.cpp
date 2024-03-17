@@ -2,12 +2,8 @@
 #include "tabulate/font_align.hpp"
 #include "tabulate/table.hpp"
 #include "util.hpp"
-#include <cmath>
 #include <cstddef>
-#include <cstdint>
 #include <iostream>
-#include <limits>
-#include <memory>
 #include <ostream>
 #include <string>
 #include <vector>

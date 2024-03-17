@@ -7,10 +7,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <eigen3/Eigen/Core>
-#include <iostream>
-#include <iterator>
 #include <limits>
-#include <numeric>
 #include <span>
 #include <vector>
 

@@ -4,7 +4,6 @@ extern "C"
 #include "cpcodec.h"
 }
 #include <cstddef>
-#include <cstdint>
 #include <span>
 #include <string>
 #include <vector>

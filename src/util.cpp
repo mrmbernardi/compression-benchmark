@@ -1,10 +1,8 @@
 #include "util.hpp"
 #include "encoding.hpp"
 #include "method.hpp"
-#include <cstdint>
 #include <cstdio>
 #include <fstream>
-#include <iostream>
 #include <map>
 #include <memory>
 #include <stdexcept>

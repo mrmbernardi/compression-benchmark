@@ -1,6 +1,5 @@
 #include "encoding.hpp"
 #include "zstd.h"
-#include <cassert>
 #include <cstddef>
 #include <stdexcept>
 

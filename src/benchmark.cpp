@@ -1,11 +1,9 @@
 #include "benchmark.hpp"
-#include "encoding.hpp"
 #include "method.hpp"
 #include <algorithm>
 #include <cassert>
 #include <chrono>
 #include <cstddef>
-#include <cstdint>
 #include <iostream>
 #include <ostream>
 #include <random>
