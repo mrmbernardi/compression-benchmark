@@ -81,8 +81,16 @@ class Method:
 
 BSC = Method("Bsc (lossless)", ["float", "double"])
 GORILLA = Method("Gorilla (lossless)", ["float", "double"])
+GORILLA_BSC = Method("Gorilla with Bsc (lossless)", ["float", "double"])
+GORILLA_LZ4 = Method("Gorilla with Lz4 (lossless)", ["float", "double"])
+GORILLA_SNAPPY = Method("Gorilla with Snappy (lossless)", ["float", "double"])
+GORILLA_ZSTD3 = Method("Gorilla with Zstd (3) (lossless)", ["float", "double"])
 INTFLOAT_BSC = Method("IntFloat with Bsc", ["float", "double"])
 INTFLOAT_GORILLA = Method("IntFloat with Gorilla", ["float", "double"])
+INTFLOAT_GORILLA_BSC = Method("IntFloat with Gorilla with Bsc", ["float", "double"])
+INTFLOAT_GORILLA_LZ4 = Method("IntFloat with Gorilla with Lz4", ["float", "double"])
+INTFLOAT_GORILLA_SNAPPY = Method("IntFloat with Gorilla with Snappy", ["float", "double"])
+INTFLOAT_GORILLA_ZSTD3 = Method("IntFloat with Gorilla with Zstd (3)", ["float", "double"])
 INTFLOAT_LZ4 = Method("IntFloat with Lz4", ["float", "double"])
 INTFLOAT_PCODEC = Method("IntFloat with Pcodec", ["float", "double"])
 INTFLOAT_PCODECINT = Method("IntFloat with Pcodec (int)", ["float", "double"])
@@ -109,6 +117,10 @@ LZ4 = Method("Lz4 (lossless)", ["float", "double"])
 MACHETE = Method("Machete", ["double"])
 MASK_BSC = Method("Mask with Bsc", ["float", "double"])
 MASK_GORILLA = Method("Mask with Gorilla", ["float", "double"])
+MASK_GORILLA_BSC = Method("Mask with Gorilla with Bsc", ["float", "double"])
+MASK_GORILLA_LZ4 = Method("Mask with Gorilla with Lz4", ["float", "double"])
+MASK_GORILLA_SNAPPY = Method("Mask with Gorilla with Snappy", ["float", "double"])
+MASK_GORILLA_ZSTD3 = Method("Mask with Gorilla with Zstd (3)", ["float", "double"])
 MASK_LZ4 = Method("Mask with Lz4", ["float", "double"])
 MASK_PCODEC = Method("Mask with Pcodec", ["float", "double"])
 MASK_PCODECINT = Method("Mask with Pcodec (int)", ["float", "double"])
@@ -150,8 +162,16 @@ ZSTD3 = Method("Zstd (3) (lossless)", ["float", "double"])
 AllMethods = [
     BSC,
     GORILLA,
+    GORILLA_BSC,
+    GORILLA_LZ4,
+    GORILLA_SNAPPY,
+    GORILLA_ZSTD3,
     INTFLOAT_BSC,
     INTFLOAT_GORILLA,
+    INTFLOAT_GORILLA_BSC,
+    INTFLOAT_GORILLA_LZ4,
+    INTFLOAT_GORILLA_SNAPPY,
+    INTFLOAT_GORILLA_ZSTD3,
     INTFLOAT_LZ4,
     INTFLOAT_PCODEC,
     INTFLOAT_PCODECINT,
@@ -178,6 +198,10 @@ AllMethods = [
     MACHETE,
     MASK_BSC,
     MASK_GORILLA,
+    MASK_GORILLA_BSC,
+    MASK_GORILLA_LZ4,
+    MASK_GORILLA_SNAPPY,
+    MASK_GORILLA_ZSTD3,
     MASK_LZ4,
     MASK_PCODEC,
     MASK_PCODECINT,

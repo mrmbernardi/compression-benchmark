@@ -31,6 +31,11 @@ template <typename F> std::vector<std::shared_ptr<Method<F>>> get_all_common_met
     methods.emplace_back(std::make_shared<Lossless<F>>(std::make_shared<Compose<StreamSplit<F>, Lz4>>()));
     methods.emplace_back(std::make_shared<Lossless<F>>(std::make_shared<Compose<StreamSplit<F>, Snappy>>()));
 
+    methods.emplace_back(std::make_shared<Lossless<F>>(std::make_shared<Compose<Gorilla<F>, Bsc>>()));
+    methods.emplace_back(std::make_shared<Lossless<F>>(std::make_shared<Compose<Gorilla<F>, Zstd>>()));
+    methods.emplace_back(std::make_shared<Lossless<F>>(std::make_shared<Compose<Gorilla<F>, Lz4>>()));
+    methods.emplace_back(std::make_shared<Lossless<F>>(std::make_shared<Compose<Gorilla<F>, Snappy>>()));
+
     for (auto &e : encodings)
     {
         methods.emplace_back(std::make_shared<Lfzip<F, false>>(e));
@@ -56,6 +61,11 @@ template <typename F> std::vector<std::shared_ptr<Method<F>>> get_all_common_met
     methods.emplace_back(std::make_shared<Mask<F>>(std::make_shared<Compose<StreamSplit<F>, Lz4>>()));
     methods.emplace_back(std::make_shared<Mask<F>>(std::make_shared<Compose<StreamSplit<F>, Snappy>>()));
 
+    methods.emplace_back(std::make_shared<Mask<F>>(std::make_shared<Compose<Gorilla<F>, Bsc>>()));
+    methods.emplace_back(std::make_shared<Mask<F>>(std::make_shared<Compose<Gorilla<F>, Zstd>>()));
+    methods.emplace_back(std::make_shared<Mask<F>>(std::make_shared<Compose<Gorilla<F>, Lz4>>()));
+    methods.emplace_back(std::make_shared<Mask<F>>(std::make_shared<Compose<Gorilla<F>, Snappy>>()));
+
     for (auto &e : encodings)
     {
         methods.emplace_back(std::make_shared<IntFloat<F>>(e));
@@ -68,6 +78,11 @@ template <typename F> std::vector<std::shared_ptr<Method<F>>> get_all_common_met
     methods.emplace_back(std::make_shared<IntFloat<F>>(std::make_shared<Compose<StreamSplit<F>, Zstd>>()));
     methods.emplace_back(std::make_shared<IntFloat<F>>(std::make_shared<Compose<StreamSplit<F>, Lz4>>()));
     methods.emplace_back(std::make_shared<IntFloat<F>>(std::make_shared<Compose<StreamSplit<F>, Snappy>>()));
+
+    methods.emplace_back(std::make_shared<IntFloat<F>>(std::make_shared<Compose<Gorilla<F>, Bsc>>()));
+    methods.emplace_back(std::make_shared<IntFloat<F>>(std::make_shared<Compose<Gorilla<F>, Zstd>>()));
+    methods.emplace_back(std::make_shared<IntFloat<F>>(std::make_shared<Compose<Gorilla<F>, Lz4>>()));
+    methods.emplace_back(std::make_shared<IntFloat<F>>(std::make_shared<Compose<Gorilla<F>, Snappy>>()));
 
     methods.emplace_back(std::make_shared<Sz3<F>>());
     methods.emplace_back(std::make_shared<Zfp<F>>());
