@@ -31,6 +31,8 @@ template <typename T> inline std::span<const T> as_typed_span(std::span<const st
 
 template <typename T> void vec_to_file(std::string path, const std::vector<T> &data);
 
+template <typename T> void span_to_file(std::string path, const std::span<T> &data);
+
 template <typename T> std::vector<T> vec_from_file(std::string path);
 
 // https://stackoverflow.com/a/26221725

@@ -165,6 +165,20 @@ template void vec_to_file(std::string path, const std::vector<uint16_t> &data);
 template void vec_to_file(std::string path, const std::vector<float> &data);
 template void vec_to_file(std::string path, const std::vector<double> &data);
 
+template <typename T> void span_to_file(std::string path, const std::span<T> &data)
+{
+    if (std::FILE *f = std::fopen(path.c_str(), "wb"))
+    {
+        std::fwrite(data.data(), sizeof(data[0]), data.size(), f);
+        std::fclose(f);
+    }
+    else
+    {
+        throw std::runtime_error("cannot open file");
+    }
+}
+template void span_to_file(std::string path, const std::span<const std::byte> &data);
+
 template <typename T> std::vector<T> vec_from_file(std::string path)
 {
     std::vector<T> data;
