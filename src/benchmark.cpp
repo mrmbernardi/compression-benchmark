@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <cassert>
 #include <chrono>
+#include <cmath>
 #include <cstddef>
 #include <iostream>
 #include <ostream>
@@ -87,7 +88,12 @@ bench_result_ex benchmark(std::span<const F> original_buffer, Method<F> &method,
         }
         for (size_t i = 0; i < original_buffer.size(); i++)
         {
-            double e = std::abs(decompressed[i] - original_buffer[i]);
+            double a, b;
+            a = decompressed[i];
+            b = original_buffer[i];
+            if(std::isnan(a) && std::isnan(b)) continue;
+
+            double e = std::abs(a - b);
             assert(e <= error_bound);
             mae += e;
             max_error = std::max(max_error, e);
