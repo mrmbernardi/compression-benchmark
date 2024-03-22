@@ -117,7 +117,7 @@ add_dependencies(compression-benchmark-app tabulate)
 
 ExternalProject_Add(pcodec
   GIT_REPOSITORY    https://github.com/mwlon/pcodec.git
-  GIT_TAG           3450aa6d825c142af5150a6ee016605a2de9a125
+  GIT_TAG           6d9dc4701070e8212538e15f2f53397f7eb99a98
   CONFIGURE_COMMAND ""
   BUILD_COMMAND     cargo build --release
   BUILD_IN_SOURCE   1
