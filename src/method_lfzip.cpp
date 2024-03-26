@@ -11,7 +11,7 @@
 #include <span>
 #include <vector>
 
-template <typename F, size_t N> class NlmsFilter
+template <typename F, size_t N, int stride> class NlmsFilter
 {
     static constexpr F mu = 0.5;
     static constexpr F eps = 1.0;
@@ -20,11 +20,11 @@ template <typename F, size_t N> class NlmsFilter
   public:
     F predict(std::span<const F> signal)
     {
-        assert(signal.size() <= N + 1);
-        if (signal.size() == N + 1)
+        assert(signal.size() <= (N + 1) * stride);
+        if (signal.size() == (N + 1) * stride)
         {
-            Eigen::Map<const Eigen::Matrix<F, N, 1>> signal_head(signal.data());
-            Eigen::Map<const Eigen::Matrix<F, N, 1>> signal_tail(signal.data() + 1);
+            Eigen::Map<const Eigen::Matrix<F, N, 1>, 0, Eigen::Stride<1, stride>> signal_head(signal.data());
+            Eigen::Map<const Eigen::Matrix<F, N, 1>, 0, Eigen::Stride<1, stride>> signal_tail(signal.data() + 1);
             F true_val = signal.back();
             F y = w.dot(signal_head);
             F e = true_val - y;
@@ -84,11 +84,41 @@ template <typename F, size_t N> class NlmsFilter
 //     }
 // };
 
-template <typename F, bool split> size_t Lfzip<F, split>::compress(std::span<const F> input)
+int16_t encode_index(int16_t i)
+{
+    uint16_t j;
+    if (i < 0)
+    {
+        j = -i;
+        j = j * 2 - 1;
+    }
+    else
+    {
+        j = i * 2;
+    }
+    return j;
+}
+
+int16_t decode_index(int16_t i)
+{
+    uint16_t j = i;
+    if (j & 1)
+    {
+        j = (j + 1) / 2;
+        return -j;
+    }
+    else
+    {
+        return j / 2;
+    }
+}
+
+template <typename F, bool split, int stride, bool encode>
+size_t Lfzip<F, split, stride, encode>::compress(std::span<const F> input)
 {
     // std::vector<int16_t> test = vec_from_file<int16_t>("../../LFZip/debug/bin_idx.0");
 
-    NlmsFilter<F, filter_size> nlms;
+    NlmsFilter<F, filter_size, stride> nlms;
     std::vector<int16_t> indices;
     std::vector<F> outliers;
     std::vector<F> recon;
@@ -97,14 +127,17 @@ template <typename F, bool split> size_t Lfzip<F, split>::compress(std::span<con
 
     for (const F v : input)
     {
-        auto sample_start = std::max(recon.end() - filter_size - 1, recon.begin());
+        auto sample_start = std::max(recon.end() - (filter_size + 1) * stride, recon.begin());
         F predval = nlms.predict(std::span<const F>(sample_start, recon.end()));
         F diff = v - predval;
         int16_t index = std::round(diff / (2 * Method<F>::error));
         F reconstruction = predval + Method<F>::error * index * 2;
         if (index != std::numeric_limits<int16_t>::min() && std::abs(v - reconstruction) <= Method<F>::error)
         {
-            indices.push_back(index);
+            if constexpr (encode)
+                indices.push_back(encode_index(index));
+            else
+                indices.push_back(index);
             recon.push_back(reconstruction);
         }
         else
@@ -134,7 +167,8 @@ template <typename F, bool split> size_t Lfzip<F, split>::compress(std::span<con
     return compressed_span.size_bytes();
 }
 
-template <typename F, bool split> std::span<const F> Lfzip<F, split>::decompress()
+template <typename F, bool split, int stride, bool encode>
+std::span<const F> Lfzip<F, split, stride, encode>::decompress()
 {
     // std::vector<F> test = vec_from_file<F>("../../LFZip/debug/recon.bin");
 
@@ -161,11 +195,11 @@ template <typename F, bool split> std::span<const F> Lfzip<F, split>::decompress
 
     result.clear();
     result.reserve(indices.size());
-    NlmsFilter<F, filter_size> nlms;
+    NlmsFilter<F, filter_size, stride> nlms;
     auto outlier = outliers.begin();
     for (const int16_t v : indices)
     {
-        auto sample_start = std::max(result.end() - filter_size - 1, result.begin());
+        auto sample_start = std::max(result.end() - (filter_size + 1) * stride, result.begin());
         F predval = nlms.predict(std::span<const F>(sample_start, result.end()));
         if (v == std::numeric_limits<int16_t>::min())
         {
@@ -174,14 +208,40 @@ template <typename F, bool split> std::span<const F> Lfzip<F, split>::decompress
         }
         else
         {
-            result.push_back(predval + Method<F>::error * v * 2);
+            if constexpr (encode)
+                result.push_back(predval + Method<F>::error * decode_index(v) * 2);
+            else
+                result.push_back(predval + Method<F>::error * v * 2);
         }
     }
     // std::cout << "magic sum: " << std::accumulate(result.begin(), result.end(), 0.0L) << std::endl;
     // assert(result == test);
     return result;
 }
-template class Lfzip<float, true>;
-template class Lfzip<float, false>;
-template class Lfzip<double, true>;
-template class Lfzip<double, false>;
+template class Lfzip<float, true, 1>;
+template class Lfzip<float, false, 1>;
+template class Lfzip<double, true, 1>;
+template class Lfzip<double, false, 1>;
+
+template class Lfzip<float, true, 2>;
+template class Lfzip<float, false, 2>;
+template class Lfzip<double, true, 2>;
+template class Lfzip<double, false, 2>;
+
+template class Lfzip<float, true, 4>;
+template class Lfzip<float, false, 4>;
+template class Lfzip<double, true, 4>;
+template class Lfzip<double, false, 4>;
+
+template class Lfzip<float, true, 8>;
+template class Lfzip<float, false, 8>;
+template class Lfzip<double, true, 8>;
+template class Lfzip<double, false, 8>;
+
+template class Lfzip<float, true, 16>;
+template class Lfzip<float, false, 16>;
+template class Lfzip<double, true, 16>;
+template class Lfzip<double, false, 16>;
+
+template class Lfzip<float, true, 16, true>;
+template class Lfzip<double, true, 16, true>;

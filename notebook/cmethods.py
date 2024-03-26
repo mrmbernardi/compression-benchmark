@@ -105,6 +105,42 @@ INTFLOAT_STREAMSPLIT8_LZ4 = Method("IntFloat with Stream Split (8) with Lz4", ["
 INTFLOAT_STREAMSPLIT8_SNAPPY = Method("IntFloat with Stream Split (8) with Snappy", ["double"])
 INTFLOAT_STREAMSPLIT8_ZSTD3 = Method("IntFloat with Stream Split (8) with Zstd (3)", ["double"])
 INTFLOAT_ZSTD3 = Method("IntFloat with Zstd (3)", ["float", "double"])
+LFZIPSTRIDE16ENCODED_STREAMSPLITV_BSC = Method("LfZip Stride 16 Encoded with Stream Split (V) with Bsc", ["float", "double"])
+LFZIPSTRIDE16ENCODED_STREAMSPLITV_LZ4 = Method("LfZip Stride 16 Encoded with Stream Split (V) with Lz4", ["float", "double"])
+LFZIPSTRIDE16ENCODED_STREAMSPLITV_SNAPPY = Method("LfZip Stride 16 Encoded with Stream Split (V) with Snappy", ["float", "double"])
+LFZIPSTRIDE16ENCODED_STREAMSPLITV_ZSTD3 = Method("LfZip Stride 16 Encoded with Stream Split (V) with Zstd (3)", ["float", "double"])
+LFZIPSTRIDE16_BSC = Method("LfZip Stride 16 with Bsc", ["float", "double"])
+LFZIPSTRIDE16_LZ4 = Method("LfZip Stride 16 with Lz4", ["float", "double"])
+LFZIPSTRIDE16_SNAPPY = Method("LfZip Stride 16 with Snappy", ["float", "double"])
+LFZIPSTRIDE16_STREAMSPLITV_BSC = Method("LfZip Stride 16 with Stream Split (V) with Bsc", ["float", "double"])
+LFZIPSTRIDE16_STREAMSPLITV_LZ4 = Method("LfZip Stride 16 with Stream Split (V) with Lz4", ["float", "double"])
+LFZIPSTRIDE16_STREAMSPLITV_SNAPPY = Method("LfZip Stride 16 with Stream Split (V) with Snappy", ["float", "double"])
+LFZIPSTRIDE16_STREAMSPLITV_ZSTD3 = Method("LfZip Stride 16 with Stream Split (V) with Zstd (3)", ["float", "double"])
+LFZIPSTRIDE16_ZSTD3 = Method("LfZip Stride 16 with Zstd (3)", ["float", "double"])
+LFZIPSTRIDE2_BSC = Method("LfZip Stride 2 with Bsc", ["float", "double"])
+LFZIPSTRIDE2_LZ4 = Method("LfZip Stride 2 with Lz4", ["float", "double"])
+LFZIPSTRIDE2_SNAPPY = Method("LfZip Stride 2 with Snappy", ["float", "double"])
+LFZIPSTRIDE2_STREAMSPLITV_BSC = Method("LfZip Stride 2 with Stream Split (V) with Bsc", ["float", "double"])
+LFZIPSTRIDE2_STREAMSPLITV_LZ4 = Method("LfZip Stride 2 with Stream Split (V) with Lz4", ["float", "double"])
+LFZIPSTRIDE2_STREAMSPLITV_SNAPPY = Method("LfZip Stride 2 with Stream Split (V) with Snappy", ["float", "double"])
+LFZIPSTRIDE2_STREAMSPLITV_ZSTD3 = Method("LfZip Stride 2 with Stream Split (V) with Zstd (3)", ["float", "double"])
+LFZIPSTRIDE2_ZSTD3 = Method("LfZip Stride 2 with Zstd (3)", ["float", "double"])
+LFZIPSTRIDE4_BSC = Method("LfZip Stride 4 with Bsc", ["float", "double"])
+LFZIPSTRIDE4_LZ4 = Method("LfZip Stride 4 with Lz4", ["float", "double"])
+LFZIPSTRIDE4_SNAPPY = Method("LfZip Stride 4 with Snappy", ["float", "double"])
+LFZIPSTRIDE4_STREAMSPLITV_BSC = Method("LfZip Stride 4 with Stream Split (V) with Bsc", ["float", "double"])
+LFZIPSTRIDE4_STREAMSPLITV_LZ4 = Method("LfZip Stride 4 with Stream Split (V) with Lz4", ["float", "double"])
+LFZIPSTRIDE4_STREAMSPLITV_SNAPPY = Method("LfZip Stride 4 with Stream Split (V) with Snappy", ["float", "double"])
+LFZIPSTRIDE4_STREAMSPLITV_ZSTD3 = Method("LfZip Stride 4 with Stream Split (V) with Zstd (3)", ["float", "double"])
+LFZIPSTRIDE4_ZSTD3 = Method("LfZip Stride 4 with Zstd (3)", ["float", "double"])
+LFZIPSTRIDE8_BSC = Method("LfZip Stride 8 with Bsc", ["float", "double"])
+LFZIPSTRIDE8_LZ4 = Method("LfZip Stride 8 with Lz4", ["float", "double"])
+LFZIPSTRIDE8_SNAPPY = Method("LfZip Stride 8 with Snappy", ["float", "double"])
+LFZIPSTRIDE8_STREAMSPLITV_BSC = Method("LfZip Stride 8 with Stream Split (V) with Bsc", ["float", "double"])
+LFZIPSTRIDE8_STREAMSPLITV_LZ4 = Method("LfZip Stride 8 with Stream Split (V) with Lz4", ["float", "double"])
+LFZIPSTRIDE8_STREAMSPLITV_SNAPPY = Method("LfZip Stride 8 with Stream Split (V) with Snappy", ["float", "double"])
+LFZIPSTRIDE8_STREAMSPLITV_ZSTD3 = Method("LfZip Stride 8 with Stream Split (V) with Zstd (3)", ["float", "double"])
+LFZIPSTRIDE8_ZSTD3 = Method("LfZip Stride 8 with Zstd (3)", ["float", "double"])
 LFZIP_BSC = Method("LfZip with Bsc", ["float", "double"])
 LFZIP_LZ4 = Method("LfZip with Lz4", ["float", "double"])
 LFZIP_SNAPPY = Method("LfZip with Snappy", ["float", "double"])
@@ -186,6 +222,42 @@ AllMethods = [
     INTFLOAT_STREAMSPLIT8_SNAPPY,
     INTFLOAT_STREAMSPLIT8_ZSTD3,
     INTFLOAT_ZSTD3,
+    LFZIPSTRIDE16ENCODED_STREAMSPLITV_BSC,
+    LFZIPSTRIDE16ENCODED_STREAMSPLITV_LZ4,
+    LFZIPSTRIDE16ENCODED_STREAMSPLITV_SNAPPY,
+    LFZIPSTRIDE16ENCODED_STREAMSPLITV_ZSTD3,
+    LFZIPSTRIDE16_BSC,
+    LFZIPSTRIDE16_LZ4,
+    LFZIPSTRIDE16_SNAPPY,
+    LFZIPSTRIDE16_STREAMSPLITV_BSC,
+    LFZIPSTRIDE16_STREAMSPLITV_LZ4,
+    LFZIPSTRIDE16_STREAMSPLITV_SNAPPY,
+    LFZIPSTRIDE16_STREAMSPLITV_ZSTD3,
+    LFZIPSTRIDE16_ZSTD3,
+    LFZIPSTRIDE2_BSC,
+    LFZIPSTRIDE2_LZ4,
+    LFZIPSTRIDE2_SNAPPY,
+    LFZIPSTRIDE2_STREAMSPLITV_BSC,
+    LFZIPSTRIDE2_STREAMSPLITV_LZ4,
+    LFZIPSTRIDE2_STREAMSPLITV_SNAPPY,
+    LFZIPSTRIDE2_STREAMSPLITV_ZSTD3,
+    LFZIPSTRIDE2_ZSTD3,
+    LFZIPSTRIDE4_BSC,
+    LFZIPSTRIDE4_LZ4,
+    LFZIPSTRIDE4_SNAPPY,
+    LFZIPSTRIDE4_STREAMSPLITV_BSC,
+    LFZIPSTRIDE4_STREAMSPLITV_LZ4,
+    LFZIPSTRIDE4_STREAMSPLITV_SNAPPY,
+    LFZIPSTRIDE4_STREAMSPLITV_ZSTD3,
+    LFZIPSTRIDE4_ZSTD3,
+    LFZIPSTRIDE8_BSC,
+    LFZIPSTRIDE8_LZ4,
+    LFZIPSTRIDE8_SNAPPY,
+    LFZIPSTRIDE8_STREAMSPLITV_BSC,
+    LFZIPSTRIDE8_STREAMSPLITV_LZ4,
+    LFZIPSTRIDE8_STREAMSPLITV_SNAPPY,
+    LFZIPSTRIDE8_STREAMSPLITV_ZSTD3,
+    LFZIPSTRIDE8_ZSTD3,
     LFZIP_BSC,
     LFZIP_LZ4,
     LFZIP_SNAPPY,

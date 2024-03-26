@@ -54,7 +54,7 @@ template <typename F> class Sz3 : public Method<F>
     std::span<const F> decompress() override;
 };
 
-template <typename F, bool split> class Lfzip : public Method<F>
+template <typename F, bool split, int stride, bool encode = false> class Lfzip : public Method<F>
 {
     static constexpr size_t filter_size = 32;
     std::span<const std::byte> compressed_span;
@@ -65,11 +65,21 @@ template <typename F, bool split> class Lfzip : public Method<F>
     Lfzip(std::shared_ptr<Encoding> e) : encoding(e){};
     std::string name() override
     {
+        std::string algo_name = "LfZip";
+        if constexpr (stride != 1)
+        {
+            algo_name += " Stride " + std::to_string(stride);
+        }
+        if constexpr (encode)
+        {
+            algo_name += " Encoded";
+        }
+
         if constexpr (split)
         {
-            return "LfZip with Stream Split (V) with " + encoding->name();
+            return algo_name + " with Stream Split (V) with " + encoding->name();
         }
-        return "LfZip with " + encoding->name();
+        return algo_name + " with " + encoding->name();
     };
     size_t compress(std::span<const F> input) override;
     std::span<const F> decompress() override;
