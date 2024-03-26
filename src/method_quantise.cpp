@@ -5,7 +5,36 @@
 #include <limits>
 #include <vector>
 
-template <typename F, bool split> size_t Quantise<F, split>::compress(std::span<const F> input)
+static constexpr inline int16_t encode_index(int16_t i)
+{
+    uint16_t j;
+    if (i < 0)
+    {
+        j = -i;
+        j = j * 2 - 1;
+    }
+    else
+    {
+        j = i * 2;
+    }
+    return j;
+}
+
+static constexpr inline int16_t decode_index(int16_t i)
+{
+    uint16_t j = i;
+    if (j & 1)
+    {
+        j = (j + 1) / 2;
+        return -j;
+    }
+    else
+    {
+        return j / 2;
+    }
+}
+
+template <typename F, bool split, bool encode> size_t Quantise<F, split, encode>::compress(std::span<const F> input)
 {
     std::vector<F> outliers;
     std::vector<int16_t> indices;
@@ -18,12 +47,23 @@ template <typename F, bool split> size_t Quantise<F, split>::compress(std::span<
         F reconstruction = prev + Method<F>::error * index * 2;
         if (index != std::numeric_limits<int16_t>::min() && std::abs(v - reconstruction) <= Method<F>::error)
         {
-            indices.push_back(index);
+            if constexpr (encode)
+                indices.push_back(encode_index(index));
+            else
+                indices.push_back(index);
             prev = reconstruction;
         }
         else
         {
-            indices.push_back(std::numeric_limits<int16_t>::min());
+            if constexpr (encode)
+            {
+                constexpr int16_t encoded_min = encode_index(std::numeric_limits<int16_t>::min());
+                indices.push_back(encoded_min);
+            }
+            else
+            {
+                indices.push_back(std::numeric_limits<int16_t>::min());
+            }
             outliers.push_back(v);
             prev = v;
         }
@@ -44,7 +84,7 @@ template <typename F, bool split> size_t Quantise<F, split>::compress(std::span<
     return compressed_span.size_bytes();
 }
 
-template <typename F, bool split> std::span<const F> Quantise<F, split>::decompress()
+template <typename F, bool split, bool encode> std::span<const F> Quantise<F, split, encode>::decompress()
 {
     std::span<const std::byte> decompressed_buffer = encoding->decode(compressed_span);
     std::span<const F> outliers;
@@ -72,8 +112,10 @@ template <typename F, bool split> std::span<const F> Quantise<F, split>::decompr
 
     auto outlier = outliers.begin();
     F value = 0;
-    for (const int16_t v : indices)
+    for (int16_t v : indices)
     {
+        if constexpr (encode)
+            v = decode_index(v);
         if (v == std::numeric_limits<int16_t>::min())
         {
             assert(outlier != outliers.end());
@@ -91,3 +133,8 @@ template class Quantise<float, true>;
 template class Quantise<float, false>;
 template class Quantise<double, true>;
 template class Quantise<double, false>;
+
+template class Quantise<float, true, true>;
+template class Quantise<float, false, true>;
+template class Quantise<double, true, true>;
+template class Quantise<double, false, true>;

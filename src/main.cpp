@@ -2,11 +2,13 @@
 #include "tabulate/font_align.hpp"
 #include "tabulate/table.hpp"
 #include "util.hpp"
+#include <cmath>
 #include <cstddef>
 #include <iostream>
 #include <ostream>
 #include <string>
 #include <vector>
+#include <fenv.h>
 
 using namespace tabulate;
 
@@ -19,6 +21,10 @@ extern "C" int reconstruct(bench_result *results, const char *method_name, char 
 
 int main(int argc, char **argv)
 {
+#ifndef NDEBUG
+    feenableexcept(FE_ALL_EXCEPT ^ FE_INVALID ^ FE_INEXACT ^ FE_UNDERFLOW);
+#endif
+
     // bench_result r;
     // std::array<double, 1> x = {-364.52299570321952};
     // return reconstruct(&r, "Sz3", 'd', x.data(), x.size(), 1.0);
@@ -35,7 +41,7 @@ int main(int argc, char **argv)
 
     std::vector<real> original_buffer = generate_random_data<real>(65536, -500, 500); // 20000000);
     //  vec_to_file("data.vec", original_buffer);
-    // std::vector<real> original_buffer = vec_from_file<double>("/home/bem@PADNT/fpc/bin/obs_temp.trace.fpc.bin");
+    // std::vector<real> original_buffer = vec_from_file<float>("/home/bem@PADNT/spdp/bin/msg_sppm.sp.spdp.bin");
     // bench_result res;
     // reconstruct(&res, "LfZip with Stream Split (V) with Lz4", 'd', void *data, original_buffer.size(), 1e-6);
     // return 0;

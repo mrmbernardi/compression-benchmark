@@ -84,7 +84,7 @@ template <typename F, size_t N, int stride> class NlmsFilter
 //     }
 // };
 
-int16_t encode_index(int16_t i)
+static constexpr inline int16_t encode_index(int16_t i)
 {
     uint16_t j;
     if (i < 0)
@@ -99,7 +99,7 @@ int16_t encode_index(int16_t i)
     return j;
 }
 
-int16_t decode_index(int16_t i)
+static constexpr inline int16_t decode_index(int16_t i)
 {
     uint16_t j = i;
     if (j & 1)
@@ -142,7 +142,15 @@ size_t Lfzip<F, split, stride, encode>::compress(std::span<const F> input)
         }
         else
         {
-            indices.push_back(std::numeric_limits<int16_t>::min());
+            if constexpr (encode)
+            {
+                constexpr int16_t encoded_min = encode_index(std::numeric_limits<int16_t>::min());
+                indices.push_back(encoded_min);
+            }
+            else
+            {
+                indices.push_back(std::numeric_limits<int16_t>::min());
+            }
             outliers.push_back(v);
             recon.push_back(v);
         }
@@ -197,10 +205,12 @@ std::span<const F> Lfzip<F, split, stride, encode>::decompress()
     result.reserve(indices.size());
     NlmsFilter<F, filter_size, stride> nlms;
     auto outlier = outliers.begin();
-    for (const int16_t v : indices)
+    for (int16_t v : indices)
     {
         auto sample_start = std::max(result.end() - (filter_size + 1) * stride, result.begin());
         F predval = nlms.predict(std::span<const F>(sample_start, result.end()));
+        if constexpr (encode)
+            v = decode_index(v);
         if (v == std::numeric_limits<int16_t>::min())
         {
             assert(outlier != outliers.end());
@@ -208,9 +218,6 @@ std::span<const F> Lfzip<F, split, stride, encode>::decompress()
         }
         else
         {
-            if constexpr (encode)
-                result.push_back(predval + Method<F>::error * decode_index(v) * 2);
-            else
                 result.push_back(predval + Method<F>::error * v * 2);
         }
     }
@@ -223,20 +230,32 @@ template class Lfzip<float, false, 1>;
 template class Lfzip<double, true, 1>;
 template class Lfzip<double, false, 1>;
 
+template class Lfzip<float, true, 1, true>;
+template class Lfzip<double, true, 1, true>;
+
 template class Lfzip<float, true, 2>;
 template class Lfzip<float, false, 2>;
 template class Lfzip<double, true, 2>;
 template class Lfzip<double, false, 2>;
+
+template class Lfzip<float, true, 2, true>;
+template class Lfzip<double, true, 2, true>;
 
 template class Lfzip<float, true, 4>;
 template class Lfzip<float, false, 4>;
 template class Lfzip<double, true, 4>;
 template class Lfzip<double, false, 4>;
 
+template class Lfzip<float, true, 4, true>;
+template class Lfzip<double, true, 4, true>;
+
 template class Lfzip<float, true, 8>;
 template class Lfzip<float, false, 8>;
 template class Lfzip<double, true, 8>;
 template class Lfzip<double, false, 8>;
+
+template class Lfzip<float, true, 8, true>;
+template class Lfzip<double, true, 8, true>;
 
 template class Lfzip<float, true, 16>;
 template class Lfzip<float, false, 16>;
@@ -245,3 +264,9 @@ template class Lfzip<double, false, 16>;
 
 template class Lfzip<float, true, 16, true>;
 template class Lfzip<double, true, 16, true>;
+
+template class Lfzip<float, true, 32, true>;
+template class Lfzip<double, true, 32, true>;
+
+template class Lfzip<float, true, 64, true>;
+template class Lfzip<double, true, 64, true>;

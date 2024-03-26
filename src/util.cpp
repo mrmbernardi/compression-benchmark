@@ -11,7 +11,7 @@
 
 template <typename F> std::vector<std::shared_ptr<Method<F>>> get_all_common_methods()
 {
-    // return {std::make_shared<Lfzip<F, true>>(std::make_shared<Lz4>())}; // for debugging a single method
+    // return {std::make_shared<Lfzip<F, true, 1, true>>(std::make_shared<Zstd>())}; // for debugging a single method
 
     std::vector<std::shared_ptr<Encoding>> encodings;
     encodings.emplace_back(std::make_shared<Bsc>());
@@ -40,21 +40,34 @@ template <typename F> std::vector<std::shared_ptr<Method<F>>> get_all_common_met
     {
         methods.emplace_back(std::make_shared<Lfzip<F, false, 1>>(e));
         methods.emplace_back(std::make_shared<Lfzip<F, true, 1>>(e));
+        methods.emplace_back(std::make_shared<Lfzip<F, true, 1, true>>(e));
+
         methods.emplace_back(std::make_shared<Lfzip<F, false, 2>>(e));
         methods.emplace_back(std::make_shared<Lfzip<F, true, 2>>(e));
+        methods.emplace_back(std::make_shared<Lfzip<F, true, 2, true>>(e));
+
         methods.emplace_back(std::make_shared<Lfzip<F, false, 4>>(e));
         methods.emplace_back(std::make_shared<Lfzip<F, true, 4>>(e));
+        methods.emplace_back(std::make_shared<Lfzip<F, true, 4, true>>(e));
+
         methods.emplace_back(std::make_shared<Lfzip<F, false, 8>>(e));
         methods.emplace_back(std::make_shared<Lfzip<F, true, 8>>(e));
+        methods.emplace_back(std::make_shared<Lfzip<F, true, 8, true>>(e));
+
         methods.emplace_back(std::make_shared<Lfzip<F, false, 16>>(e));
         methods.emplace_back(std::make_shared<Lfzip<F, true, 16>>(e));
         methods.emplace_back(std::make_shared<Lfzip<F, true, 16, true>>(e));
+
+        methods.emplace_back(std::make_shared<Lfzip<F, true, 32, true>>(e));
+        methods.emplace_back(std::make_shared<Lfzip<F, true, 64, true>>(e));
     }
 
     for (auto &e : encodings)
     {
         methods.emplace_back(std::make_shared<Quantise<F, false>>(e));
         methods.emplace_back(std::make_shared<Quantise<F, true>>(e));
+        methods.emplace_back(std::make_shared<Quantise<F, false, true>>(e));
+        methods.emplace_back(std::make_shared<Quantise<F, true, true>>(e));
     }
 
     for (auto &e : encodings)

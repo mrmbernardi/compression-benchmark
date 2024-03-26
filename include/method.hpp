@@ -74,7 +74,6 @@ template <typename F, bool split, int stride, bool encode = false> class Lfzip :
         {
             algo_name += " Encoded";
         }
-
         if constexpr (split)
         {
             return algo_name + " with Stream Split (V) with " + encoding->name();
@@ -85,7 +84,7 @@ template <typename F, bool split, int stride, bool encode = false> class Lfzip :
     std::span<const F> decompress() override;
 };
 
-template <typename F, bool split> class Quantise : public Method<F>
+template <typename F, bool split, bool encode = false> class Quantise : public Method<F>
 {
     std::span<const std::byte> compressed_span;
     std::vector<F> result;
@@ -95,11 +94,16 @@ template <typename F, bool split> class Quantise : public Method<F>
     Quantise(std::shared_ptr<Encoding> e) : encoding(e){};
     std::string name() override
     {
+        std::string algo_name = "Quantise";
+        if constexpr (encode)
+        {
+            algo_name += " Encoded";
+        }
         if constexpr (split)
         {
-            return "Quantise with Stream Split (V) with " + encoding->name();
+            return algo_name + " with Stream Split (V) with " + encoding->name();
         }
-        return "Quantise with " + encoding->name();
+        return algo_name + " with " + encoding->name();
     };
     size_t compress(std::span<const F> input) override;
     std::span<const F> decompress() override;
