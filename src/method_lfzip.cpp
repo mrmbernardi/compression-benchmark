@@ -17,6 +17,8 @@ template <typename F, size_t N, int stride> class NlmsFilter
     static constexpr F eps = 1.0;
     Eigen::Matrix<F, N, 1> w = Eigen::Matrix<F, N, 1>::Zero();
 
+    // F y = 0; // TODO: implement this optimisation.
+
   public:
     F predict(std::span<const F> signal)
     {
@@ -43,46 +45,6 @@ template <typename F, size_t N, int stride> class NlmsFilter
         }
     }
 };
-
-// Slower scalar method:
-// template <typename F, size_t N> class NlmsFilter
-// {
-//     static constexpr F mu = 0.5;
-//     static constexpr F eps = 1.0;
-//     std::array<F, N> w = {};
-
-//   public:
-//     F predict(std::span<const F> signal)
-//     {
-//         assert(signal.size() <= N + 1);
-//         if (signal.size() == N + 1)
-//         {
-//             auto signal_static = signal.template subspan<0, N + 1>();
-//             adapt(signal_static);
-//             return std::inner_product(signal_static.begin() + 1, signal_static.end(), w.begin(), 0.0f);
-//         }
-//         else if (signal.size() == 0)
-//         {
-//             return 0;
-//         }
-//         else
-//         {
-//             return signal.back();
-//         }
-//     }
-//     void adapt(std::span<const F, N + 1> signal)
-//     {
-//         F true_val = signal.back();
-//         F y = std::inner_product(signal.begin(), signal.end() - 1, w.begin(), 0.0f);
-//         F e = true_val - y;
-//         F dot = std::inner_product(signal.begin(), signal.end() - 1, signal.begin(), 0.0f);
-//         F nu = mu / (eps + dot);
-//         for (size_t i = 0; i < N; i++)
-//         {
-//             w[i] += nu * e * signal[i];
-//         }
-//     }
-// };
 
 static constexpr inline int16_t encode_index(int16_t i)
 {
